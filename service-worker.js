@@ -1,13 +1,14 @@
-const CACHE = "card-app-v2";
+const CACHE = "card-app-v3";
+const BASE = "/Card";
 
 const FILES = [
- "/",
- "/index.html",
- "/card.html",
- "/edit.html",
- "/manifest.json",
- "/icon-192.png",
- "/icon-512.png"
+ BASE + "/",
+ BASE + "/index.html",
+ BASE + "/card.html",
+ BASE + "/edit.html",
+ BASE + "/manifest.json",
+ BASE + "/icon-192.png",
+ BASE + "/icon-512.png"
 ];
 
 self.addEventListener("install", e => {
@@ -33,9 +34,9 @@ self.addEventListener("fetch", e => {
  const url = new URL(e.request.url);
 
  // Always serve card.html from cache (ignore ?id)
- if (url.pathname.endsWith("/card.html")) {
+ if (url.pathname.startsWith(BASE + "/card.html")) {
   e.respondWith(
-   caches.match("/card.html").then(r => r || fetch(e.request))
+   caches.match(BASE + "/card.html").then(r => r || fetch(e.request))
   );
   return;
  }
