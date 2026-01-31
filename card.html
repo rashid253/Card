@@ -11,46 +11,47 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
+body{
+ margin:0;
+ font-family:system-ui;
+ background:#f1f5f9;
+ color:#0f172a;
+ font-size:15px;
+ line-height:1.5;
+ -webkit-font-smoothing:antialiased;
+ overflow-x:hidden
+}
+
 .topbar{display:flex;justify-content:space-around;padding:10px;background:#0f172a}
 .topbar a{color:white;font-size:18px}
 
-/* PROFILE */
-.profile{
- text-align:center;
- padding:16px;
- background:#e2e8f0;
- font-family: "Segoe UI", Roboto, Arial;
-}
+.profile{display:flex;gap:12px;padding:16px;background:#e2e8f0;align-items:center}
 .profile img{
- width:90px;height:90px;
+ width:70px;
+ height:70px;
  border-radius:50%;
  object-fit:cover;
  border:2px solid #cbd5f5;
- background:white;
+ background:white
 }
-#business{
- font-weight:bold;
- font-size:16px;
- margin-top:6px;
-}
-#name{font-size:14px;margin-top:4px}
-#phone,#email,#address{font-size:13px}
+
+.info{font-size:14px}
+#name{font-size:16px;font-weight:600}
+#business{font-size:15px;font-weight:700}
 
 .downloadBtn{
  display:inline-block;
  font-size:12px;
- padding:4px 10px;
+ padding:4px 8px;
  border-radius:6px;
  background:#2563eb;
  color:white;
- margin-top:8px;
- cursor:pointer;
+ margin-top:6px;
+ cursor:pointer
 }
 
 .about{padding:12px;background:white;font-size:14px}
 
-/* OFFERS */
 .offers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
 .offer{
  min-width:90%;
@@ -62,27 +63,33 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
  color:white;
  display:flex;
  gap:12px;
- align-items:center;
+ align-items:center
 }
+
 .offer img{max-width:120px;max-height:100px;object-fit:contain;border-radius:8px}
 .offerContent{flex:1}
-.offer button{width:100%;padding:8px;border:none;border-radius:8px;background:#0f172a;color:white}
+.offer button{
+ width:100%;
+ padding:8px;
+ border:none;
+ border-radius:8px;
+ background:#0f172a;
+ color:white;
+ font-size:14px;
+ margin-top:6px
+}
 
-/* DOTS */
 .dots{text-align:center;margin-bottom:10px}
 .dots span{
  display:inline-block;
- width:8px;height:8px;
+ width:8px;
+ height:8px;
  border-radius:50%;
  background:#94a3b8;
  margin:0 4px;
- transition:0.3s;
+ transition:.3s
 }
-.dots .active{
- background:#2563eb;
- width:18px;
- border-radius:10px;
-}
+.dots .active{background:#2563eb;width:18px;border-radius:10px}
 
 .actions{display:flex;justify-content:space-around;padding:14px;background:#e2e8f0}
 .actions a{color:#0f172a;font-size:22px}
@@ -101,12 +108,14 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 
 <div class="profile">
 <img id="photo">
-<div id="business"></div>
+<div class="info">
 <div id="name"></div>
+<div id="business"></div>
 <div id="phone"></div>
 <div id="email"></div>
 <div id="address"></div>
-<div class="downloadBtn" onclick="saveCard()">Save Contact</div>
+<div class="downloadBtn" onclick="saveCard()">Save</div>
+</div>
 </div>
 
 <div class="about" id="about"></div>
@@ -138,10 +147,10 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-let id = new URLSearchParams(location.search).get("id");
-if(id){ localStorage.setItem("last_card_id", id); }
-else{ id = localStorage.getItem("last_card_id"); }
-if(!id){ document.body.innerHTML="No card"; throw ""; }
+let id=new URLSearchParams(location.search).get("id");
+if(id) localStorage.setItem("last_card_id",id);
+else id=localStorage.getItem("last_card_id");
+if(!id){document.body.innerHTML="No card";throw "";}
 
 let cardData=null;
 
@@ -151,16 +160,17 @@ if(cached) loadCard(JSON.parse(cached));
 db.from("cards").select("*").eq("id",id).single().then(r=>{
  if(r.data){
   const data=JSON.parse(r.data.data);
-  localStorage.setItem("card_"+id, JSON.stringify(data));
+  localStorage.setItem("card_"+id,JSON.stringify(data));
   loadCard(data);
  }
 });
 
 function loadCard(data){
  cardData=data;
+
  photo.src=data.profileImage||"";
- business.textContent=data.businessName||"";
  name.textContent=data.name||"";
+ business.textContent=data.businessName||"";
  phone.textContent="📞 "+(data.phone||"");
  email.textContent="✉️ "+(data.email||"");
  address.textContent="📍 "+(data.address||"");
@@ -181,13 +191,23 @@ function loadCard(data){
  data.offers.forEach((o,i)=>{
   const d=document.createElement("div");
   d.className="offer";
+
+  // DYNAMIC BUTTON TEXT
+  let btnText = o.type==="call" ? "Call Now" : "Order Now";
+
   d.innerHTML=`
    ${o.image?`<img src="${o.image}">`:""}
    <div class="offerContent">
     <h3>${o.title}</h3>
     <p>${o.desc}</p>
-    <button>Grab Offer</button>
+    <button>${btnText}</button>
    </div>`;
+
+  d.onclick=()=>{
+   const msg=`Hello ${data.name}, I am interested in your offer: ${o.title}`;
+   location.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(msg);
+  }
+
   offers.appendChild(d);
 
   const dot=document.createElement("span");
@@ -195,7 +215,7 @@ function loadCard(data){
   dots.appendChild(dot);
  });
 
- // DOTS MOVE FIX
+ // DOT MOVE FIX
  offers.addEventListener("scroll",()=>{
   const index=Math.round(offers.scrollLeft / offers.offsetWidth);
   [...dots.children].forEach((d,i)=>{
@@ -218,10 +238,14 @@ END:VCARD`;
  a.click();
 }
 
-// SHARE
+// SHARE BUTTON
 share.onclick=()=>{
  if(navigator.share){
-  navigator.share({title:cardData.name,url:location.href});
+  navigator.share({
+   title:cardData.name,
+   text:cardData.businessName,
+   url:location.href
+  });
  }else{
   navigator.clipboard.writeText(location.href);
   alert("Link copied");
