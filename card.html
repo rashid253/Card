@@ -11,22 +11,79 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a;overflow-x:hidden}
+body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 .topbar{display:flex;justify-content:space-around;padding:10px;background:#0f172a}
 .topbar a{color:white;font-size:18px}
-.profile{display:flex;gap:12px;padding:16px;background:#e2e8f0;align-items:center}
-.profile img{width:70px;height:70px;border-radius:50%;object-fit:contain;border:2px solid #cbd5f5;background:white}
-.info{font-size:13px}
-.downloadBtn{display:inline-block;font-size:12px;padding:4px 8px;border-radius:6px;background:#2563eb;color:white;margin-top:6px;cursor:pointer}
+
+/* PROFILE */
+.profile{
+ text-align:center;
+ padding:16px;
+ background:#e2e8f0;
+ font-family: "Segoe UI", Roboto, Arial;
+}
+.profile img{
+ width:90px;height:90px;
+ border-radius:50%;
+ object-fit:cover;
+ border:2px solid #cbd5f5;
+ background:white;
+}
+#business{
+ font-weight:bold;
+ font-size:16px;
+ margin-top:6px;
+}
+#name{font-size:14px;margin-top:4px}
+#phone,#email,#address{font-size:13px}
+
+.downloadBtn{
+ display:inline-block;
+ font-size:12px;
+ padding:4px 10px;
+ border-radius:6px;
+ background:#2563eb;
+ color:white;
+ margin-top:8px;
+ cursor:pointer;
+}
+
 .about{padding:12px;background:white;font-size:14px}
+
+/* OFFERS */
 .offers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
-.offer{min-width:90%;margin:12px;background:#2563eb;border-radius:16px;padding:12px;scroll-snap-align:center;color:white;display:flex;gap:12px;align-items:center}
+.offer{
+ min-width:90%;
+ margin:12px;
+ background:#2563eb;
+ border-radius:16px;
+ padding:12px;
+ scroll-snap-align:center;
+ color:white;
+ display:flex;
+ gap:12px;
+ align-items:center;
+}
 .offer img{max-width:120px;max-height:100px;object-fit:contain;border-radius:8px}
 .offerContent{flex:1}
-.offer button{width:100%;padding:8px;border:none;border-radius:8px;background:#0f172a;color:white;font-size:14px;margin-top:6px}
+.offer button{width:100%;padding:8px;border:none;border-radius:8px;background:#0f172a;color:white}
+
+/* DOTS */
 .dots{text-align:center;margin-bottom:10px}
-.dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:#94a3b8;margin:0 4px}
-.dots .active{background:#2563eb;width:18px;border-radius:10px}
+.dots span{
+ display:inline-block;
+ width:8px;height:8px;
+ border-radius:50%;
+ background:#94a3b8;
+ margin:0 4px;
+ transition:0.3s;
+}
+.dots .active{
+ background:#2563eb;
+ width:18px;
+ border-radius:10px;
+}
+
 .actions{display:flex;justify-content:space-around;padding:14px;background:#e2e8f0}
 .actions a{color:#0f172a;font-size:22px}
 .social{display:flex;justify-content:center;gap:18px;padding:10px}
@@ -44,16 +101,12 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a;overflow-x:
 
 <div class="profile">
 <img id="photo">
-<div class="info">
-<div id="name"></div>
 <div id="business"></div>
+<div id="name"></div>
 <div id="phone"></div>
 <div id="email"></div>
 <div id="address"></div>
-<div class="downloadBtn" onclick="saveCard()">
- <i class="fa fa-floppy-disk"></i> Save
-</div>
-</div>
+<div class="downloadBtn" onclick="saveCard()">Save Contact</div>
 </div>
 
 <div class="about" id="about"></div>
@@ -85,61 +138,36 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-/* ===== PWA FIX ===== */
 let id = new URLSearchParams(location.search).get("id");
+if(id){ localStorage.setItem("last_card_id", id); }
+else{ id = localStorage.getItem("last_card_id"); }
+if(!id){ document.body.innerHTML="No card"; throw ""; }
 
-if(id){
- localStorage.setItem("last_card_id", id);
-}else{
- id = localStorage.getItem("last_card_id");
-}
+let cardData=null;
 
-if(!id){
- document.body.innerHTML="<h2 style='text-align:center'>No card found</h2>";
- throw "No card id";
-}
-/* =================== */
+const cached=localStorage.getItem("card_"+id);
+if(cached) loadCard(JSON.parse(cached));
 
-let cardData = null;
-
-// TRY LOCAL FIRST
-const cached = localStorage.getItem("card_"+id);
-if(cached){
- loadCard(JSON.parse(cached));
-}
-
-// LOAD ONLINE
 db.from("cards").select("*").eq("id",id).single().then(r=>{
  if(r.data){
-  const data = JSON.parse(r.data.data);
+  const data=JSON.parse(r.data.data);
   localStorage.setItem("card_"+id, JSON.stringify(data));
   loadCard(data);
  }
 });
 
 function loadCard(data){
- cardData = data;
-
- photo.src = data.profileImage || "";
- name.textContent = data.name || "";
- business.textContent = data.businessName || "";
- phone.textContent = "📞 "+(data.phone||"");
- email.textContent = "✉️ "+(data.email||"");
- address.textContent = "📍 "+(data.address||"");
- about.textContent = data.businessInfo || "";
+ cardData=data;
+ photo.src=data.profileImage||"";
+ business.textContent=data.businessName||"";
+ name.textContent=data.name||"";
+ phone.textContent="📞 "+(data.phone||"");
+ email.textContent="✉️ "+(data.email||"");
+ address.textContent="📍 "+(data.address||"");
+ about.textContent=data.businessInfo||"";
 
  call.href="tel:"+data.phone;
-
- const mainMsg = `Hello ${data.name},
-
-I found your digital business card.
-
-Business: ${data.businessName}
-
-${location.href}`;
-
- wa.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(mainMsg);
-
+ wa.href="https://wa.me/"+data.phone;
  mail.href="mailto:"+data.email;
  map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
  sms.href="sms:"+data.phone;
@@ -156,30 +184,33 @@ ${location.href}`;
   d.innerHTML=`
    ${o.image?`<img src="${o.image}">`:""}
    <div class="offerContent">
-    <h3>🔥 ${o.title}</h3>
+    <h3>${o.title}</h3>
     <p>${o.desc}</p>
     <button>Grab Offer</button>
    </div>`;
-  d.onclick=()=>{
-   const msg=`Hello ${data.name}, I am interested in your offer: ${o.title}`;
-   location.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(msg);
-  }
   offers.appendChild(d);
+
   const dot=document.createElement("span");
   if(i==0) dot.classList.add("active");
   dots.appendChild(dot);
  });
+
+ // DOTS MOVE FIX
+ offers.addEventListener("scroll",()=>{
+  const index=Math.round(offers.scrollLeft / offers.offsetWidth);
+  [...dots.children].forEach((d,i)=>{
+   d.classList.toggle("active", i===index);
+  });
+ });
 }
 
 function saveCard(){
- const vcf = `
-BEGIN:VCARD
+ const vcf=`BEGIN:VCARD
 VERSION:3.0
 FN:${cardData.name}
 TEL:${cardData.phone}
 EMAIL:${cardData.email}
-END:VCARD`.trim();
-
+END:VCARD`;
  const blob=new Blob([vcf],{type:"text/vcard"});
  const a=document.createElement("a");
  a.href=URL.createObjectURL(blob);
@@ -187,28 +218,15 @@ END:VCARD`.trim();
  a.click();
 }
 
-/* ===== SHARE FIX (ONLY ADDITION) ===== */
-share.onclick = async () => {
- const shareData = {
-  title: cardData.name,
-  text: `Check my digital card:\n${cardData.name}\n${cardData.businessName}`,
-  url: location.href
- };
-
+// SHARE
+share.onclick=()=>{
  if(navigator.share){
-  await navigator.share(shareData);
+  navigator.share({title:cardData.name,url:location.href});
  }else{
   navigator.clipboard.writeText(location.href);
   alert("Link copied");
  }
 };
-/* ==================================== */
-
-// BACK = EXIT APP
-history.pushState({}, "");
-window.addEventListener("popstate", () => {
- window.close();
-});
 </script>
 </body>
 </html>
