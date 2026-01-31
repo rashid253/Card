@@ -208,7 +208,22 @@ db.from("cards").select("*").eq("id",id).single().then(r=>{
  about.textContent = data.businessInfo || "";
 
  call.href="tel:"+data.phone;
- wa.href="https://wa.me/"+data.phone;
+
+ // PROFESSIONAL MAIN WHATSAPP MESSAGE
+ const mainMsg = 
+`Hello ${data.name},
+
+I found your digital business card and would like to get in touch regarding your services.
+
+Business: ${data.businessName}
+
+Please share more details.
+
+Card Link:
+${location.href}`;
+
+ wa.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(mainMsg);
+
  mail.href="mailto:"+data.email;
  map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
  sms.href="sms:"+data.phone;
@@ -233,8 +248,25 @@ db.from("cards").select("*").eq("id",id).single().then(r=>{
     <button>Grab Offer</button>
    </div>`;
   d.onclick=()=>{
-   const msg=`Hi, I'm interested in your offer: ${o.title}`;
-   location.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(msg);
+   const offerMsg = 
+`Hello ${data.name},
+
+I am interested in your offer:
+
+"${o.title}"
+
+Details:
+${o.desc}
+
+Business:
+${data.businessName}
+
+Please guide me further.
+
+Card Link:
+${location.href}`;
+
+   location.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(offerMsg);
   }
   offers.appendChild(d);
 
