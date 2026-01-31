@@ -11,135 +11,26 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-body{
- margin:0;
- font-family:system-ui;
- background:#f1f5f9;
- color:#0f172a;
- overflow-x:hidden;
-}
-
-.topbar{
- display:flex;
- justify-content:space-around;
- padding:10px;
- background:#0f172a;
-}
-
+/* SAME STYLES AS BEFORE */
+body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a;overflow-x:hidden}
+.topbar{display:flex;justify-content:space-around;padding:10px;background:#0f172a}
 .topbar a{color:white;font-size:18px}
-
-.profile{
- display:flex;
- gap:12px;
- padding:16px;
- background:#e2e8f0;
- align-items:center;
-}
-
-.profile img{
- width:70px;
- height:70px;
- border-radius:50%;
- object-fit:contain;
- border:2px solid #cbd5f5;
- background:white;
-}
-
+.profile{display:flex;gap:12px;padding:16px;background:#e2e8f0;align-items:center}
+.profile img{width:70px;height:70px;border-radius:50%;object-fit:contain;border:2px solid #cbd5f5;background:white}
 .info{font-size:13px}
-
-.downloadBtn{
- display:inline-block;
- font-size:12px;
- padding:4px 8px;
- border-radius:6px;
- background:#2563eb;
- color:white;
- margin-top:6px;
- cursor:pointer;
-}
-
-.about{
- padding:12px;
- background:white;
- font-size:14px;
-}
-
-.offers{
- display:flex;
- overflow-x:auto;
- scroll-snap-type:x mandatory;
-}
-
-.offer{
- min-width:90%;
- margin:12px;
- background:#2563eb;
- border-radius:16px;
- padding:12px;
- scroll-snap-align:center;
- color:white;
- display:flex;
- gap:12px;
- align-items:center;
-}
-
-.offer img{
- max-width:120px;
- max-height:100px;
- width:auto;
- height:auto;
- object-fit:contain;
- border-radius:8px;
- background:transparent;
-}
-
-.offerContent{flex:1;}
-
-.offer button{
- width:100%;
- padding:8px;
- border:none;
- border-radius:8px;
- background:#0f172a;
- color:white;
- font-size:14px;
- margin-top:6px;
-}
-
-.dots{
- text-align:center;
- margin-bottom:10px;
-}
-.dots span{
- display:inline-block;
- width:8px;
- height:8px;
- border-radius:50%;
- background:#94a3b8;
- margin:0 4px;
- transition:.3s;
-}
-.dots .active{
- background:#2563eb;
- width:18px;
- border-radius:10px;
-}
-
-.actions{
- display:flex;
- justify-content:space-around;
- padding:14px;
- background:#e2e8f0;
-}
-
+.downloadBtn{display:inline-block;font-size:12px;padding:4px 8px;border-radius:6px;background:#2563eb;color:white;margin-top:6px;cursor:pointer}
+.about{padding:12px;background:white;font-size:14px}
+.offers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
+.offer{min-width:90%;margin:12px;background:#2563eb;border-radius:16px;padding:12px;scroll-snap-align:center;color:white;display:flex;gap:12px;align-items:center}
+.offer img{max-width:120px;max-height:100px;object-fit:contain;border-radius:8px}
+.offerContent{flex:1}
+.offer button{width:100%;padding:8px;border:none;border-radius:8px;background:#0f172a;color:white;font-size:14px;margin-top:6px}
+.dots{text-align:center;margin-bottom:10px}
+.dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:#94a3b8;margin:0 4px}
+.dots .active{background:#2563eb;width:18px;border-radius:10px}
+.actions{display:flex;justify-content:space-around;padding:14px;background:#e2e8f0}
 .actions a{color:#0f172a;font-size:22px}
-
-.social{
- display:flex;
- justify-content:center;
- gap:18px;
- padding:10px;
-}
+.social{display:flex;justify-content:center;gap:18px;padding:10px}
 .social a{color:#2563eb;font-size:20px}
 </style>
 </head>
@@ -167,7 +58,6 @@ body{
 </div>
 
 <div class="about" id="about"></div>
-
 <div class="offers" id="offers"></div>
 <div class="dots" id="dots"></div>
 
@@ -187,6 +77,10 @@ body{
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <script>
+if('serviceWorker' in navigator){
+ navigator.serviceWorker.register("sw.js");
+}
+
 const db = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
@@ -195,9 +89,22 @@ const db = supabase.createClient(
 const id = new URLSearchParams(location.search).get("id");
 let cardData = null;
 
-// LOAD DATA
+// TRY LOCAL FIRST
+const cached = localStorage.getItem("card_"+id);
+if(cached){
+ loadCard(JSON.parse(cached));
+}
+
+// LOAD ONLINE
 db.from("cards").select("*").eq("id",id).single().then(r=>{
- const data = JSON.parse(r.data.data);
+ if(r.data){
+  const data = JSON.parse(r.data.data);
+  localStorage.setItem("card_"+id, JSON.stringify(data));
+  loadCard(data);
+ }
+});
+
+function loadCard(data){
  cardData = data;
 
  photo.src = data.profileImage || "";
@@ -210,16 +117,12 @@ db.from("cards").select("*").eq("id",id).single().then(r=>{
 
  call.href="tel:"+data.phone;
 
- const mainMsg = 
-`Hello ${data.name},
+ const mainMsg = `Hello ${data.name},
 
-I found your digital business card and would like to get in touch regarding your services.
+I found your digital business card.
 
 Business: ${data.businessName}
 
-Please share more details.
-
-Card Link:
 ${location.href}`;
 
  wa.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(mainMsg);
@@ -233,15 +136,7 @@ ${location.href}`;
  if(data.youtube) yt.href=data.youtube;
  if(data.website) web.href=data.website;
 
- share.onclick=()=>{
-  navigator.share({
-   title:data.name,
-   text:data.businessName,
-   url:location.href
-  });
- }
-
- // OFFERS
+ offers.innerHTML=""; dots.innerHTML="";
  data.offers.forEach((o,i)=>{
   const d=document.createElement("div");
   d.className="offer";
@@ -253,65 +148,31 @@ ${location.href}`;
     <button>Grab Offer</button>
    </div>`;
   d.onclick=()=>{
-   const offerMsg = 
-`Hello ${data.name},
-
-I am interested in your offer:
-
-"${o.title}"
-
-Details:
-${o.desc}
-
-Business:
-${data.businessName}
-
-Please guide me further.
-
-Card Link:
-${location.href}`;
-
-   location.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(offerMsg);
+   const msg=`Hello ${data.name}, I am interested in your offer: ${o.title}`;
+   location.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(msg);
   }
   offers.appendChild(d);
-
   const dot=document.createElement("span");
   if(i==0) dot.classList.add("active");
   dots.appendChild(dot);
  });
+}
 
- offers.addEventListener("scroll",()=>{
-  const idx=Math.round(offers.scrollLeft / offers.offsetWidth);
-  document.querySelectorAll(".dots span").forEach((d,i)=>{
-   d.classList.toggle("active",i==idx);
-  });
- });
-});
-
-// REAL CONTACT SAVE
 function saveCard(){
- if(!cardData) return alert("Loading...");
-
  const vcf = `
 BEGIN:VCARD
 VERSION:3.0
 FN:${cardData.name}
-N:${cardData.name};;;;
-ORG:${cardData.businessName}
 TEL:${cardData.phone}
 EMAIL:${cardData.email}
-ADR:;;${cardData.address};;;;
-NOTE:${cardData.businessInfo}
-END:VCARD
-`.trim();
+END:VCARD`.trim();
 
- const blob = new Blob([vcf], {type:"text/vcard"});
- const a = document.createElement("a");
- a.href = URL.createObjectURL(blob);
- a.download = cardData.name.replace(/ /g,"_")+".vcf";
+ const blob=new Blob([vcf],{type:"text/vcard"});
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);
+ a.download=cardData.name+".vcf";
  a.click();
 }
 </script>
-
 </body>
 </html>
