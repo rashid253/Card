@@ -1,23 +1,21 @@
-const CACHE = "digital-card-v2";
+const CACHE = "digital-card-v3";
 
 const FILES = [
-  "./",
-  "index.html",
-  "card.html",
-  "offline.html",
-  "manifest.json",
-  "icon-192.png",
-  "icon-512.png"
+  "./index.html",
+  "./card.html",
+  "./edit.html",
+  "./offline.html",
+  "./manifest.json",
+  "./icon-192.png",
+  "./icon-512.png"
 ];
 
-// INSTALL: cache shell
 self.addEventListener("install", e => {
   e.waitUntil(
     caches.open(CACHE).then(cache => cache.addAll(FILES))
   );
 });
 
-// ACTIVATE: cleanup old caches
 self.addEventListener("activate", e => {
   e.waitUntil(
     caches.keys().then(keys =>
@@ -28,7 +26,6 @@ self.addEventListener("activate", e => {
   );
 });
 
-// FETCH: network first, cache fallback
 self.addEventListener("fetch", e => {
   e.respondWith(
     fetch(e.request)
@@ -37,10 +34,8 @@ self.addEventListener("fetch", e => {
         caches.open(CACHE).then(cache => cache.put(e.request, clone));
         return res;
       })
-      .catch(() => {
-        return caches.match(e.request).then(r => {
-          return r || caches.match("offline.html");
-        });
-      })
+      .catch(() =>
+        caches.match(e.request).then(r => r || caches.match("./offline.html"))
+      )
   );
 });
