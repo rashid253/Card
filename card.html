@@ -22,17 +22,16 @@ body{
  overflow-x:hidden
 }
 
+/* TOP BAR */
 .topbar{
  display:flex;
  justify-content:space-around;
  padding:12px;
  background:#0f172a
 }
-.topbar a{
- color:white;
- font-size:20px
-}
+.topbar a{color:white;font-size:20px}
 
+/* PROFILE */
 .profile{
  display:flex;
  gap:14px;
@@ -41,7 +40,6 @@ body{
  align-items:center
 }
 
-/* LEFT SIDE */
 .profileLeft{
  display:flex;
  flex-direction:column;
@@ -49,7 +47,6 @@ body{
  min-width:100px;
 }
 
-/* BIG STANDARD IMAGE */
 .profile img{
  width:96px;
  height:96px;
@@ -59,7 +56,6 @@ body{
  background:white
 }
 
-/* NAME FIX */
 #name{
  font-size:17px;
  font-weight:600;
@@ -67,7 +63,7 @@ body{
  text-align:center;
 }
 
-/* RIGHT SIDE */
+/* RIGHT SIDE INFO */
 .info{
  font-size:14px;
  flex:1
@@ -78,30 +74,18 @@ body{
  margin-bottom:4px;
 }
 
-/* FLOPPY ICON */
+/* FLOPPY */
 .saveIcon{
  font-size:20px;
  color:#2563eb;
  cursor:pointer;
- padding:8px;
- border-radius:50%;
- background:white;
- box-shadow:0 2px 6px rgba(0,0,0,.15);
 }
 
 /* ABOUT */
-.about{
- padding:12px;
- background:white;
- font-size:14px
-}
+.about{padding:12px;background:white;font-size:14px}
 
 /* OFFERS */
-.offers{
- display:flex;
- overflow-x:auto;
- scroll-snap-type:x mandatory
-}
+.offers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
 .offer{
  min-width:90%;
  margin:12px;
@@ -115,15 +99,8 @@ body{
  align-items:center
 }
 
-.offer img{
- max-width:120px;
- max-height:100px;
- object-fit:contain;
- border-radius:10px
-}
-
+.offer img{max-width:120px;max-height:100px;object-fit:contain;border-radius:10px}
 .offerContent{flex:1}
-
 .offer button{
  width:100%;
  padding:10px;
@@ -146,26 +123,18 @@ body{
  margin:0 4px;
  transition:.3s
 }
-.dots .active{
- background:#2563eb;
- width:20px;
- border-radius:10px
-}
+.dots .active{background:#2563eb;width:20px;border-radius:10px}
 
-/* ACTIONS ICONS MODERN */
+/* FOOTER ACTIONS (DARK) */
 .actions{
  display:flex;
  justify-content:space-around;
  padding:14px;
- background:#e2e8f0
+ background:#0f172a
 }
 .actions a{
- color:#0f172a;
- font-size:22px;
- background:white;
- padding:10px;
- border-radius:50%;
- box-shadow:0 2px 6px rgba(0,0,0,.15);
+ color:white;
+ font-size:22px
 }
 
 /* SOCIAL */
@@ -175,23 +144,16 @@ body{
  gap:18px;
  padding:12px
 }
-.social a{
- color:#2563eb;
- font-size:22px;
- background:white;
- padding:8px;
- border-radius:50%;
- box-shadow:0 2px 6px rgba(0,0,0,.15);
-}
+.social a{color:#2563eb;font-size:22px}
 </style>
 </head>
 
 <body>
 
 <div class="topbar">
-<a id="share"><i class="fa-solid fa-share-nodes"></i></a>
-<a id="map"><i class="fa-solid fa-location-dot"></i></a>
-<a id="sms"><i class="fa-solid fa-comment-dots"></i></a>
+<a id="share"><i class="fa fa-share"></i></a>
+<a id="map"><i class="fa fa-location-dot"></i></a>
+<a id="sms"><i class="fa fa-comment"></i></a>
 </div>
 
 <div class="profile">
@@ -208,7 +170,7 @@ body{
  </div>
 
  <div class="saveIcon" onclick="saveCard()">
-  <i class="fa-solid fa-floppy-disk"></i>
+  <i class="fa fa-floppy-disk"></i>
  </div>
 </div>
 
@@ -216,17 +178,18 @@ body{
 <div class="offers" id="offers"></div>
 <div class="dots" id="dots"></div>
 
+<!-- DARK FOOTER -->
 <div class="actions">
-<a id="call"><i class="fa-solid fa-phone"></i></a>
+<a id="call"><i class="fa fa-phone"></i></a>
 <a id="wa"><i class="fab fa-whatsapp"></i></a>
-<a id="mail"><i class="fa-solid fa-envelope"></i></a>
+<a id="mail"><i class="fa fa-envelope"></i></a>
 </div>
 
 <div class="social">
 <a id="fb"><i class="fab fa-facebook"></i></a>
 <a id="ig"><i class="fab fa-instagram"></i></a>
 <a id="yt"><i class="fab fa-youtube"></i></a>
-<a id="web"><i class="fa-solid fa-globe"></i></a>
+<a id="web"><i class="fa fa-globe"></i></a>
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -263,7 +226,7 @@ function loadCard(data){
  cardData=data;
 
  photo.src=data.profileImage||"";
- name.textContent=data.name||"";   // <-- THIS WAS BUG, now fixed
+ name.textContent=data.name||"(No Name)";
  business.textContent=data.businessName||"";
  phone.textContent="📞 "+(data.phone||"");
  email.textContent="✉️ "+(data.email||"");
