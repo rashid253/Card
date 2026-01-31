@@ -1,46 +1,41 @@
-const CACHE = "card-app-prod";
-const BASE = "/Card";
+const CACHE = "card-app-v2";
 
 const FILES = [
- BASE + "/",
- BASE + "/card.html",
- BASE + "/edit.html",
- BASE + "/manifest.json",
- BASE + "/icon-192.png",
- BASE + "/icon-512.png"
+  "./",
+  "./index.html",
+  "./card.html",
+  "./edit.html",
+  "./manifest.json",
+  "./icon-192.png",
+  "./icon-512.png"
 ];
 
 self.addEventListener("install", e => {
- e.waitUntil(
-  caches.open(CACHE).then(c => c.addAll(FILES))
- );
- self.skipWaiting();
+  e.waitUntil(
+    caches.open(CACHE).then(cache => cache.addAll(FILES))
+  );
+  self.skipWaiting();
 });
 
 self.addEventListener("activate", e => {
- e.waitUntil(
-  caches.keys().then(keys =>
-   Promise.all(
-    keys.filter(k => k !== CACHE).map(k => caches.delete(k))
-   )
-  )
- );
- self.clients.claim();
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.filter(k => k !== CACHE).map(k => caches.delete(k))
+      )
+    )
+  );
 });
 
 self.addEventListener("fetch", e => {
- const url = new URL(e.request.url);
+  if (e.request.mode === "navigate") {
+    e.respondWith(
+      caches.match("./index.html").then(r => r || fetch(e.request))
+    );
+    return;
+  }
 
- // Always serve card.html even with ?id
- if (url.pathname.endsWith("/card.html")) {
   e.respondWith(
-   caches.match(BASE + "/card.html")
-    .then(r => r || fetch(BASE + "/card.html"))
+    caches.match(e.request).then(r => r || fetch(e.request))
   );
-  return;
- }
-
- e.respondWith(
-  caches.match(e.request).then(r => r || fetch(e.request))
- );
 });
