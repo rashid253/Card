@@ -11,7 +11,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-/* SAME STYLES AS BEFORE */
 body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a;overflow-x:hidden}
 .topbar{display:flex;justify-content:space-around;padding:10px;background:#0f172a}
 .topbar a{color:white;font-size:18px}
@@ -86,7 +85,21 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-const id = new URLSearchParams(location.search).get("id");
+/* ===== PWA FIX (ONLY CHANGE) ===== */
+let id = new URLSearchParams(location.search).get("id");
+
+if(id){
+ localStorage.setItem("last_card_id", id);
+}else{
+ id = localStorage.getItem("last_card_id");
+}
+
+if(!id){
+ document.body.innerHTML="<h2 style='text-align:center'>No card found</h2>";
+ throw "No card id";
+}
+/* ================================= */
+
 let cardData = null;
 
 // TRY LOCAL FIRST
@@ -173,6 +186,12 @@ END:VCARD`.trim();
  a.download=cardData.name+".vcf";
  a.click();
 }
+
+// BACK = EXIT APP
+history.pushState({}, "");
+window.addEventListener("popstate", () => {
+ window.close();
+});
 </script>
 </body>
 </html>
