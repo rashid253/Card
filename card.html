@@ -2,274 +2,75 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>My Digital Card</title>
+<title>Digital Card</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f172a">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
 <style>
-body{
- margin:0;
- font-family:system-ui;
- background:#f1f5f9;
- color:#0f172a;
- overflow-x:hidden;
-}
-
-.topbar{
- display:flex;
- justify-content:space-around;
- padding:10px;
- background:#0f172a;
-}
-
-.topbar a{color:white;font-size:18px}
-
-.profile{
- display:flex;
- gap:12px;
- padding:16px;
- background:#e2e8f0;
- align-items:center;
-}
-
-.profile img{
- width:70px;
- height:70px;
- border-radius:50%;
- object-fit:contain;
- border:2px solid #cbd5f5;
- background:white;
-}
-
-.info{font-size:13px}
-
-.downloadBtn{
- display:inline-block;
- font-size:12px;
- padding:4px 8px;
- border-radius:6px;
- background:#2563eb;
- color:white;
- margin-top:6px;
-}
-
-.about{
- padding:12px;
- background:white;
- font-size:14px;
-}
-
-.offers{
- display:flex;
- overflow-x:auto;
- scroll-snap-type:x mandatory;
-}
-
-.offer{
- min-width:90%;
- margin:12px;
- background:#2563eb;
- border-radius:16px;
- padding:12px;
- scroll-snap-align:center;
- color:white;
- display:flex;
- gap:12px;
- align-items:center;
-}
-
-.offer img{
- max-width:120px;
- max-height:100px;
- width:auto;
- height:auto;
- object-fit:contain;
- border-radius:8px;
- background:transparent;
-}
-
-.offerContent{
- flex:1;
-}
-
-.offer button{
- width:100%;
- padding:8px;
- border:none;
- border-radius:8px;
- background:#0f172a;
- color:white;
- font-size:14px;
- margin-top:6px;
-}
-
-.dots{
- text-align:center;
- margin-bottom:10px;
-}
-.dots span{
- display:inline-block;
- width:8px;
- height:8px;
- border-radius:50%;
- background:#94a3b8;
- margin:0 4px;
- transition:.3s;
-}
-.dots .active{
- background:#2563eb;
- width:18px;
- border-radius:10px;
-}
-
-.actions{
- display:flex;
- justify-content:space-around;
- padding:14px;
- background:#e2e8f0;
-}
-
-.actions a{color:#0f172a;font-size:22px}
-
-.social{
- display:flex;
- justify-content:center;
- gap:18px;
- padding:10px;
-}
-.social a{color:#2563eb;font-size:20px}
+body{margin:0;font-family:system-ui;background:#f8fafc}
+.top{background:#0f172a;color:white;padding:12px;display:flex;justify-content:space-around}
+.card{background:white;margin:15px;border-radius:14px;padding:15px}
+.profile{display:flex;gap:15px;align-items:center}
+.profile img{width:90px;height:90px;border-radius:50%;object-fit:contain}
+.offers{display:flex;overflow-x:auto;gap:10px;margin-top:15px}
+.offer{min-width:220px;background:#f1f5f9;border-radius:10px;padding:10px}
+.offer img{width:100%;border-radius:8px}
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
-<a id="share"><i class="fa fa-share"></i></a>
-<a id="map"><i class="fa-solid fa-location-dot"></i></a>
-<a id="sms"><i class="fa fa-comment"></i></a>
+<div class="top">
+<a id="callBtn">Call</a>
+<a id="waBtn">WhatsApp</a>
+<a id="mapBtn">Map</a>
 </div>
 
+<div class="card">
 <div class="profile">
-<img id="photo">
-<div class="info">
-<div id="name"></div>
-<div id="business"></div>
-<div id="phone"></div>
-<div id="email"></div>
-<div id="address"></div>
-<div class="downloadBtn" onclick="saveCard()">Download</div>
+<img id="profileImg">
+<div>
+<h2 id="name"></h2>
+<p id="businessName"></p>
+<p id="address"></p>
 </div>
 </div>
 
-<div class="about" id="about"></div>
+<p id="businessInfo"></p>
+</div>
 
 <div class="offers" id="offers"></div>
-<div class="dots" id="dots"></div>
 
-<div class="actions">
-<a id="call"><i class="fa fa-phone"></i></a>
-<a id="wa"><i class="fab fa-whatsapp"></i></a>
-<a id="mail"><i class="fa fa-envelope"></i></a>
-</div>
-
-<div class="social">
-<a id="fb"><i class="fab fa-facebook"></i></a>
-<a id="ig"><i class="fab fa-instagram"></i></a>
-<a id="yt"><i class="fab fa-youtube"></i></a>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-if("serviceWorker" in navigator){
- navigator.serviceWorker.register("sw.js");
-}
+const db = supabase.createClient(
+ "https://dfvnefbxgayxqgjjgtrr.supabase.co",
+ "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
+);
 
-/* ===== PWA SAFE DATA LOADER (ONLY FIX) ===== */
-const p = new URLSearchParams(location.search);
-let data;
+const id=new URLSearchParams(location.search).get("id");
 
-if(p.get("data")){
- data = JSON.parse(atob(p.get("data")));
-}else{
- data = {
-  name: p.get("name"),
-  businessName: p.get("businessName"),
-  businessInfo: p.get("businessInfo"),
-  address: p.get("address"),
-  phone: p.get("phone"),
-  email: p.get("email"),
-  facebook: p.get("facebook"),
-  instagram: p.get("instagram"),
-  youtube: p.get("youtube"),
-  profileImage: p.get("profileImage"),
-  offers: []
- };
-}
-/* ========================================== */
+db.from("cards").select("*").eq("id",id).single().then(r=>{
+ const d=JSON.parse(r.data.data);
 
-photo.src=data.profileImage;
-name.textContent=data.name;
-business.textContent=data.businessName;
-phone.textContent="📞 "+data.phone;
-email.textContent="✉️ "+data.email;
-address.textContent="📍 "+data.address;
-about.textContent=data.businessInfo;
+ name.innerText=d.name;
+ businessName.innerText=d.businessName;
+ address.innerText=d.address;
+ businessInfo.innerText=d.businessInfo;
+ profileImg.src=d.profileImage || "";
 
-call.href="tel:"+data.phone;
-wa.href="https://wa.me/"+data.phone;
-mail.href="mailto:"+data.email;
-map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
-sms.href="sms:"+data.phone;
+ callBtn.href="tel:"+d.phone;
+ waBtn.href="https://wa.me/"+d.phone;
+ mapBtn.href="https://maps.google.com?q="+encodeURIComponent(d.address);
 
-if(data.facebook) fb.href=data.facebook;
-if(data.instagram) ig.href=data.instagram;
-if(data.youtube) yt.href=data.youtube;
-
-share.onclick=()=>{
- navigator.share({title:data.name,text:data.businessName,url:location.href});
-}
-
-function saveCard(){
- html2canvas(document.body).then(c=>{
-  const a=document.createElement("a");
-  a.href=c.toDataURL();
-  a.download="my-digital-card.png";
-  a.click();
- });
-}
-
-// offers + dots
-data.offers.forEach((o,i)=>{
- const d=document.createElement("div");
- d.className="offer";
- d.innerHTML=`
-  ${o.image?`<img src="${o.image}">`:""}
-  <div class="offerContent">
-   <h3>🔥 ${o.title}</h3>
+ d.offers.forEach(o=>{
+  const div=document.createElement("div");
+  div.className="offer";
+  div.innerHTML=`
+   <img src="${o.image}">
+   <h4>${o.title}</h4>
    <p>${o.desc}</p>
-   <button>Grab Offer</button>
-  </div>`;
- d.onclick=()=>{
-  const msg=`Hi, I'm interested in your offer: ${o.title} - ${o.desc}`;
-  location.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(msg);
- }
- offers.appendChild(d);
-
- const dot=document.createElement("span");
- if(i==0) dot.classList.add("active");
- dots.appendChild(dot);
-});
-
-// dot animation
-offers.addEventListener("scroll",()=>{
- const idx=Math.round(offers.scrollLeft / offers.offsetWidth);
- document.querySelectorAll(".dots span").forEach((d,i)=>{
-  d.classList.toggle("active",i==idx);
+  `;
+  offers.appendChild(div);
  });
 });
 </script>
