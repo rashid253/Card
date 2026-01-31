@@ -1,7 +1,7 @@
 {
   "name": "Digital Business Card",
   "short_name": "MyCard",
-  "start_url": "/",
+  "start_url": "https://imaginative-seahorse-f149e6.netlify.app/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
