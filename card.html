@@ -40,6 +40,28 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 
 .about{padding:12px;background:white;font-size:14px}
 
+/* SHOP CTA */
+.ctaBar{
+ margin:12px;
+ padding:12px;
+ border-radius:12px;
+ background:linear-gradient(90deg,#2563eb,#0f172a);
+ color:white;
+ font-size:14px;
+ font-weight:600;
+ display:none;
+ align-items:center;
+ gap:10px;
+ box-shadow:0 4px 10px rgba(0,0,0,.25);
+ cursor:pointer
+}
+.ctaBar img{
+ width:40px;height:40px;
+ border-radius:8px;
+ object-fit:cover;
+ background:white
+}
+
 .offers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
 .offer{
  min-width:90%;
@@ -156,6 +178,9 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 
 <div class="about" id="about"></div>
 
+<!-- SHOP CTA -->
+<div id="shopCTA" class="ctaBar"></div>
+
 <div class="offers" id="offers"></div>
 <div class="dots" id="dots"></div>
 
@@ -165,7 +190,6 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 <a id="mail"><i class="fa fa-envelope"></i></a>
 </div>
 
-<!-- Floating social -->
 <div class="socialStack" onclick="toggleSocial()">
  <i class="fab fa-facebook-f"></i>
  <div class="socialExpand" id="socialExpand">
@@ -187,7 +211,6 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-// ID FIX
 let id = new URLSearchParams(location.search).get("id");
 if(id){ localStorage.setItem("last_card_id", id); }
 else{ id = localStorage.getItem("last_card_id"); }
@@ -195,11 +218,9 @@ if(!id){ document.body.innerHTML="<h2>No card found</h2>"; throw "No id"; }
 
 let cardData=null;
 
-// LOCAL
 const cached = localStorage.getItem("card_"+id);
 if(cached) loadCard(JSON.parse(cached));
 
-// ONLINE
 db.from("cards").select("*").eq("id",id).single().then(r=>{
  if(r.data){
   const data = JSON.parse(r.data.data);
@@ -229,6 +250,16 @@ function loadCard(data){
  if(data.youtube) yt.href=data.youtube;
  if(data.website) web.href=data.website;
 
+ /* SHOP CTA */
+ if(data.shopAppLink){
+  shopCTA.style.display="flex";
+  shopCTA.onclick=()=>location.href=data.shopAppLink;
+  shopCTA.innerHTML = `
+   ${data.shopAppImage?`<img src="${data.shopAppImage}">`:""}
+   <div>Shop on our official app</div>
+  `;
+ }
+
  offers.innerHTML=""; dots.innerHTML="";
  data.offers.forEach((o,i)=>{
   const d=document.createElement("div");
@@ -249,7 +280,6 @@ function loadCard(data){
  });
 }
 
-// SHARE
 share.onclick=async()=>{
  const s={title:cardData.name,text:"My digital card",url:location.href};
  if(navigator.share){ await navigator.share(s); }
@@ -275,7 +305,6 @@ function toggleSocial(){
  s.style.display = s.style.display=="flex" ? "none" : "flex";
 }
 
-// BACK EXIT
 history.pushState({}, "");
 window.addEventListener("popstate",()=>{window.close();});
 </script>
