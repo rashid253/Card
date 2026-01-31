@@ -25,7 +25,20 @@ body{
 .topbar{display:flex;justify-content:space-around;padding:10px;background:#0f172a}
 .topbar a{color:white;font-size:18px}
 
-.profile{display:flex;gap:12px;padding:16px;background:#e2e8f0;align-items:center}
+.profile{
+ display:flex;
+ gap:12px;
+ padding:16px;
+ background:#e2e8f0;
+ align-items:flex-start
+}
+
+.profileLeft{
+ display:flex;
+ flex-direction:column;
+ align-items:center
+}
+
 .profile img{
  width:70px;
  height:70px;
@@ -35,18 +48,22 @@ body{
  background:white
 }
 
-.info{font-size:14px}
-#name{font-size:16px;font-weight:600}
+#name{
+ font-size:16px;
+ font-weight:600;
+ margin-top:4px
+}
+
+.info{
+ font-size:14px;
+ flex:1
+}
+
 #business{font-size:15px;font-weight:700}
 
-.downloadBtn{
- display:inline-block;
- font-size:12px;
- padding:4px 8px;
- border-radius:6px;
- background:#2563eb;
- color:white;
- margin-top:6px;
+.saveIcon{
+ font-size:18px;
+ color:#2563eb;
  cursor:pointer
 }
 
@@ -107,15 +124,21 @@ body{
 </div>
 
 <div class="profile">
-<img id="photo">
-<div class="info">
-<div id="name"></div>
-<div id="business"></div>
-<div id="phone"></div>
-<div id="email"></div>
-<div id="address"></div>
-<div class="downloadBtn" onclick="saveCard()">Save</div>
-</div>
+ <div class="profileLeft">
+  <img id="photo">
+  <div id="name"></div>
+ </div>
+
+ <div class="info">
+  <div id="business"></div>
+  <div id="phone"></div>
+  <div id="email"></div>
+  <div id="address"></div>
+ </div>
+
+ <div class="saveIcon" onclick="saveCard()">
+  <i class="fa fa-floppy-disk"></i>
+ </div>
 </div>
 
 <div class="about" id="about"></div>
@@ -192,7 +215,6 @@ function loadCard(data){
   const d=document.createElement("div");
   d.className="offer";
 
-  // DYNAMIC BUTTON TEXT
   let btnText = o.type==="call" ? "Call Now" : "Order Now";
 
   d.innerHTML=`
@@ -215,7 +237,6 @@ function loadCard(data){
   dots.appendChild(dot);
  });
 
- // DOT MOVE FIX
  offers.addEventListener("scroll",()=>{
   const index=Math.round(offers.scrollLeft / offers.offsetWidth);
   [...dots.children].forEach((d,i)=>{
@@ -238,7 +259,6 @@ END:VCARD`;
  a.click();
 }
 
-// SHARE BUTTON
 share.onclick=()=>{
  if(navigator.share){
   navigator.share({
