@@ -1,9 +1,9 @@
 {
-  "name": "Digital Business Card",
+  "name": "Digital Card",
   "short_name": "MyCard",
-  "start_url": "./index.html",
+  "start_url": "card.html",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#0f172a",
   "theme_color": "#2563eb",
   "icons": [
     {
