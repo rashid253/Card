@@ -181,6 +181,7 @@ body{
 <a id="fb"><i class="fab fa-facebook"></i></a>
 <a id="ig"><i class="fab fa-instagram"></i></a>
 <a id="yt"><i class="fab fa-youtube"></i></a>
+<a id="web"><i class="fa fa-globe"></i></a>
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -209,7 +210,6 @@ db.from("cards").select("*").eq("id",id).single().then(r=>{
 
  call.href="tel:"+data.phone;
 
- // PROFESSIONAL MAIN WHATSAPP MESSAGE
  const mainMsg = 
 `Hello ${data.name},
 
@@ -227,6 +227,11 @@ ${location.href}`;
  mail.href="mailto:"+data.email;
  map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
  sms.href="sms:"+data.phone;
+
+ if(data.facebook) fb.href=data.facebook;
+ if(data.instagram) ig.href=data.instagram;
+ if(data.youtube) yt.href=data.youtube;
+ if(data.website) web.href=data.website;
 
  share.onclick=()=>{
   navigator.share({
