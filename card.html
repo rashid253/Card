@@ -5,24 +5,66 @@
 <title>Digital Card</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f172a">
+
 <style>
 body{margin:0;font-family:system-ui;background:#f8fafc}
-.top{background:#0f172a;color:white;padding:12px;display:flex;justify-content:space-around}
-.card{background:white;margin:15px;border-radius:14px;padding:15px}
-.profile{display:flex;gap:15px;align-items:center}
-.profile img{width:90px;height:90px;border-radius:50%;object-fit:contain}
-.offers{display:flex;overflow-x:auto;gap:10px;margin-top:15px}
-.offer{min-width:220px;background:#f1f5f9;border-radius:10px;padding:10px}
-.offer img{width:100%;border-radius:8px}
+.top{
+ background:#0f172a;color:white;
+ padding:12px;display:flex;
+ justify-content:space-around;
+ font-size:20px
+}
+.top a{color:white;text-decoration:none}
+.card{
+ background:white;margin:15px;
+ border-radius:16px;padding:15px
+}
+.profile{
+ display:flex;gap:15px;align-items:center
+}
+.profile img{
+ width:100px;height:100px;
+ border-radius:50%;
+ object-fit:cover
+}
+.offers{
+ display:flex;overflow-x:auto;
+ gap:12px;padding:15px
+}
+.offer{
+ min-width:240px;
+ background:white;
+ border-radius:12px;
+ padding:10px
+}
+.offer img{
+ width:100%;
+ height:140px;
+ border-radius:10px;
+ object-fit:cover
+}
+.offer button{
+ width:100%;
+ margin-top:8px;
+ padding:10px;
+ border:none;
+ border-radius:8px;
+ background:#2563eb;
+ color:white
+}
 </style>
 </head>
 
 <body>
 
 <div class="top">
-<a id="callBtn">Call</a>
-<a id="waBtn">WhatsApp</a>
-<a id="mapBtn">Map</a>
+<a id="shareBtn">🔗</a>
+<a id="callBtn">📞</a>
+<a id="waBtn">💬</a>
+<a id="mapBtn">📍</a>
+<a id="dirBtn">🧭</a>
 </div>
 
 <div class="card">
@@ -34,7 +76,6 @@ body{margin:0;font-family:system-ui;background:#f8fafc}
 <p id="address"></p>
 </div>
 </div>
-
 <p id="businessInfo"></p>
 </div>
 
@@ -61,6 +102,8 @@ db.from("cards").select("*").eq("id",id).single().then(r=>{
  callBtn.href="tel:"+d.phone;
  waBtn.href="https://wa.me/"+d.phone;
  mapBtn.href="https://maps.google.com?q="+encodeURIComponent(d.address);
+ dirBtn.href="https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(d.address);
+ shareBtn.onclick=()=>navigator.share({url:location.href});
 
  d.offers.forEach(o=>{
   const div=document.createElement("div");
@@ -69,6 +112,9 @@ db.from("cards").select("*").eq("id",id).single().then(r=>{
    <img src="${o.image}">
    <h4>${o.title}</h4>
    <p>${o.desc}</p>
+   <button onclick="location.href='https://wa.me/${d.phone}?text=${encodeURIComponent(o.title)}'">
+    Get Offer
+   </button>
   `;
   offers.appendChild(div);
  });
