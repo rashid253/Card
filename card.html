@@ -55,6 +55,7 @@ body{
  background:#2563eb;
  color:white;
  margin-top:6px;
+ cursor:pointer;
 }
 
 .about{
@@ -92,9 +93,7 @@ body{
  background:transparent;
 }
 
-.offerContent{
- flex:1;
-}
+.offerContent{flex:1;}
 
 .offer button{
  width:100%;
@@ -161,7 +160,9 @@ body{
 <div id="phone"></div>
 <div id="email"></div>
 <div id="address"></div>
-<div class="downloadBtn" onclick="saveCard()">Download</div>
+<div class="downloadBtn" onclick="saveCard()">
+ <i class="fa fa-floppy-disk"></i> Save
+</div>
 </div>
 </div>
 
@@ -182,7 +183,6 @@ body{
 <a id="yt"><i class="fab fa-youtube"></i></a>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <script>
@@ -191,12 +191,13 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-// GET ID FROM URL
 const id = new URLSearchParams(location.search).get("id");
+let cardData = null;
 
-// LOAD FROM SUPABASE
+// LOAD DATA
 db.from("cards").select("*").eq("id",id).single().then(r=>{
  const data = JSON.parse(r.data.data);
+ cardData = data;
 
  photo.src = data.profileImage || "";
  name.textContent = data.name || "";
@@ -211,10 +212,6 @@ db.from("cards").select("*").eq("id",id).single().then(r=>{
  mail.href="mailto:"+data.email;
  map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
  sms.href="sms:"+data.phone;
-
- if(data.facebook) fb.href=data.facebook;
- if(data.instagram) ig.href=data.instagram;
- if(data.youtube) yt.href=data.youtube;
 
  share.onclick=()=>{
   navigator.share({
@@ -236,7 +233,7 @@ db.from("cards").select("*").eq("id",id).single().then(r=>{
     <button>Grab Offer</button>
    </div>`;
   d.onclick=()=>{
-   const msg=`Hi, I'm interested in your offer: ${o.title} - ${o.desc}`;
+   const msg=`Hi, I'm interested in your offer: ${o.title}`;
    location.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(msg);
   }
   offers.appendChild(d);
@@ -246,7 +243,6 @@ db.from("cards").select("*").eq("id",id).single().then(r=>{
   dots.appendChild(dot);
  });
 
- // DOT SCROLL
  offers.addEventListener("scroll",()=>{
   const idx=Math.round(offers.scrollLeft / offers.offsetWidth);
   document.querySelectorAll(".dots span").forEach((d,i)=>{
@@ -255,14 +251,28 @@ db.from("cards").select("*").eq("id",id).single().then(r=>{
  });
 });
 
-// DOWNLOAD IMAGE
+// REAL CONTACT SAVE
 function saveCard(){
- html2canvas(document.body).then(c=>{
-  const a=document.createElement("a");
-  a.href=c.toDataURL();
-  a.download="my-digital-card.png";
-  a.click();
- });
+ if(!cardData) return alert("Loading...");
+
+ const vcf = `
+BEGIN:VCARD
+VERSION:3.0
+FN:${cardData.name}
+N:${cardData.name};;;;
+ORG:${cardData.businessName}
+TEL:${cardData.phone}
+EMAIL:${cardData.email}
+ADR:;;${cardData.address};;;;
+NOTE:${cardData.businessInfo}
+END:VCARD
+`.trim();
+
+ const blob = new Blob([vcf], {type:"text/vcard"});
+ const a = document.createElement("a");
+ a.href = URL.createObjectURL(blob);
+ a.download = cardData.name.replace(/ /g,"_")+".vcf";
+ a.click();
 }
 </script>
 
