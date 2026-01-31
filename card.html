@@ -178,7 +178,6 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 
 <div class="about" id="about"></div>
 
-<!-- SHOP CTA -->
 <div id="shopCTA" class="ctaBar"></div>
 
 <div class="offers" id="offers"></div>
@@ -203,7 +202,7 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
 if('serviceWorker' in navigator){
- navigator.serviceWorker.register("sw.js");
+ navigator.serviceWorker.register("sw.js", { scope: "./" });
 }
 
 const db = supabase.createClient(
@@ -240,12 +239,9 @@ function loadCard(data){
  about.textContent=data.businessInfo||"";
 
  call.href="tel:"+data.phone;
-
- // PROFESSIONAL MAIN WHATSAPP
  wa.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(
   "Hello, I found your digital card and would like to know more about your services."
  );
-
  mail.href="mailto:"+data.email;
  map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
  sms.href="sms:"+data.phone;
@@ -255,7 +251,6 @@ function loadCard(data){
  if(data.youtube) yt.href=data.youtube;
  if(data.website) web.href=data.website;
 
- /* SHOP CTA */
  if(data.shopAppLink){
   shopCTA.style.display="flex";
   shopCTA.onclick=()=>location.href=data.shopAppLink;
@@ -277,7 +272,6 @@ function loadCard(data){
     <button>Get Offer</button>
    </div>`;
 
-  // OFFER-SPECIFIC MESSAGE (FIX)
   d.onclick=()=>{
    const msg = `Hello, I am interested in your offer:\n\n${o.title}\n${o.desc}`;
    location.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(msg);
@@ -290,7 +284,6 @@ function loadCard(data){
   dots.appendChild(dot);
  });
 
- // DOTS SCROLL SYNC (FIX)
  offers.addEventListener("scroll",()=>{
   const index = Math.round(offers.scrollLeft / offers.offsetWidth);
   document.querySelectorAll(".dots span").forEach((d,i)=>{
