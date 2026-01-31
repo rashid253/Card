@@ -77,7 +77,7 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a;overflow-x:
 
 <script>
 if('serviceWorker' in navigator){
- navigator.serviceWorker.register("service-worker.js", { scope: "/" });
+ navigator.serviceWorker.register("sw.js");
 }
 
 const db = supabase.createClient(
@@ -88,39 +88,14 @@ const db = supabase.createClient(
 const id = new URLSearchParams(location.search).get("id");
 let cardData = null;
 
-/* ---------- IndexedDB Layer ---------- */
-function saveToDB(id, data){
- const req = indexedDB.open("cardDB",1);
- req.onupgradeneeded = e=>{
-  e.target.result.createObjectStore("cards");
- };
- req.onsuccess = e=>{
-  const db = e.target.result;
-  const tx = db.transaction("cards","readwrite");
-  tx.objectStore("cards").put(data,id);
- };
-}
+// BACK FIX
+history.pushState({}, "", location.href);
+window.addEventListener("popstate", ()=>location.href="index.html");
 
-function loadFromDB(id, cb){
- const req = indexedDB.open("cardDB",1);
- req.onsuccess = e=>{
-  const db = e.target.result;
-  const tx = db.transaction("cards","readonly");
-  const get = tx.objectStore("cards").get(id);
-  get.onsuccess = ()=> cb(get.result);
- };
-}
-/* ------------------------------------ */
-
-// TRY localStorage
+// TRY CACHE FIRST
 const cached = localStorage.getItem("card_"+id);
 if(cached){
  loadCard(JSON.parse(cached));
-} else {
- // fallback IndexedDB
- loadFromDB(id, data=>{
-  if(data) loadCard(data);
- });
 }
 
 // LOAD ONLINE
@@ -128,7 +103,6 @@ db.from("cards").select("*").eq("id",id).single().then(r=>{
  if(r.data){
   const data = JSON.parse(r.data.data);
   localStorage.setItem("card_"+id, JSON.stringify(data));
-  saveToDB(id, data);
   loadCard(data);
  }
 });
