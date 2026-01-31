@@ -1,4 +1,4 @@
-const CACHE = "card-app-v3";
+const CACHE = "card-app-final";
 const BASE = "/Card";
 
 const FILES = [
@@ -18,30 +18,18 @@ self.addEventListener("install", e => {
  self.skipWaiting();
 });
 
-self.addEventListener("activate", e => {
- e.waitUntil(
-  caches.keys().then(keys =>
-   Promise.all(
-    keys.filter(k => k !== CACHE).map(k => caches.delete(k))
-   )
-  )
- );
- self.clients.claim();
-});
-
 self.addEventListener("fetch", e => {
-
  const url = new URL(e.request.url);
 
- // Always serve card.html from cache (ignore ?id)
- if (url.pathname.startsWith(BASE + "/card.html")) {
+ // Any card.html with ?id -> always serve cached one
+ if (url.pathname.endsWith("/card.html")) {
   e.respondWith(
-   caches.match(BASE + "/card.html").then(r => r || fetch(e.request))
+   caches.match(BASE + "/card.html")
+    .then(r => r || fetch(BASE + "/card.html"))
   );
   return;
  }
 
- // Normal behavior
  e.respondWith(
   caches.match(e.request).then(r => r || fetch(e.request))
  );
