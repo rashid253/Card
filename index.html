@@ -43,6 +43,12 @@ button{
 <input id="businessName" placeholder="Business Title">
 <textarea id="businessInfo" placeholder="About your business"></textarea>
 
+<h2>Social Media</h2>
+<input id="facebook" placeholder="Facebook link">
+<input id="instagram" placeholder="Instagram link">
+<input id="youtube" placeholder="YouTube link">
+<input id="website" placeholder="Website link">
+
 <h2>Offers</h2>
 <div id="offersForm"></div>
 
@@ -68,7 +74,6 @@ for(let i=1;i<=5;i++){
  </div>`;
 }
 
-// resize image
 function resizeImage(file){
  return new Promise(res=>{
   const img=new Image();
@@ -88,23 +93,23 @@ function resizeImage(file){
 
 async function generate(){
 
- const name = document.getElementById("fullName").value.trim();
- const phone = document.getElementById("phoneNumber").value.trim();
-
- if(name=="" || phone==""){
-  alert("Name & Phone required");
-  return;
- }
+ const name = fullName.value.trim();
+ const phone = phoneNumber.value.trim();
+ if(name=="" || phone==""){ alert("Name & Phone required"); return; }
 
  const id = Math.random().toString(36).slice(2,8);
 
  const data={
-  name:name,
-  phone:phone,
+  name,
+  phone,
   email:email.value,
   address:address.value,
   businessName:businessName.value,
   businessInfo:businessInfo.value,
+  facebook:facebook.value,
+  instagram:instagram.value,
+  youtube:youtube.value,
+  website:website.value,
   profileImage:"",
   offers:[]
  };
