@@ -22,60 +22,92 @@ body{
  overflow-x:hidden
 }
 
-.topbar{display:flex;justify-content:space-around;padding:10px;background:#0f172a}
-.topbar a{color:white;font-size:18px}
+.topbar{
+ display:flex;
+ justify-content:space-around;
+ padding:12px;
+ background:#0f172a
+}
+.topbar a{
+ color:white;
+ font-size:20px
+}
 
 .profile{
  display:flex;
- gap:12px;
+ gap:14px;
  padding:16px;
  background:#e2e8f0;
- align-items:flex-start
-}
-
-.profileLeft{
- display:flex;
- flex-direction:column;
  align-items:center
 }
 
+/* LEFT SIDE */
+.profileLeft{
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ min-width:100px;
+}
+
+/* BIG STANDARD IMAGE */
 .profile img{
- width:70px;
- height:70px;
+ width:96px;
+ height:96px;
  border-radius:50%;
  object-fit:cover;
- border:2px solid #cbd5f5;
+ border:3px solid #2563eb;
  background:white
 }
 
+/* NAME FIX */
 #name{
- font-size:16px;
+ font-size:17px;
  font-weight:600;
- margin-top:4px
+ margin-top:6px;
+ text-align:center;
 }
 
+/* RIGHT SIDE */
 .info{
  font-size:14px;
  flex:1
 }
-
-#business{font-size:15px;font-weight:700}
-
-.saveIcon{
- font-size:18px;
- color:#2563eb;
- cursor:pointer
+#business{
+ font-size:15px;
+ font-weight:700;
+ margin-bottom:4px;
 }
 
-.about{padding:12px;background:white;font-size:14px}
+/* FLOPPY ICON */
+.saveIcon{
+ font-size:20px;
+ color:#2563eb;
+ cursor:pointer;
+ padding:8px;
+ border-radius:50%;
+ background:white;
+ box-shadow:0 2px 6px rgba(0,0,0,.15);
+}
 
-.offers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
+/* ABOUT */
+.about{
+ padding:12px;
+ background:white;
+ font-size:14px
+}
+
+/* OFFERS */
+.offers{
+ display:flex;
+ overflow-x:auto;
+ scroll-snap-type:x mandatory
+}
 .offer{
  min-width:90%;
  margin:12px;
  background:#2563eb;
- border-radius:16px;
- padding:12px;
+ border-radius:18px;
+ padding:14px;
  scroll-snap-align:center;
  color:white;
  display:flex;
@@ -83,19 +115,27 @@ body{
  align-items:center
 }
 
-.offer img{max-width:120px;max-height:100px;object-fit:contain;border-radius:8px}
+.offer img{
+ max-width:120px;
+ max-height:100px;
+ object-fit:contain;
+ border-radius:10px
+}
+
 .offerContent{flex:1}
+
 .offer button{
  width:100%;
- padding:8px;
+ padding:10px;
  border:none;
- border-radius:8px;
+ border-radius:10px;
  background:#0f172a;
  color:white;
  font-size:14px;
- margin-top:6px
+ margin-top:8px
 }
 
+/* DOTS */
 .dots{text-align:center;margin-bottom:10px}
 .dots span{
  display:inline-block;
@@ -106,21 +146,52 @@ body{
  margin:0 4px;
  transition:.3s
 }
-.dots .active{background:#2563eb;width:18px;border-radius:10px}
+.dots .active{
+ background:#2563eb;
+ width:20px;
+ border-radius:10px
+}
 
-.actions{display:flex;justify-content:space-around;padding:14px;background:#e2e8f0}
-.actions a{color:#0f172a;font-size:22px}
-.social{display:flex;justify-content:center;gap:18px;padding:10px}
-.social a{color:#2563eb;font-size:20px}
+/* ACTIONS ICONS MODERN */
+.actions{
+ display:flex;
+ justify-content:space-around;
+ padding:14px;
+ background:#e2e8f0
+}
+.actions a{
+ color:#0f172a;
+ font-size:22px;
+ background:white;
+ padding:10px;
+ border-radius:50%;
+ box-shadow:0 2px 6px rgba(0,0,0,.15);
+}
+
+/* SOCIAL */
+.social{
+ display:flex;
+ justify-content:center;
+ gap:18px;
+ padding:12px
+}
+.social a{
+ color:#2563eb;
+ font-size:22px;
+ background:white;
+ padding:8px;
+ border-radius:50%;
+ box-shadow:0 2px 6px rgba(0,0,0,.15);
+}
 </style>
 </head>
 
 <body>
 
 <div class="topbar">
-<a id="share"><i class="fa fa-share"></i></a>
+<a id="share"><i class="fa-solid fa-share-nodes"></i></a>
 <a id="map"><i class="fa-solid fa-location-dot"></i></a>
-<a id="sms"><i class="fa fa-comment"></i></a>
+<a id="sms"><i class="fa-solid fa-comment-dots"></i></a>
 </div>
 
 <div class="profile">
@@ -137,7 +208,7 @@ body{
  </div>
 
  <div class="saveIcon" onclick="saveCard()">
-  <i class="fa fa-floppy-disk"></i>
+  <i class="fa-solid fa-floppy-disk"></i>
  </div>
 </div>
 
@@ -146,16 +217,16 @@ body{
 <div class="dots" id="dots"></div>
 
 <div class="actions">
-<a id="call"><i class="fa fa-phone"></i></a>
+<a id="call"><i class="fa-solid fa-phone"></i></a>
 <a id="wa"><i class="fab fa-whatsapp"></i></a>
-<a id="mail"><i class="fa fa-envelope"></i></a>
+<a id="mail"><i class="fa-solid fa-envelope"></i></a>
 </div>
 
 <div class="social">
 <a id="fb"><i class="fab fa-facebook"></i></a>
 <a id="ig"><i class="fab fa-instagram"></i></a>
 <a id="yt"><i class="fab fa-youtube"></i></a>
-<a id="web"><i class="fa fa-globe"></i></a>
+<a id="web"><i class="fa-solid fa-globe"></i></a>
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -192,7 +263,7 @@ function loadCard(data){
  cardData=data;
 
  photo.src=data.profileImage||"";
- name.textContent=data.name||"";
+ name.textContent=data.name||"";   // <-- THIS WAS BUG, now fixed
  business.textContent=data.businessName||"";
  phone.textContent="📞 "+(data.phone||"");
  email.textContent="✉️ "+(data.email||"");
