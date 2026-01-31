@@ -5,24 +5,11 @@
 <title>Offline</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body{
- margin:0;
- font-family:system-ui;
- background:#0f172a;
- color:white;
- display:flex;
- align-items:center;
- justify-content:center;
- height:100vh;
- text-align:center;
-}
+body{font-family:system-ui;text-align:center;padding:50px;background:#0f172a;color:white}
 </style>
 </head>
 <body>
-<div>
-<h2>📴 No Internet</h2>
-<p>Your digital card is available offline.</p>
-<p>Please reconnect for new data.</p>
-</div>
+<h2>You are offline</h2>
+<p>Please connect to internet.</p>
 </body>
 </html>
