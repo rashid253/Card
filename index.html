@@ -5,12 +5,27 @@
 <title>Create Digital Card</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+
 <style>
 body{margin:0;font-family:system-ui;background:#f1f5f9}
-.wrap{max-width:420px;margin:auto;padding:16px}
-input,textarea{width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #cbd5f5}
-button{width:100%;padding:14px;border:none;border-radius:10px;background:#2563eb;color:white;font-size:16px;margin-top:16px}
-.offerBox{background:white;padding:10px;border-radius:10px;margin-top:10px}
+.wrap{max-width:480px;margin:auto;padding:16px}
+h2{margin-top:20px}
+input,textarea{
+ width:100%;padding:12px;margin:6px 0;
+ border-radius:10px;border:1px solid #cbd5f5
+}
+button{
+ width:100%;padding:16px;
+ border:none;border-radius:12px;
+ background:#2563eb;color:white;
+ font-size:17px;margin-top:20px
+}
+.offerBox{
+ background:white;padding:12px;
+ border-radius:12px;margin-top:10px
+}
 </style>
 </head>
 
@@ -19,8 +34,8 @@ button{width:100%;padding:14px;border:none;border-radius:10px;background:#2563eb
 
 <h2>Profile</h2>
 <input type="file" id="profileImage" accept="image/*">
-<input id="name" placeholder="Full Name">
-<input id="phone" placeholder="Phone">
+<input id="name" placeholder="Full Name" required>
+<input id="phone" placeholder="Phone" required>
 <input id="email" placeholder="Email">
 <input id="address" placeholder="Address">
 
@@ -37,16 +52,21 @@ button{width:100%;padding:14px;border:none;border-radius:10px;background:#2563eb
 <div id="offersForm"></div>
 
 <button onclick="generate()">Generate Card</button>
+
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
+if("serviceWorker" in navigator){
+ navigator.serviceWorker.register("service-worker.js");
+}
+
 const db = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-// build offer boxes
+// build offer inputs
 for(let i=1;i<=5;i++){
  offersForm.innerHTML+=`
  <div class="offerBox">
@@ -57,25 +77,30 @@ for(let i=1;i<=5;i++){
  </div>`;
 }
 
-// safe resize (no crop)
+// resize without crop
 function resizeImage(file){
  return new Promise(res=>{
   const img=new Image();
   img.onload=()=>{
    const c=document.createElement("canvas");
-   const max=600;
+   const max=1024;
    let w=img.width,h=img.height;
    const ratio=Math.min(max/w,max/h,1);
    w*=ratio; h*=ratio;
    c.width=w; c.height=h;
    c.getContext("2d").drawImage(img,0,0,w,h);
-   res(c.toDataURL("image/jpeg",0.7));
+   res(c.toDataURL("image/jpeg",0.8));
   }
   img.src=URL.createObjectURL(file);
  });
 }
 
 async function generate(){
+
+ if(!name.value || !phone.value){
+  alert("Name & Phone required");
+  return;
+ }
 
  const id = Math.random().toString(36).slice(2,8);
 
