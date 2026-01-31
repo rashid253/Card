@@ -85,7 +85,7 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-/* ===== PWA FIX (ONLY CHANGE) ===== */
+/* ===== PWA FIX ===== */
 let id = new URLSearchParams(location.search).get("id");
 
 if(id){
@@ -98,7 +98,7 @@ if(!id){
  document.body.innerHTML="<h2 style='text-align:center'>No card found</h2>";
  throw "No card id";
 }
-/* ================================= */
+/* =================== */
 
 let cardData = null;
 
@@ -186,6 +186,23 @@ END:VCARD`.trim();
  a.download=cardData.name+".vcf";
  a.click();
 }
+
+/* ===== SHARE FIX (ONLY ADDITION) ===== */
+share.onclick = async () => {
+ const shareData = {
+  title: cardData.name,
+  text: `Check my digital card:\n${cardData.name}\n${cardData.businessName}`,
+  url: location.href
+ };
+
+ if(navigator.share){
+  await navigator.share(shareData);
+ }else{
+  navigator.clipboard.writeText(location.href);
+  alert("Link copied");
+ }
+};
+/* ==================================== */
 
 // BACK = EXIT APP
 history.pushState({}, "");
