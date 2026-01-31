@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
+/* SAME STYLES AS BEFORE */
 body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a;overflow-x:hidden}
 .topbar{display:flex;justify-content:space-around;padding:10px;background:#0f172a}
 .topbar a{color:white;font-size:18px}
@@ -88,11 +89,7 @@ const db = supabase.createClient(
 const id = new URLSearchParams(location.search).get("id");
 let cardData = null;
 
-// BACK FIX
-history.pushState({}, "", location.href);
-window.addEventListener("popstate", ()=>location.href="index.html");
-
-// TRY CACHE FIRST
+// TRY LOCAL FIRST
 const cached = localStorage.getItem("card_"+id);
 if(cached){
  loadCard(JSON.parse(cached));
@@ -161,17 +158,13 @@ ${location.href}`;
  });
 }
 
-// SAVE CONTACT
 function saveCard(){
  const vcf = `
 BEGIN:VCARD
 VERSION:3.0
 FN:${cardData.name}
-ORG:${cardData.businessName}
 TEL:${cardData.phone}
 EMAIL:${cardData.email}
-ADR:;;${cardData.address};;;;
-NOTE:${cardData.businessInfo}
 END:VCARD`.trim();
 
  const blob=new Blob([vcf],{type:"text/vcard"});
@@ -180,16 +173,6 @@ END:VCARD`.trim();
  a.download=cardData.name+".vcf";
  a.click();
 }
-
-// SCROLL RESTORE
-window.onload=()=>{
- const y=sessionStorage.getItem("scrollY");
- if(y) window.scrollTo(0,y);
-}
-window.addEventListener("scroll",()=>{
- sessionStorage.setItem("scrollY",window.scrollY);
-});
 </script>
-
 </body>
 </html>
