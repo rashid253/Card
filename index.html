@@ -49,7 +49,6 @@ button{
 <input id="youtube" placeholder="YouTube link">
 <input id="website" placeholder="Website link">
 
-<!-- ✅ NEW OPTIONAL SECTION -->
 <h2>Shop App (Optional)</h2>
 <input id="shopAppLink" placeholder="Play Store app link">
 <input type="file" id="shopAppImage" accept="image/*">
@@ -63,6 +62,10 @@ button{
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
+if('serviceWorker' in navigator){
+ navigator.serviceWorker.register("sw.js", { scope: "./" });
+}
+
 const db = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
@@ -116,7 +119,6 @@ async function generate(){
   youtube:youtube.value,
   website:website.value,
 
-  // ✅ new optional fields
   shopAppLink: shopAppLink.value,
   shopAppImage: "",
 
