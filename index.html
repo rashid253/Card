@@ -49,6 +49,11 @@ button{
 <input id="youtube" placeholder="YouTube link">
 <input id="website" placeholder="Website link">
 
+<!-- ✅ NEW OPTIONAL SECTION -->
+<h2>Shop App (Optional)</h2>
+<input id="shopAppLink" placeholder="Play Store app link">
+<input type="file" id="shopAppImage" accept="image/*">
+
 <h2>Offers</h2>
 <div id="offersForm"></div>
 
@@ -110,12 +115,20 @@ async function generate(){
   instagram:instagram.value,
   youtube:youtube.value,
   website:website.value,
+
+  // ✅ new optional fields
+  shopAppLink: shopAppLink.value,
+  shopAppImage: "",
+
   profileImage:"",
   offers:[]
  };
 
  if(profileImage.files[0])
   data.profileImage = await resizeImage(profileImage.files[0]);
+
+ if(shopAppImage.files[0])
+  data.shopAppImage = await resizeImage(shopAppImage.files[0]);
 
  for(let i=1;i<=5;i++){
   const title=document.getElementById("offerTitle"+i).value;
