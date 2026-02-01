@@ -1,13 +1,145 @@
-{
-  "name": "Digital Card Directory",
-  "short_name": "MyCard",
-  "start_url": "./index.html",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#2563eb",
-  "icons": [
-    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png" }
-  ]
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Edit Digital Card</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+
+<style>
+body{margin:0;font-family:system-ui;background:#f1f5f9}
+.wrap{max-width:480px;margin:auto;padding:16px}
+h2{margin-top:20px}
+input,textarea{
+ width:100%;padding:12px;margin:6px 0;
+ border-radius:10px;border:1px solid #cbd5f5
 }
+button{
+ width:100%;padding:16px;
+ border:none;border-radius:12px;
+ background:#2563eb;color:white;
+ font-size:17px;margin-top:20px
+}
+.offerBox{
+ background:white;padding:12px;
+ border-radius:12px;margin-top:10px
+}
+.notice{
+ background:#fee2e2;
+ padding:10px;
+ border-radius:10px;
+ font-size:14px;
+ color:#991b1b;
+ margin-bottom:10px
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+<h2>Edit Card</h2>
+<div class="notice">
+ Edit only works with a valid card link.
+</div>
+
+<input id="fullName" placeholder="Full Name">
+<input id="phoneNumber" placeholder="Phone">
+<input id="email" placeholder="Email">
+<input id="address" placeholder="Address">
+
+<h2>Business</h2>
+<input id="businessName" placeholder="Business Title">
+<textarea id="businessInfo" placeholder="About your business"></textarea>
+
+<h2>Social Media</h2>
+<input id="facebook" placeholder="Facebook link">
+<input id="instagram" placeholder="Instagram link">
+<input id="youtube" placeholder="YouTube link">
+<input id="website" placeholder="Website link">
+
+<button onclick="updateCard()">Update Card</button>
+
+</div>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+/* SERVICE WORKER */
+if('serviceWorker' in navigator){
+ navigator.serviceWorker.register("sw.js",{scope:"./"});
+}
+
+/* SUPABASE */
+const db = supabase.createClient(
+ "https://dfvnefbxgayxqgjjgtrr.supabase.co",
+ "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
+);
+
+/* DIRECTORY SAFE ID */
+const id = new URLSearchParams(location.search).get("id");
+
+if(!id){
+ document.body.innerHTML = `
+  <div style="padding:20px;text-align:center">
+   <h2>No Card Selected</h2>
+   <p>Please open edit page with a valid card link.</p>
+  </div>`;
+ throw "NO_ID";
+}
+
+/* LOAD CARD */
+db.from("cards").select("*").eq("id",id).single().then(r=>{
+ if(r.data){
+  const data = JSON.parse(r.data.data);
+
+  fullName.value = data.name || "";
+  phoneNumber.value = data.phone || "";
+  email.value = data.email || "";
+  address.value = data.address || "";
+  businessName.value = data.businessName || "";
+  businessInfo.value = data.businessInfo || "";
+  facebook.value = data.facebook || "";
+  instagram.value = data.instagram || "";
+  youtube.value = data.youtube || "";
+  website.value = data.website || "";
+ }
+});
+
+/* UPDATE CARD */
+async function updateCard(){
+
+ const name = fullName.value.trim();
+ const phone = phoneNumber.value.trim();
+
+ if(name=="" || phone==""){
+  alert("Name & Phone required");
+  return;
+ }
+
+ const data = {
+  name,
+  phone,
+  email:email.value,
+  address:address.value,
+  businessName:businessName.value,
+  businessInfo:businessInfo.value,
+  facebook:facebook.value,
+  instagram:instagram.value,
+  youtube:youtube.value,
+  website:website.value
+ };
+
+ await db.from("cards").update({
+  data: JSON.stringify(data)
+ }).eq("id",id);
+
+ alert("Card updated successfully");
+
+ location.href = "card.html?id=" + id;
+}
+</script>
+
+</body>
+</html>
