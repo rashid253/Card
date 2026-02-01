@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faisalabad Bazar Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+body{font-family:system-ui;padding:20px;background:#f1f5f9}
+form{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+input,textarea,button{width:100%;margin:6px 0;padding:10px;border-radius:8px;border:1px solid #ccc;font-size:14px}
+button{background:#2563eb;color:white;border:none;cursor:pointer;font-weight:600}
+</style>
+</head>
+<body>
+<h2>Admin Panel - Create Card</h2>
+<form id="cardForm">
+<input type="text" name="name" placeholder="Owner Name" required>
+<input type="text" name="businessName" placeholder="Business Name" required>
+<input type="text" name="phone" placeholder="Phone" required>
+<input type="email" name="email" placeholder="Email">
+<input type="text" name="address" placeholder="Address">
+<input type="text" name="bazar" placeholder="Bazar Name" required>
+<input type="text" name="category" placeholder="Category">
+<textarea name="businessInfo" placeholder="About Business"></textarea>
+<input type="url" name="shopAppLink" placeholder="Shop App Link">
+<input type="url" name="shopAppImage" placeholder="Shop App Image URL">
+<input type="file" name="profileImage" accept="image/*" required>
+<textarea name="offers" placeholder='Offers JSON (Example: [{"title":"Discount","desc":"50% off","image":"url"}])'></textarea>
+<button type="submit">Generate Card</button>
+</form>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+const db = supabase.createClient(
+ "https://dfvnefbxgayxqgjjgtrr.supabase.co",
+ "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
+);
+
+async function uploadImage(file){
+ const compressed = await compressImage(file,512,0.7);
+ return compressed;
+}
+
+function compressImage(file,max=512,quality=0.75){
+ return new Promise(res=>{
+  const img=new Image();
+  img.onload=()=>{
+   let w=img.width,h=img.height;
+   const r=Math.min(max/w,max/h,1);
+   w*=r; h*=r;
+   const c=document.createElement("canvas");
+   c.width=w; c.height=h;
+   c.getContext("2d").drawImage(img,0,0,w,h);
+   res(c.toDataURL("image/jpeg",quality));
+  };
+  img.src=URL.createObjectURL(file);
+ });
+}
+
+document.getElementById("cardForm").addEventListener("submit", async e=>{
+ e.preventDefault();
+ const f = e.target;
+ const profile = f.profileImage.files[0];
+ const imgData = await uploadImage(profile);
+ const offers = JSON.parse(f.offers.value || '[]');
+ const cardData = {
+   name:f.name.value,
+   businessName:f.businessName.value,
+   phone:f.phone.value,
+   email:f.email.value,
+   address:f.address.value,
+   bazar:f.bazar.value,
+   category:f.category.value,
+   businessInfo:f.businessInfo.value,
+   shopAppLink:f.shopAppLink.value,
+   shopAppImage:f.shopAppImage.value,
+   profileImage: imgData,
+   offers: offers
+ };
+ await db.from("cards").insert([{data:JSON.stringify(cardData)}]);
+ alert("Card Generated Successfully!");
+ f.reset();
+});
+</script>
+</body>
+</html>
