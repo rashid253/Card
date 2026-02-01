@@ -17,16 +17,15 @@
   --muted:#64748b;
   --radius:12px;
 }
-body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text)}
-
-/* SPLASH SCREEN */
+body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text);}
+/* SPLASH */
 #splash{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--primary);color:white;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;transition:opacity 0.8s}
 #splash img{width:120px;height:120px;object-fit:cover;border-radius:12px;margin-bottom:10px;box-shadow:0 4px 12px rgba(0,0,0,.3)}
 #splash h1{font-size:24px;margin:0;font-weight:700}
 #splash p{font-size:16px;margin-top:6px;opacity:0.9;font-style:italic}
 
 /* HEADER */
-.header{background:var(--primary);color:white;font-size:20px;font-weight:600;padding:16px;text-align:center;position:sticky;top:0;z-index:10}
+.header{background:var(--primary);color:white;font-size:20px;font-weight:600;padding:16px;text-align:center;position:sticky;top:0;z-index:10;cursor:pointer}
 
 /* TRENDING CARDS */
 .trending-container{padding:12px;overflow-x:auto;display:flex;gap:12px;scroll-snap-type:x mandatory;scroll-behavior:smooth}
@@ -136,7 +135,7 @@ body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text)}
 // Service Worker
 if('serviceWorker' in navigator){ navigator.serviceWorker.register("sw.js",{scope:"./"}); }
 
-// Supabase client
+// Supabase client (replace with your own keys)
 const db = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
@@ -153,7 +152,24 @@ window.addEventListener("load",()=>{
  },2500);
 });
 
-// Fetch all cards
+// IMAGE COMPRESSION
+function compressImage(file,max=512,quality=0.75){
+ return new Promise(res=>{
+  const img=new Image();
+  img.onload=()=>{
+   let w=img.width,h=img.height;
+   const r=Math.min(max/w,max/h,1);
+   w*=r; h*=r;
+   const c=document.createElement("canvas");
+   c.width=w; c.height=h;
+   c.getContext("2d").drawImage(img,0,0,w,h);
+   res(c.toDataURL("image/jpeg",quality));
+  };
+  img.src=URL.createObjectURL(file);
+ });
+}
+
+// Fetch cards
 db.from("cards").select("*").then(r=>{
  if(r.data){
    allCards = r.data.map(c=>JSON.parse(c.data));
@@ -260,55 +276,4 @@ function backToDirectory(){
  document.getElementById("cardView").style.display="none";
  document.getElementById("shopList").style.display="flex";
  document.getElementById("bazarFilter").style.display="flex";
- document.getElementById("trendingContainer").style.display="flex";
- document.getElementById("offersCarousel").style.display="flex";
- document.getElementById("carouselDots").style.display="block";
-}
-
-/* SOCIAL TOGGLE */
-function toggleSocial(){
- const s=document.getElementById("socialExpand");
- s.style.display = (s.style.display==="flex") ? "none" : "flex";
-}
-
-/* IMAGE AUTO COMPRESS (for future use) */
-function compressImage(file,max=512,quality=0.75){
- return new Promise(res=>{
-  const img=new Image();
-  img.onload=()=>{
-   let w=img.width,h=img.height;
-   const r=Math.min(max/w,max/h,1);
-   w*=r; h*=r;
-   const c=document.createElement("canvas");
-   c.width=w; c.height=h;
-   c.getContext("2d").drawImage(img,0,0,w,h);
-   res(c.toDataURL("image/jpeg",quality));
-  };
-  img.src=URL.createObjectURL(file);
- });
-}
-
-/* SHARE APP */
-if(navigator.share){
- document.querySelector(".header").addEventListener("click",()=>{
-  navigator.share({
-   title:"Faisalabad Bazar",
-   text:"Explore deals & shops in Faisalabad",
-   url:location.href
-  });
- });
-}
-
-/* HISTORY CONTROL (PWA feel) */
-history.pushState({}, "");
-window.addEventListener("popstate",()=>{
- if(document.getElementById("cardView").style.display==="block"){
-  backToDirectory();
- }else{
-  window.close();
- }
-});
-</script>
-
-</body>
-</html>
+ document.getElementById("trendingContainer").style.display="flex
