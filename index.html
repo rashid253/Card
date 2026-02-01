@@ -27,6 +27,14 @@ button{
  border-radius:12px;margin-top:10px
 }
 </style>
+
+<script>
+/* ==== ONLY THIS PART IS NEW ==== */
+/* If opened as installed app → go to card.html */
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+  window.location.replace("card.html");
+}
+</script>
 </head>
 
 <body>
