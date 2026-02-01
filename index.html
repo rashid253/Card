@@ -27,18 +27,6 @@ button{
  border-radius:12px;margin-top:10px
 }
 </style>
-
-<script>
-/* AUTO OPEN LAST CARD IN APP MODE */
-if (
- (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)
-) {
- const last = localStorage.getItem("lastCardId");
- if (last) {
-  window.location.replace("card.html?id=" + last);
- }
-}
-</script>
 </head>
 
 <body>
@@ -74,16 +62,18 @@ if (
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
+/* SERVICE WORKER */
 if('serviceWorker' in navigator){
- navigator.serviceWorker.register("sw.js", { scope: "./" });
+ navigator.serviceWorker.register("sw.js",{scope:"./"});
 }
 
+/* SUPABASE */
 const db = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-// build offer boxes
+/* BUILD OFFER BOXES */
 for(let i=1;i<=5;i++){
  offersForm.innerHTML+=`
  <div class="offerBox">
@@ -94,6 +84,7 @@ for(let i=1;i<=5;i++){
  </div>`;
 }
 
+/* IMAGE RESIZE */
 function resizeImage(file){
  return new Promise(res=>{
   const img=new Image();
@@ -111,11 +102,15 @@ function resizeImage(file){
  });
 }
 
+/* GENERATE CARD */
 async function generate(){
 
  const name = fullName.value.trim();
  const phone = phoneNumber.value.trim();
- if(name=="" || phone==""){ alert("Name & Phone required"); return; }
+ if(name=="" || phone==""){
+  alert("Name & Phone required");
+  return;
+ }
 
  const id = Math.random().toString(36).slice(2,8);
 
@@ -130,10 +125,8 @@ async function generate(){
   instagram:instagram.value,
   youtube:youtube.value,
   website:website.value,
-
-  shopAppLink: shopAppLink.value,
-  shopAppImage: "",
-
+  shopAppLink:shopAppLink.value,
+  shopAppImage:"",
   profileImage:"",
   offers:[]
  };
@@ -161,9 +154,7 @@ async function generate(){
   data:JSON.stringify(data)
  });
 
- /* SAVE LAST CARD */
- localStorage.setItem("lastCardId", id);
-
+ /* DIRECTORY SAFE REDIRECT */
  location.href="card.html?id="+id;
 }
 </script>
