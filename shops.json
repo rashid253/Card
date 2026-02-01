@@ -1,0 +1,77 @@
+[
+  {
+    "businessName": "Al-Noor Electronics",
+    "name": "Ahmed Raza",
+    "category": "Electronics",
+    "bazar": "Clock Tower Bazar",
+    "address": "Clock Tower, Faisalabad",
+    "phone": "03001234567",
+    "email": "alnoor@example.com",
+    "profileImage": "images/electronics-shop-1.jpg",
+    "shopAppLink": "https://play.google.com/store/apps/details?id=alnoor.app",
+    "shopAppImage": "images/alnoor-app.png",
+    "businessInfo": "Leading electronics shop in Faisalabad offering latest gadgets and appliances.",
+    "offers": [
+      {
+        "title": "50% Off on Headphones",
+        "desc": "Limited time offer on premium headphones.",
+        "image": "images/offer-headphones.jpg"
+      },
+      {
+        "title": "Buy 1 Get 1 USB Cable",
+        "desc": "Applicable on selected USB cables.",
+        "image": "images/offer-usb.jpg"
+      }
+    ]
+  },
+  {
+    "businessName": "Fashion Hub",
+    "name": "Sara Khan",
+    "category": "Clothing",
+    "bazar": "Katchery Bazar",
+    "address": "Katchery Bazar, Faisalabad",
+    "phone": "03007654321",
+    "email": "fashionhub@example.com",
+    "profileImage": "images/clothing-shop-1.jpg",
+    "shopAppLink": "https://play.google.com/store/apps/details?id=fashionhub.app",
+    "shopAppImage": "images/fashionhub-app.png",
+    "businessInfo": "Trendy clothing for men and women with latest designs.",
+    "offers": [
+      {
+        "title": "Summer Collection 30% Off",
+        "desc": "Exclusive summer outfits for all ages.",
+        "image": "images/offer-summer.jpg"
+      },
+      {
+        "title": "Buy 2 Shirts, Get 1 Free",
+        "desc": "Applicable on all formal shirts.",
+        "image": "images/offer-shirts.jpg"
+      }
+    ]
+  },
+  {
+    "businessName": "Sweet Tooth Bakery",
+    "name": "Hassan Ali",
+    "category": "Food & Bakery",
+    "bazar": "Rail Bazar",
+    "address": "Rail Bazar, Faisalabad",
+    "phone": "03101239876",
+    "email": "sweettooth@example.com",
+    "profileImage": "images/bakery-shop-1.jpg",
+    "shopAppLink": "",
+    "shopAppImage": "",
+    "businessInfo": "Freshly baked cakes, cookies, and pastries every day.",
+    "offers": [
+      {
+        "title": "Buy Cake, Get Free Cupcakes",
+        "desc": "Only valid on orders above 500 PKR.",
+        "image": "images/offer-cupcake.jpg"
+      },
+      {
+        "title": "10% Off on Birthday Cakes",
+        "desc": "Order online and get discount.",
+        "image": "images/offer-birthday.jpg"
+      }
+    ]
+  }
+]
