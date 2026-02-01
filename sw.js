@@ -1,10 +1,7 @@
-const CACHE = "digital-card-v3";
+const CACHE = "digital-card-v4";
 
 const FILES = [
-  "./index.html",
   "./card.html",
-  "./edit.html",
-  "./offline.html",
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png"
@@ -27,15 +24,18 @@ self.addEventListener("activate", e => {
 });
 
 self.addEventListener("fetch", e => {
+  const url = new URL(e.request.url);
+
+  // Agar card.html ke ilawa koi bhi page ho
+  if (!url.pathname.endsWith("card.html")) {
+    e.respondWith(caches.match("./card.html"));
+    return;
+  }
+
+  // Sirf card.html allow
   e.respondWith(
-    fetch(e.request)
-      .then(res => {
-        const clone = res.clone();
-        caches.open(CACHE).then(cache => cache.put(e.request, clone));
-        return res;
-      })
-      .catch(() =>
-        caches.match(e.request).then(r => r || caches.match("./offline.html"))
-      )
+    fetch(e.request).catch(() =>
+      caches.match("./card.html")
+    )
   );
 });
