@@ -1,41 +1,43 @@
-const CACHE = "digital-card-v3";
+const CACHE_NAME = "faisalabad-bazar-v1";
 
-const FILES = [
+const FILES_TO_CACHE = [
+  "./bazar.html",
   "./index.html",
   "./card.html",
   "./edit.html",
-  "./offline.html",
   "./manifest.json",
   "./icon-192.png",
-  "./icon-512.png"
+  "./icon-512.png",
+  "./clocktower.png",
+  "./offline.html"
 ];
 
-self.addEventListener("install", e => {
-  e.waitUntil(
-    caches.open(CACHE).then(cache => cache.addAll(FILES))
+self.addEventListener("install", event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(FILES_TO_CACHE))
   );
+  self.skipWaiting();
 });
 
-self.addEventListener("activate", e => {
-  e.waitUntil(
-    caches.keys().then(keys =>
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys().then(keys => 
       Promise.all(
-        keys.filter(k => k !== CACHE).map(k => caches.delete(k))
+        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
       )
     )
   );
+  self.clients.claim();
 });
 
-self.addEventListener("fetch", e => {
-  e.respondWith(
-    fetch(e.request)
-      .then(res => {
-        const clone = res.clone();
-        caches.open(CACHE).then(cache => cache.put(e.request, clone));
-        return res;
+self.addEventListener("fetch", event => {
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        const resClone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, resClone));
+        return response;
       })
-      .catch(() =>
-        caches.match(e.request).then(r => r || caches.match("./offline.html"))
-      )
+      .catch(() => caches.match(event.request).then(r => r || caches.match("./offline.html")))
   );
 });
