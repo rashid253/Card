@@ -1,4 +1,4 @@
-const CACHE = "digital-card-v4";
+const CACHE = "digital-card-v5";
 
 const FILES = [
   "./card.html",
@@ -26,16 +26,22 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
 
-  // Agar card.html ke ilawa koi bhi page ho
-  if (!url.pathname.endsWith("card.html")) {
-    e.respondWith(caches.match("./card.html"));
-    return;
+  // Agar navigation request hai (page open)
+  if (e.request.mode === "navigate") {
+
+    // App ke andar sirf card.html
+    if (!url.pathname.endsWith("card.html")) {
+      e.respondWith(
+        caches.match("./card.html")
+      );
+      return;
+    }
   }
 
-  // Sirf card.html allow
+  // Baqi sab normal network (Supabase, JS, images)
   e.respondWith(
     fetch(e.request).catch(() =>
-      caches.match("./card.html")
+      caches.match(e.request)
     )
   );
 });
