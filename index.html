@@ -62,12 +62,10 @@ button{
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-/* SERVICE WORKER */
 if('serviceWorker' in navigator){
  navigator.serviceWorker.register("sw.js",{scope:"./"});
 }
 
-/* SUPABASE */
 const db = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
@@ -84,7 +82,6 @@ for(let i=1;i<=5;i++){
  </div>`;
 }
 
-/* IMAGE RESIZE */
 function resizeImage(file){
  return new Promise(res=>{
   const img=new Image();
@@ -102,24 +99,34 @@ function resizeImage(file){
  });
 }
 
-/* GENERATE CARD */
 async function generate(){
 
  const name = fullName.value.trim();
  const phone = phoneNumber.value.trim();
- if(name=="" || phone==""){
-  alert("Name & Phone required");
+ const business = businessName.value.trim();
+
+ if(name==="" || phone==="" || business===""){
+  alert("Name, Phone and Business Title required");
   return;
  }
 
  const id = Math.random().toString(36).slice(2,8);
 
+ /* 🔑 DIRECTORY KEY (AUTO) */
+ const shopKey = business
+   .toLowerCase()
+   .replace(/[^a-z0-9]+/g,"-")
+   .replace(/(^-|-$)/g,"");
+
  const data={
+  shopKey,              // ✅ DIRECTORY USE
+  shopTitle: business,  // ✅ SHOPS LIST TITLE
+
   name,
   phone,
   email:email.value,
   address:address.value,
-  businessName:businessName.value,
+  businessName:business,
   businessInfo:businessInfo.value,
   facebook:facebook.value,
   instagram:instagram.value,
@@ -154,9 +161,9 @@ async function generate(){
   data:JSON.stringify(data)
  });
 
- /* DIRECTORY SAFE REDIRECT */
  location.href="card.html?id="+id;
 }
 </script>
+
 </body>
 </html>
