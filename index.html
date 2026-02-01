@@ -29,10 +29,14 @@ button{
 </style>
 
 <script>
-/* ==== ONLY THIS PART IS NEW ==== */
-/* If opened as installed app → go to card.html */
-if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-  window.location.replace("card.html");
+/* AUTO OPEN LAST CARD IN APP MODE */
+if (
+ (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)
+) {
+ const last = localStorage.getItem("lastCardId");
+ if (last) {
+  window.location.replace("card.html?id=" + last);
+ }
 }
 </script>
 </head>
@@ -156,6 +160,9 @@ async function generate(){
   id:id,
   data:JSON.stringify(data)
  });
+
+ /* SAVE LAST CARD */
+ localStorage.setItem("lastCardId", id);
 
  location.href="card.html?id="+id;
 }
