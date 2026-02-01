@@ -1,4 +1,4 @@
-const CACHE = "digital-card-v5";
+const CACHE = "digital-card-v6";
 
 const FILES = [
   "./card.html",
@@ -26,19 +26,19 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
 
-  // Agar navigation request hai (page open)
-  if (e.request.mode === "navigate") {
+  const isApp =
+    self.registration &&
+    self.registration.scope &&
+    self.clients.matchAll &&
+    e.request.mode === "navigate";
 
-    // App ke andar sirf card.html
+  if (isApp) {
     if (!url.pathname.endsWith("card.html")) {
-      e.respondWith(
-        caches.match("./card.html")
-      );
+      e.respondWith(caches.match("./card.html"));
       return;
     }
   }
 
-  // Baqi sab normal network (Supabase, JS, images)
   e.respondWith(
     fetch(e.request).catch(() =>
       caches.match(e.request)
