@@ -277,3 +277,39 @@ function backToDirectory(){
  document.getElementById("shopList").style.display="flex";
  document.getElementById("bazarFilter").style.display="flex";
  document.getElementById("trendingContainer").style.display="flex
+   
+";
+ document.getElementById("offersCarousel").style.display="flex";
+ document.getElementById("carouselDots").style.display="block";
+}
+
+/* SOCIAL TOGGLE */
+function toggleSocial(){
+ const s=document.getElementById("socialExpand");
+ s.style.display = (s.style.display==="flex") ? "none" : "flex";
+}
+
+/* SHARE APP */
+if(navigator.share){
+ document.querySelector(".header").addEventListener("click",()=>{
+  navigator.share({
+   title:"Faisalabad Bazar",
+   text:"Explore deals & shops in Faisalabad",
+   url:location.href
+  });
+ });
+}
+
+/* HISTORY CONTROL (PWA feel) */
+history.pushState({}, "");
+window.addEventListener("popstate",()=>{
+ if(document.getElementById("cardView").style.display==="block"){
+  backToDirectory();
+ }else{
+  window.close();
+ }
+});
+</script>
+
+</body>
+</html>
