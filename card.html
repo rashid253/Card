@@ -21,7 +21,6 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
  width:110px;height:110px;
  border-radius:50%;
  object-fit:cover;
- aspect-ratio:1/1;
  border:3px solid #2563eb;
  background:white
 }
@@ -83,17 +82,6 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
  background:white
 }
 .offerContent{flex:1}
-.offer button{
- width:auto;
- padding:6px 14px;
- border-radius:20px;
- border:1px solid white;
- background:transparent;
- color:white;
- font-size:13px;
- margin-top:8px;
- box-shadow:0 2px 6px rgba(0,0,0,.25)
-}
 
 .dots{text-align:center;margin-bottom:10px}
 .dots span{
@@ -167,11 +155,11 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 <div class="profile">
 <img id="photo">
 <div class="info">
-<div id="name"></div>
-<div id="business"></div>
-<div id="phone"></div>
-<div id="email"></div>
-<div id="address"></div>
+ <div id="name"></div>
+ <div id="business"></div>
+ <div id="phone"></div>
+ <div id="email"></div>
+ <div id="address"></div>
 </div>
 <i class="fa fa-floppy-disk saveIcon" onclick="saveCard()"></i>
 </div>
@@ -190,61 +178,71 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 </div>
 
 <div class="socialStack" onclick="toggleSocial()">
- <i class="fab fa-facebook-f"></i>
- <div class="socialExpand" id="socialExpand">
-  <a id="fb"><i class="fab fa-facebook-f"></i></a>
-  <a id="ig"><i class="fab fa-instagram"></i></a>
-  <a id="yt"><i class="fab fa-youtube"></i></a>
-  <a id="web"><i class="fa fa-globe"></i></a>
- </div>
+<i class="fab fa-facebook-f"></i>
+<div class="socialExpand" id="socialExpand">
+ <a id="fb"><i class="fab fa-facebook-f"></i></a>
+ <a id="ig"><i class="fab fa-instagram"></i></a>
+ <a id="yt"><i class="fab fa-youtube"></i></a>
+ <a id="web"><i class="fa fa-globe"></i></a>
+</div>
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
+/* SERVICE WORKER */
 if('serviceWorker' in navigator){
- navigator.serviceWorker.register("sw.js", { scope: "./" });
+ navigator.serviceWorker.register("sw.js",{scope:"./"});
 }
 
+/* SUPABASE */
 const db = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-let id = new URLSearchParams(location.search).get("id");
-if(id){ localStorage.setItem("last_card_id", id); }
-else{ id = localStorage.getItem("last_card_id"); }
-if(!id){ document.body.innerHTML="<h2>No card found</h2>"; throw "No id"; }
+/* DIRECTORY SAFE ID */
+const id = new URLSearchParams(location.search).get("id");
 
-let cardData=null;
+if(!id){
+ document.body.innerHTML = `
+  <div style="padding:20px;text-align:center">
+   <h2>Digital Card Directory</h2>
+   <p>Please open a card using a valid link or QR code.</p>
+  </div>`;
+ throw "NO_ID";
+}
 
+let cardData = null;
+
+/* LOAD FROM CACHE (OPTIONAL SPEED) */
 const cached = localStorage.getItem("card_"+id);
 if(cached) loadCard(JSON.parse(cached));
 
+/* LOAD FROM DB */
 db.from("cards").select("*").eq("id",id).single().then(r=>{
  if(r.data){
   const data = JSON.parse(r.data.data);
-  localStorage.setItem("card_"+id, JSON.stringify(data));
+  localStorage.setItem("card_"+id,JSON.stringify(data));
   loadCard(data);
  }
 });
 
 function loadCard(data){
- cardData=data;
- photo.src=data.profileImage||"";
- name.textContent=data.name||"";
- business.textContent=data.businessName||"";
- phone.textContent="📞 "+(data.phone||"");
- email.textContent="✉️ "+(data.email||"");
- address.textContent="📍 "+(data.address||"");
- about.textContent=data.businessInfo||"";
+ cardData = data;
 
- call.href="tel:"+data.phone;
- wa.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(
-  "Hello, I found your digital card and would like to know more about your services."
- );
- mail.href="mailto:"+data.email;
- map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
- sms.href="sms:"+data.phone;
+ photo.src = data.profileImage || "";
+ name.textContent = data.name || "";
+ business.textContent = data.businessName || "";
+ phone.textContent = "📞 "+(data.phone||"");
+ email.textContent = "✉️ "+(data.email||"");
+ address.textContent = "📍 "+(data.address||"");
+ about.textContent = data.businessInfo || "";
+
+ call.href = "tel:"+data.phone;
+ wa.href = "https://wa.me/"+data.phone;
+ mail.href = "mailto:"+data.email;
+ map.href = "https://maps.google.com/?q="+encodeURIComponent(data.address);
+ sms.href = "sms:"+data.phone;
 
  if(data.facebook) fb.href=data.facebook;
  if(data.instagram) ig.href=data.instagram;
@@ -269,35 +267,36 @@ function loadCard(data){
    <div class="offerContent">
     <h3>🔥 ${o.title}</h3>
     <p>${o.desc}</p>
-    <button>Get Offer</button>
    </div>`;
-
-  d.onclick=()=>{
-   const msg = `Hello, I am interested in your offer:\n\n${o.title}\n${o.desc}`;
-   location.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(msg);
-  };
-
   offers.appendChild(d);
 
   const dot=document.createElement("span");
-  if(i==0) dot.classList.add("active");
+  if(i===0) dot.classList.add("active");
   dots.appendChild(dot);
  });
 
  offers.addEventListener("scroll",()=>{
-  const index = Math.round(offers.scrollLeft / offers.offsetWidth);
-  document.querySelectorAll(".dots span").forEach((d,i)=>{
-   d.classList.toggle("active", i===index);
-  });
+  const index=Math.round(offers.scrollLeft/offers.offsetWidth);
+  document.querySelectorAll(".dots span")
+   .forEach((d,i)=>d.classList.toggle("active",i===index));
  });
 }
 
+/* SHARE */
 share.onclick=async()=>{
- const s={title:cardData.name,text:"My digital card",url:location.href};
- if(navigator.share){ await navigator.share(s); }
- else{ navigator.clipboard.writeText(location.href); alert("Link copied"); }
+ if(navigator.share){
+  await navigator.share({
+   title:cardData.name,
+   text:"My digital card",
+   url:location.href
+  });
+ }else{
+  navigator.clipboard.writeText(location.href);
+  alert("Link copied");
+ }
 };
 
+/* SAVE CONTACT */
 function saveCard(){
  const vcf=`BEGIN:VCARD
 VERSION:3.0
@@ -312,13 +311,12 @@ END:VCARD`;
  a.click();
 }
 
+/* SOCIAL TOGGLE */
 function toggleSocial(){
  const s=document.getElementById("socialExpand");
- s.style.display = s.style.display=="flex" ? "none" : "flex";
+ s.style.display = s.style.display==="flex" ? "none" : "flex";
 }
-
-history.pushState({}, "");
-window.addEventListener("popstate",()=>{window.close();});
 </script>
+
 </body>
 </html>
