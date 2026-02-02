@@ -32,9 +32,10 @@ body{margin:0;font-family:system-ui;background:#f1f5f9}
 }
 #status{
  text-align:center;
- padding:26px 20px;
+ padding:28px 22px;
  color:#475569;
- line-height:1.6;
+ line-height:1.7;
+ font-size:14px;
 }
 </style>
 </head>
@@ -47,9 +48,9 @@ body{margin:0;font-family:system-ui;background:#f1f5f9}
 </div>
 
 <div id="status">
-🌿 براہِ کرم انتظار کریں  
+🌱 خوش آمدید  
 <br>
-فیسل آباد کے کاروبار لوڈ ہو رہے ہیں…
+فیسل آباد کے کاروبار ایک جگہ جمع کیے جا رہے ہیں…
 </div>
 
 <div id="list" class="list"></div>
@@ -70,8 +71,7 @@ const db = supabase.createClient(
 const list = document.getElementById("list");
 const statusBox = document.getElementById("status");
 
-/* ---------- helpers ---------- */
-
+/* --------- RENDER --------- */
 function render(data){
  list.innerHTML="";
  data.forEach(row=>{
@@ -89,25 +89,21 @@ function render(data){
  });
 }
 
-/* ---------- 1) Load from cache instantly ---------- */
-
+/* --------- STEP 1: INSTANT CACHE LOAD --------- */
+let cacheUsed = false;
 const cached = localStorage.getItem("fsd_cards");
+
 if(cached){
+ cacheUsed = true;
  statusBox.style.display="none";
  render(JSON.parse(cached));
 }
 
-/* ---------- 2) Supabase warm-up (silent) ---------- */
+/* --------- STEP 2: BACKGROUND WAKE --------- */
+db.from("cards").select("id").limit(1);
 
+/* --------- STEP 3: BACKGROUND FETCH --------- */
 (async ()=>{
- try{
-  await db.from("cards").select("id").limit(1);
- }catch(e){}
-})();
-
-/* ---------- 3) Fetch fresh data (silent update) ---------- */
-
-async function fetchLatest(){
  const {data, error} = await db
   .from("cards")
   .select("*")
@@ -118,20 +114,20 @@ async function fetchLatest(){
  const newData = JSON.stringify(data);
  const oldData = localStorage.getItem("fsd_cards");
 
- // first time ever
+ // FIRST SUCCESS EVER → save permanently
  if(!oldData){
+  localStorage.setItem("fsd_cards", newData);
   statusBox.style.display="none";
   render(data);
+  return;
  }
 
- // save & silently update
+ // SILENT UPDATE (no flicker)
  if(oldData !== newData){
   localStorage.setItem("fsd_cards", newData);
-  render(data);
+  if(cacheUsed) render(data);
  }
-}
-
-fetchLatest();
+})();
 </script>
 </body>
 </html>
