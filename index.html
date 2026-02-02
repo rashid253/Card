@@ -83,9 +83,6 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-/* APP IDENTIFIER (NEW – ONLY ADDITION) */
-const APP_ID = "digital_card_v1";
-
 // build offer boxes
 for(let i=1;i<=5;i++){
  offersForm.innerHTML+=`
@@ -160,9 +157,8 @@ async function generate(){
  }
 
  await db.from("cards").insert({
-  id: id,
-  app_id: APP_ID,
-  data: JSON.stringify(data)
+  id:id,
+  data:JSON.stringify(data)
  });
 
  /* SAVE LAST CARD */
