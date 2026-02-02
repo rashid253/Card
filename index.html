@@ -120,4 +120,19 @@ async function generate(){
   offers:[]
  };
 
- if(profileImage.files
+ if(profileImage.files[0])
+  data.profileImage=await resizeImage(profileImage.files[0]);
+
+ for(let i=1;i<=3;i++){
+  const t=document.getElementById("offerTitle"+i).value;
+  const d=document.getElementById("offerDesc"+i).value;
+  if(t && d) data.offers.push({title:t,desc:d});
+ }
+
+ await db.from("cards").insert({id,data:JSON.stringify(data)});
+ localStorage.setItem("lastCardId",id);
+ location.href="card.html?id="+id;
+}
+</script>
+</body>
+</html>
