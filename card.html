@@ -38,26 +38,7 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
  cursor:pointer;
 }
 
-/* BUSINESS INFO - Facebook style collapse/expand */
-.about{
- padding:12px;
- background:white;
- font-size:14px;
- line-height:1.6;
- position:relative;
-}
-.about.collapsed{
- max-height:80px;
- overflow:hidden;
- text-overflow: ellipsis;
-}
-.readMore{
- color:#2563eb;
- font-weight:600;
- cursor:pointer;
- margin-top:6px;
- display:inline-block
-}
+.about{padding:12px;background:white;font-size:14px}
 
 /* SHOP CTA */
 .ctaBar{
@@ -195,9 +176,7 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 <i class="fa fa-floppy-disk saveIcon" onclick="saveCard()"></i>
 </div>
 
-<!-- BUSINESS INFO WITH COLLAPSE -->
-<div class="about collapsed" id="about"></div>
-<div class="readMore" id="readMore" onclick="toggleAbout()">Read more...</div>
+<div class="about" id="about"></div>
 
 <div id="shopCTA" class="ctaBar"></div>
 
@@ -257,13 +236,7 @@ function loadCard(data){
  phone.textContent="📞 "+(data.phone||"");
  email.textContent="✉️ "+(data.email||"");
  address.textContent="📍 "+(data.address||"");
-
  about.textContent=data.businessInfo||"";
-
- /* Hide read more if text short */
- if(about.scrollHeight<=80){
-  readMore.style.display="none";
- }
 
  call.href="tel:"+data.phone;
  wa.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(
@@ -337,11 +310,6 @@ END:VCARD`;
  a.href=URL.createObjectURL(blob);
  a.download=cardData.name+".vcf";
  a.click();
-}
-
-function toggleAbout(){
- about.classList.toggle("collapsed");
- readMore.textContent = about.classList.contains("collapsed") ? "Read more..." : "Show less";
 }
 
 function toggleSocial(){
