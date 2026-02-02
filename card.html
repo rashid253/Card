@@ -2,40 +2,37 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Business Profile</title>
+<title>Business Card</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
 <style>
 body{margin:0;font-family:system-ui;background:#f1f5f9}
-.top{background:#0f172a;color:white;padding:12px;text-align:center}
-.profile{background:white;padding:16px;text-align:center}
+.top{background:#0f172a;color:white;padding:12px;display:flex;justify-content:space-around}
+.profile{padding:16px;background:white;text-align:center}
 .profile img{width:110px;height:110px;border-radius:50%;object-fit:cover}
-h2{margin:10px 0}
 .actions{display:flex;justify-content:space-around;padding:14px;background:#2563eb}
 .actions a{color:white;font-size:22px}
-.offer{background:white;margin:10px;padding:12px;border-radius:12px}
 </style>
 </head>
 
 <body>
 
-<div class="top">Faisalabad Business Directory</div>
-
-<div class="profile">
-<img id="photo">
-<h2 id="name"></h2>
-<div id="business"></div>
-<div id="address"></div>
+<div class="top">
+<a id="share"><i class="fa fa-share"></i></a>
+<a id="map"><i class="fa fa-location-dot"></i></a>
+<a id="sms"><i class="fa fa-comment"></i></a>
 </div>
 
-<div id="offers"></div>
+<div class="profile">
+<img id="img">
+<h2 id="bname"></h2>
+<div id="owner"></div>
+<div id="addr"></div>
+</div>
 
 <div class="actions">
 <a id="call"><i class="fa fa-phone"></i></a>
 <a id="wa"><i class="fab fa-whatsapp"></i></a>
-<a id="map"><i class="fa fa-location-dot"></i></a>
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -45,27 +42,18 @@ const db=supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-let id=new URLSearchParams(location.search).get("id");
-if(!id){document.body.innerHTML="No business found";throw 0;}
-
+const id=new URLSearchParams(location.search).get("id");
 db.from("cards").select("*").eq("id",id).single().then(r=>{
  const d=JSON.parse(r.data.data);
-
- photo.src=d.profileImage||"";
- name.textContent=d.businessName;
- business.textContent=d.name+" | "+d.phone;
- address.textContent="📍 "+d.address;
+ img.src=d.profileImage||"";
+ bname.textContent=d.businessName;
+ owner.textContent=d.name+" | "+d.phone;
+ addr.textContent=d.address;
 
  call.href="tel:"+d.phone;
  wa.href="https://wa.me/"+d.phone;
  map.href="https://maps.google.com/?q="+encodeURIComponent(d.address+", Faisalabad");
-
- d.offers.forEach(o=>{
-  const div=document.createElement("div");
-  div.className="offer";
-  div.innerHTML=`<b>${o.title}</b><p>${o.desc}</p>`;
-  offers.appendChild(div);
- });
+ sms.href="sms:"+d.phone;
 });
 </script>
 </body>
