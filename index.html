@@ -2,9 +2,8 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Create Digital Card</title>
+<title>Faisalabad Business Directory</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2563eb">
 
@@ -22,21 +21,16 @@ button{
  background:#2563eb;color:white;
  font-size:17px;margin-top:20px
 }
-.offerBox{
- background:white;padding:12px;
- border-radius:12px;margin-top:10px
-}
+.offerBox{background:white;padding:12px;border-radius:12px;margin-top:10px}
+.small{font-size:13px;color:#475569}
 </style>
 
 <script>
-/* AUTO OPEN LAST CARD IN APP MODE */
 if (
- (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)
-) {
- const last = localStorage.getItem("lastCardId");
- if (last) {
-  window.location.replace("card.html?id=" + last);
- }
+ window.matchMedia('(display-mode: standalone)').matches &&
+ localStorage.getItem("lastCardId")
+){
+ location.replace("card.html?id="+localStorage.getItem("lastCardId"));
 }
 </script>
 </head>
@@ -44,38 +38,37 @@ if (
 <body>
 <div class="wrap">
 
-<h2>Profile</h2>
+<h2>Faisalabad Business Directory</h2>
+<p class="small">Register your shop or service in Faisalabad</p>
+
+<h2>Owner Info</h2>
 <input type="file" id="profileImage" accept="image/*">
-<input id="fullName" placeholder="Full Name">
-<input id="phoneNumber" placeholder="Phone">
-<input id="email" placeholder="Email">
-<input id="address" placeholder="Address">
+<input id="fullName" placeholder="Owner Name">
+<input id="phoneNumber" placeholder="Phone (03xx)">
+<input id="email" placeholder="Email (optional)">
+<input id="address" placeholder="Shop Address, Faisalabad">
 
 <h2>Business</h2>
-<input id="businessName" placeholder="Business Title">
+<input id="businessName" placeholder="Business Name">
 <textarea id="businessInfo" placeholder="About your business"></textarea>
 
-<h2>Social Media</h2>
+<h2>Social Links</h2>
 <input id="facebook" placeholder="Facebook link">
 <input id="instagram" placeholder="Instagram link">
 <input id="youtube" placeholder="YouTube link">
 <input id="website" placeholder="Website link">
 
-<h2>Shop App (Optional)</h2>
-<input id="shopAppLink" placeholder="Play Store app link">
-<input type="file" id="shopAppImage" accept="image/*">
-
 <h2>Offers</h2>
 <div id="offersForm"></div>
 
-<button type="button" onclick="generate()">Generate Card</button>
+<button onclick="generate()">Add Business</button>
 
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
 if('serviceWorker' in navigator){
- navigator.serviceWorker.register("sw.js", { scope: "./" });
+ navigator.serviceWorker.register("sw.js");
 }
 
 const db = supabase.createClient(
@@ -83,12 +76,10 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-// build offer boxes
-for(let i=1;i<=5;i++){
+for(let i=1;i<=3;i++){
  offersForm.innerHTML+=`
  <div class="offerBox">
   <b>Offer ${i}</b>
-  <input type="file" id="offerImg${i}">
   <input id="offerTitle${i}" placeholder="Title">
   <textarea id="offerDesc${i}" placeholder="Description"></textarea>
  </div>`;
@@ -99,12 +90,9 @@ function resizeImage(file){
   const img=new Image();
   img.onload=()=>{
    const c=document.createElement("canvas");
-   const max=1024;
-   let w=img.width,h=img.height;
-   const r=Math.min(max/w,max/h,1);
-   w*=r; h*=r;
-   c.width=w; c.height=h;
-   c.getContext("2d").drawImage(img,0,0,w,h);
+   const r=Math.min(1024/img.width,1024/img.height,1);
+   c.width=img.width*r; c.height=img.height*r;
+   c.getContext("2d").drawImage(img,0,0,c.width,c.height);
    res(c.toDataURL("image/jpeg",0.8));
   }
   img.src=URL.createObjectURL(file);
@@ -112,16 +100,14 @@ function resizeImage(file){
 }
 
 async function generate(){
+ if(!fullName.value || !phoneNumber.value){
+  alert("Name & phone required"); return;
+ }
 
- const name = fullName.value.trim();
- const phone = phoneNumber.value.trim();
- if(name=="" || phone==""){ alert("Name & Phone required"); return; }
-
- const id = Math.random().toString(36).slice(2,8);
-
+ const id=Math.random().toString(36).slice(2,8);
  const data={
-  name,
-  phone,
+  name:fullName.value,
+  phone:phoneNumber.value,
   email:email.value,
   address:address.value,
   businessName:businessName.value,
@@ -130,42 +116,8 @@ async function generate(){
   instagram:instagram.value,
   youtube:youtube.value,
   website:website.value,
-
-  shopAppLink: shopAppLink.value,
-  shopAppImage: "",
-
   profileImage:"",
   offers:[]
  };
 
- if(profileImage.files[0])
-  data.profileImage = await resizeImage(profileImage.files[0]);
-
- if(shopAppImage.files[0])
-  data.shopAppImage = await resizeImage(shopAppImage.files[0]);
-
- for(let i=1;i<=5;i++){
-  const title=document.getElementById("offerTitle"+i).value;
-  const desc=document.getElementById("offerDesc"+i).value;
-  const img=document.getElementById("offerImg"+i).files[0];
-
-  if(title && desc){
-   let imgData="";
-   if(img) imgData = await resizeImage(img);
-   data.offers.push({title,desc,image:imgData});
-  }
- }
-
- await db.from("cards").insert({
-  id:id,
-  data:JSON.stringify(data)
- });
-
- /* SAVE LAST CARD */
- localStorage.setItem("lastCardId", id);
-
- location.href="card.html?id="+id;
-}
-</script>
-</body>
-</html>
+ if(profileImage.files
