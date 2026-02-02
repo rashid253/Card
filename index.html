@@ -36,6 +36,7 @@ body{margin:0;font-family:system-ui;background:#f1f5f9}
  color:#475569;
  line-height:1.7;
  font-size:14px;
+ cursor:pointer;
 }
 </style>
 </head>
@@ -48,9 +49,9 @@ body{margin:0;font-family:system-ui;background:#f1f5f9}
 </div>
 
 <div id="status">
-🌱 خوش آمدید  
+🌿 براہِ کرم انتظار کریں  
 <br>
-فیسل آباد کے کاروبار ایک جگہ جمع کیے جا رہے ہیں…
+کاروبار لوڈ کیے جا رہے ہیں…
 </div>
 
 <div id="list" class="list"></div>
@@ -71,7 +72,7 @@ const db = supabase.createClient(
 const list = document.getElementById("list");
 const statusBox = document.getElementById("status");
 
-/* --------- RENDER --------- */
+/* ---------- render ---------- */
 function render(data){
  list.innerHTML="";
  data.forEach(row=>{
@@ -87,47 +88,42 @@ function render(data){
    </div>`;
   list.appendChild(div);
  });
-}
-
-/* --------- STEP 1: INSTANT CACHE LOAD --------- */
-let cacheUsed = false;
-const cached = localStorage.getItem("fsd_cards");
-
-if(cached){
- cacheUsed = true;
  statusBox.style.display="none";
- render(JSON.parse(cached));
 }
 
-/* --------- STEP 2: BACKGROUND WAKE --------- */
-db.from("cards").select("id").limit(1);
+/* ---------- STEP 1: LOAD CACHE (if any) ---------- */
+const cached = localStorage.getItem("fsd_cards");
+if(cached){
+ try{
+  render(JSON.parse(cached));
+ }catch(e){}
+}
 
-/* --------- STEP 3: BACKGROUND FETCH --------- */
-(async ()=>{
- const {data, error} = await db
-  .from("cards")
-  .select("*")
-  .order("id",{ascending:false});
+/* ---------- STEP 2: FETCH FROM SUPABASE ---------- */
+async function loadFromServer(){
+ statusBox.innerHTML = "⏳ کنکشن قائم کیا جا رہا ہے…";
 
- if(error || !data) return;
+ try{
+  // warm up
+  await db.from("cards").select("id").limit(1);
 
- const newData = JSON.stringify(data);
- const oldData = localStorage.getItem("fsd_cards");
+  const {data, error} = await db
+    .from("cards")
+    .select("*")
+    .order("id",{ascending:false});
 
- // FIRST SUCCESS EVER → save permanently
- if(!oldData){
-  localStorage.setItem("fsd_cards", newData);
-  statusBox.style.display="none";
+  if(error || !data) throw error;
+
+  localStorage.setItem("fsd_cards", JSON.stringify(data));
   render(data);
-  return;
- }
 
- // SILENT UPDATE (no flicker)
- if(oldData !== newData){
-  localStorage.setItem("fsd_cards", newData);
-  if(cacheUsed) render(data);
+ }catch(err){
+  statusBox.innerHTML = "⚠️ انٹرنیٹ سست ہے<br>دوبارہ کوشش کے لیے یہاں دبائیں";
+  statusBox.onclick = loadFromServer;
  }
-})();
+}
+
+loadFromServer();
 </script>
 </body>
 </html>
