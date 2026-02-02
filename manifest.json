@@ -1,7 +1,7 @@
 {
-  "name": "Digital Card",
-  "short_name": "MyCard",
-  "start_url": "./card.html",
+  "name": "Faisalabad Business Directory",
+  "short_name": "FSD Directory",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#0f172a",
