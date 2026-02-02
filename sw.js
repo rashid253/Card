@@ -1,7 +1,9 @@
 const CACHE = "fsd-directory-v1";
 
 const FILES = [
+  "./",
   "./index.html",
+  "./create.html",
   "./card.html",
   "./edit.html",
   "./manifest.json",
@@ -10,9 +12,7 @@ const FILES = [
 ];
 
 self.addEventListener("install", e => {
-  e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(FILES))
-  );
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));
 });
 
 self.addEventListener("activate", e => {
@@ -25,12 +25,6 @@ self.addEventListener("activate", e => {
 
 self.addEventListener("fetch", e => {
   e.respondWith(
-    fetch(e.request)
-      .then(res => {
-        const clone = res.clone();
-        caches.open(CACHE).then(c => c.put(e.request, clone));
-        return res;
-      })
-      .catch(() => caches.match(e.request))
+    fetch(e.request).catch(() => caches.match(e.request))
   );
 });
