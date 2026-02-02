@@ -1,7 +1,6 @@
 const CACHE = "fsd-directory-v1";
 
 const FILES = [
-  "./",
   "./index.html",
   "./create.html",
   "./card.html",
