@@ -30,6 +30,12 @@ body{margin:0;font-family:system-ui;background:#f1f5f9}
  display:flex;align-items:center;justify-content:center;
  font-size:28px
 }
+#status{
+ text-align:center;
+ padding:26px 20px;
+ color:#475569;
+ line-height:1.6;
+}
 </style>
 </head>
 
@@ -37,10 +43,17 @@ body{margin:0;font-family:system-ui;background:#f1f5f9}
 
 <div class="header">
 <h2>Faisalabad Business Directory</h2>
-<p style="font-size:13px">Tap a business to view details</p>
+<p style="font-size:13px">Local businesses, one place</p>
+</div>
+
+<div id="status">
+🌿 براہِ کرم انتظار کریں  
+<br>
+فیسل آباد کے کاروبار لوڈ ہو رہے ہیں…
 </div>
 
 <div id="list" class="list"></div>
+
 <div class="add" onclick="location.href='create.html'">+</div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -49,15 +62,21 @@ if('serviceWorker' in navigator){
  navigator.serviceWorker.register("sw.js");
 }
 
-const db=supabase.createClient(
+const db = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-db.from("cards").select("*").order("id",{ascending:false}).then(r=>{
- r.data.forEach(row=>{
-  const d=JSON.parse(row.data);
-  const div=document.createElement("div");
+const list = document.getElementById("list");
+const statusBox = document.getElementById("status");
+
+/* ---------- helpers ---------- */
+
+function render(data){
+ list.innerHTML="";
+ data.forEach(row=>{
+  const d = JSON.parse(row.data);
+  const div = document.createElement("div");
   div.className="item";
   div.onclick=()=>location.href="card.html?id="+row.id;
   div.innerHTML=`
@@ -68,7 +87,51 @@ db.from("cards").select("*").order("id",{ascending:false}).then(r=>{
    </div>`;
   list.appendChild(div);
  });
-});
+}
+
+/* ---------- 1) Load from cache instantly ---------- */
+
+const cached = localStorage.getItem("fsd_cards");
+if(cached){
+ statusBox.style.display="none";
+ render(JSON.parse(cached));
+}
+
+/* ---------- 2) Supabase warm-up (silent) ---------- */
+
+(async ()=>{
+ try{
+  await db.from("cards").select("id").limit(1);
+ }catch(e){}
+})();
+
+/* ---------- 3) Fetch fresh data (silent update) ---------- */
+
+async function fetchLatest(){
+ const {data, error} = await db
+  .from("cards")
+  .select("*")
+  .order("id",{ascending:false});
+
+ if(error || !data) return;
+
+ const newData = JSON.stringify(data);
+ const oldData = localStorage.getItem("fsd_cards");
+
+ // first time ever
+ if(!oldData){
+  statusBox.style.display="none";
+  render(data);
+ }
+
+ // save & silently update
+ if(oldData !== newData){
+  localStorage.setItem("fsd_cards", newData);
+  render(data);
+ }
+}
+
+fetchLatest();
 </script>
 </body>
 </html>
