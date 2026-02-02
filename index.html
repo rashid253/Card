@@ -12,7 +12,7 @@
 body{margin:0;font-family:system-ui;background:#f1f5f9}
 .wrap{max-width:480px;margin:auto;padding:16px}
 h2{margin-top:20px}
-input,textarea{
+input,textarea,select{
  width:100%;padding:12px;margin:6px 0;
  border-radius:10px;border:1px solid #cbd5f5
 }
@@ -29,14 +29,11 @@ button{
 </style>
 
 <script>
-/* AUTO OPEN LAST CARD IN APP MODE */
 if (
  (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)
 ) {
  const last = localStorage.getItem("lastCardId");
- if (last) {
-  window.location.replace("card.html?id=" + last);
- }
+ if (last) window.location.replace("card.html?id=" + last);
 }
 </script>
 </head>
@@ -53,7 +50,16 @@ if (
 
 <h2>Business</h2>
 <input id="businessName" placeholder="Business Title">
-<textarea id="businessInfo" placeholder="About your business"></textarea>
+
+<!-- UPDATED BUSINESS INFO (GMB STYLE) -->
+<textarea id="aboutBusiness" placeholder="Short description about business"></textarea>
+
+<input id="workingDays" placeholder="Working Days (e.g. Mon – Sat)">
+<input id="timing" placeholder="Business Timing (e.g. 9:00 AM – 9:00 PM)">
+<input id="holidays" placeholder="Holidays / Off Days">
+<input id="services" placeholder="Main Services (comma separated)">
+<input id="payment" placeholder="Payment Methods (Cash, Bank, JazzCash)">
+<input id="established" placeholder="Established Year (optional)">
 
 <h2>Social Media</h2>
 <input id="facebook" placeholder="Facebook link">
@@ -83,7 +89,6 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-// build offer boxes
 for(let i=1;i<=5;i++){
  offersForm.innerHTML+=`
  <div class="offerBox">
@@ -102,9 +107,8 @@ function resizeImage(file){
    const max=1024;
    let w=img.width,h=img.height;
    const r=Math.min(max/w,max/h,1);
-   w*=r; h*=r;
-   c.width=w; c.height=h;
-   c.getContext("2d").drawImage(img,0,0,w,h);
+   c.width=w*r; c.height=h*r;
+   c.getContext("2d").drawImage(img,0,0,c.width,c.height);
    res(c.toDataURL("image/jpeg",0.8));
   }
   img.src=URL.createObjectURL(file);
@@ -119,21 +123,39 @@ async function generate(){
 
  const id = Math.random().toString(36).slice(2,8);
 
+ /* BUILD BEAUTIFUL BUSINESS INFO */
+ const businessInfo =
+`${aboutBusiness.value}
+
+🕒 Timing: ${timing.value}
+📅 Working Days: ${workingDays.value}
+❌ Holidays: ${holidays.value}
+
+🛠 Services:
+${services.value}
+
+💳 Payment Methods:
+${payment.value}
+
+🏢 Established:
+${established.value}
+`;
+
  const data={
   name,
   phone,
   email:email.value,
   address:address.value,
   businessName:businessName.value,
-  businessInfo:businessInfo.value,
+  businessInfo:businessInfo.trim(),
+
   facebook:facebook.value,
   instagram:instagram.value,
   youtube:youtube.value,
   website:website.value,
 
   shopAppLink: shopAppLink.value,
-  shopAppImage: "",
-
+  shopAppImage:"",
   profileImage:"",
   offers:[]
  };
@@ -161,9 +183,7 @@ async function generate(){
   data:JSON.stringify(data)
  });
 
- /* SAVE LAST CARD */
  localStorage.setItem("lastCardId", id);
-
  location.href="card.html?id="+id;
 }
 </script>
