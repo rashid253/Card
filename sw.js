@@ -1,4 +1,4 @@
-const CACHE = "fsd-directory-v1";
+const CACHE = "fsd-directory-v2";
 
 const FILES = [
  "./index.html",
@@ -23,12 +23,11 @@ self.addEventListener("activate", e => {
  );
 });
 
-// ❗ Supabase requests are NOT cached
+// Supabase requests always live
 self.addEventListener("fetch", e => {
  if(e.request.url.includes("supabase")){
   return;
  }
-
  e.respondWith(
   caches.match(e.request).then(r => r || fetch(e.request))
  );
