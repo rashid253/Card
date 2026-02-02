@@ -38,7 +38,26 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
  cursor:pointer;
 }
 
-.about{padding:12px;background:white;font-size:14px}
+/* BUSINESS INFO - Tick mark style + collapse/expand */
+.about{
+ padding:12px;
+ background:white;
+ font-size:14px;
+ line-height:1.6;
+ position:relative;
+}
+.about.collapsed{
+ max-height:120px;
+ overflow:hidden;
+ text-overflow: ellipsis;
+}
+.readMore{
+ color:#2563eb;
+ font-weight:600;
+ cursor:pointer;
+ margin-top:6px;
+ display:inline-block
+}
 
 /* SHOP CTA */
 .ctaBar{
@@ -176,7 +195,9 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 <i class="fa fa-floppy-disk saveIcon" onclick="saveCard()"></i>
 </div>
 
-<div class="about" id="about"></div>
+<!-- BUSINESS INFO WITH COLLAPSE + TICK STYLE -->
+<div class="about collapsed" id="about"></div>
+<div class="readMore" id="readMore" onclick="toggleAbout()">Read more...</div>
 
 <div id="shopCTA" class="ctaBar"></div>
 
@@ -236,47 +257,44 @@ function loadCard(data){
  phone.textContent="📞 "+(data.phone||"");
  email.textContent="✉️ "+(data.email||"");
  address.textContent="📍 "+(data.address||"");
- about.textContent=data.businessInfo||"";
 
- call.href="tel:"+data.phone;
- wa.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(
-  "Hello, I found your digital card and would like to know more about your services."
- );
- mail.href="mailto:"+data.email;
- map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
- sms.href="sms:"+data.phone;
+call.href="tel:"+data.phone;
+wa.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(
+ "Hello, I found your digital card and would like to know more about your services."
+);
+mail.href="mailto:"+data.email;
+map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
+sms.href="sms:"+data.phone;
 
- if(data.facebook) fb.href=data.facebook;
- if(data.instagram) ig.href=data.instagram;
- if(data.youtube) yt.href=data.youtube;
- if(data.website) web.href=data.website;
+if(data.facebook) fb.href=data.facebook;
+if(data.instagram) ig.href=data.instagram;
+if(data.youtube) yt.href=data.youtube;
+if(data.website) web.href=data.website;
 
- if(data.shopAppLink){
-  shopCTA.style.display="flex";
-  shopCTA.onclick=()=>location.href=data.shopAppLink;
-  shopCTA.innerHTML = `
-   ${data.shopAppImage?`<img src="${data.shopAppImage}">`:""}
-   <div>Shop on our official app</div>
-  `;
- }
+// SHOP APP
+if(data.shopAppLink){
+ shopCTA.style.display="flex";
+ shopCTA.onclick=()=>location.href=data.shopAppLink;
+ shopCTA.innerHTML = `
+  ${data.shopAppImage?`<img src="${data.shopAppImage}">`:""}
+  <div>Shop on our official app</div>
+ `;
+}
 
- offers.innerHTML=""; dots.innerHTML="";
+// OFFERS
+offers.innerHTML=""; dots.innerHTML="";
+if(data.offers && data.offers.length>0){
  data.offers.forEach((o,i)=>{
   const d=document.createElement("div");
   d.className="offer";
   d.innerHTML=`
-   ${o.image?`<img src="${o.image}">`:""}
+   <img src="${o.image || ''}">
    <div class="offerContent">
     <h3>🔥 ${o.title}</h3>
     <p>${o.desc}</p>
     <button>Get Offer</button>
    </div>`;
-
-  d.onclick=()=>{
-   const msg = `Hello, I am interested in your offer:\n\n${o.title}\n${o.desc}`;
-   location.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(msg);
-  };
-
+  d.onclick=()=>location.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(`Hello, I am interested in your offer:\n\n${o.title}\n${o.desc}`);
   offers.appendChild(d);
 
   const dot=document.createElement("span");
@@ -290,6 +308,32 @@ function loadCard(data){
    d.classList.toggle("active", i===index);
   });
  });
+}
+
+// BUSINESS INFO - Tick mark formatting
+if(data.businessInfoFull){
+ let lines = [];
+ if(data.businessInfoFull.timing) lines.push(`🕒 Timing: ${data.businessInfoFull.timing}`);
+ if(data.businessInfoFull.days) lines.push(`📅 Working Days: ${data.businessInfoFull.days}`);
+ if(data.businessInfoFull.holidays) lines.push(`❌ Holidays: ${data.businessInfoFull.holidays}`);
+ if(data.businessInfoFull.services && data.businessInfoFull.services.length>0){
+  lines.push('🛠 Services:');
+  data.businessInfoFull.services.forEach(s=>lines.push(`✅ ${s}`));
+ }
+ if(data.businessInfoFull.payment && data.businessInfoFull.payment.length>0){
+  lines.push('💳 Payment Methods:');
+  data.businessInfoFull.payment.forEach(p=>lines.push(`✅ ${p}`));
+ }
+ if(data.businessInfoFull.established) lines.push(`🏢 Established: ${data.businessInfoFull.established}`);
+ about.textContent = lines.join('\n');
+}
+
+// Collapse logic
+if(about.scrollHeight<=120) readMore.style.display="none";
+
+function toggleAbout(){
+ about.classList.toggle("collapsed");
+ readMore.textContent = about.classList.contains("collapsed") ? "Read more..." : "Show less";
 }
 
 share.onclick=async()=>{
