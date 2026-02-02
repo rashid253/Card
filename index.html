@@ -2,66 +2,80 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Faisalabad Business Directory</title>
+<title>Create Digital Card</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f172a">
+<meta name="theme-color" content="#2563eb">
 
 <style>
 body{margin:0;font-family:system-ui;background:#f1f5f9}
-.header{background:#0f172a;color:white;padding:14px;text-align:center}
-.list{max-width:480px;margin:auto;padding:12px}
-.item{
- background:white;border-radius:14px;padding:12px;
- display:flex;gap:12px;align-items:center;
- margin-bottom:10px;cursor:pointer;
- box-shadow:0 4px 10px rgba(0,0,0,.1)
+.wrap{max-width:480px;margin:auto;padding:16px}
+h2{margin-top:20px}
+input,textarea{
+ width:100%;padding:12px;margin:6px 0;
+ border-radius:10px;border:1px solid #cbd5f5
 }
-.item img{
- width:60px;height:60px;border-radius:50%;
- object-fit:cover;background:#e2e8f0
-}
-.name{font-weight:700}
-.addr{font-size:12px;color:#475569}
-.add{
- position:fixed;right:16px;bottom:16px;
- width:56px;height:56px;border-radius:50%;
+button{
+ width:100%;padding:16px;
+ border:none;border-radius:12px;
  background:#2563eb;color:white;
- display:flex;align-items:center;justify-content:center;
- font-size:28px
+ font-size:17px;margin-top:20px
 }
-#status{
- text-align:center;
- padding:28px 22px;
- color:#475569;
- line-height:1.7;
- font-size:14px;
- cursor:pointer;
+.offerBox{
+ background:white;padding:12px;
+ border-radius:12px;margin-top:10px
 }
 </style>
+
+<script>
+/* AUTO OPEN LAST CARD IN APP MODE */
+if (
+ (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)
+) {
+ const last = localStorage.getItem("lastCardId");
+ if (last) {
+  window.location.replace("card.html?id=" + last);
+ }
+}
+</script>
 </head>
 
 <body>
+<div class="wrap">
 
-<div class="header">
-<h2>Faisalabad Business Directory</h2>
-<p style="font-size:13px">Local businesses, one place</p>
+<h2>Profile</h2>
+<input type="file" id="profileImage" accept="image/*">
+<input id="fullName" placeholder="Full Name">
+<input id="phoneNumber" placeholder="Phone">
+<input id="email" placeholder="Email">
+<input id="address" placeholder="Address">
+
+<h2>Business</h2>
+<input id="businessName" placeholder="Business Title">
+<textarea id="businessInfo" placeholder="About your business"></textarea>
+
+<h2>Social Media</h2>
+<input id="facebook" placeholder="Facebook link">
+<input id="instagram" placeholder="Instagram link">
+<input id="youtube" placeholder="YouTube link">
+<input id="website" placeholder="Website link">
+
+<h2>Shop App (Optional)</h2>
+<input id="shopAppLink" placeholder="Play Store app link">
+<input type="file" id="shopAppImage" accept="image/*">
+
+<h2>Offers</h2>
+<div id="offersForm"></div>
+
+<button type="button" onclick="generate()">Generate Card</button>
+
 </div>
-
-<div id="status">
-🌿 براہِ کرم انتظار کریں  
-<br>
-کاروبار لوڈ کیے جا رہے ہیں…
-</div>
-
-<div id="list" class="list"></div>
-
-<div class="add" onclick="location.href='create.html'">+</div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
 if('serviceWorker' in navigator){
- navigator.serviceWorker.register("sw.js");
+ navigator.serviceWorker.register("sw.js", { scope: "./" });
 }
 
 const db = supabase.createClient(
@@ -69,61 +83,93 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-const list = document.getElementById("list");
-const statusBox = document.getElementById("status");
+/* APP IDENTIFIER (NEW – ONLY ADDITION) */
+const APP_ID = "digital_card_v1";
 
-/* ---------- render ---------- */
-function render(data){
- list.innerHTML="";
- data.forEach(row=>{
-  const d = JSON.parse(row.data);
-  const div = document.createElement("div");
-  div.className="item";
-  div.onclick=()=>location.href="card.html?id="+row.id;
-  div.innerHTML=`
-   <img src="${d.profileImage||''}">
-   <div>
-    <div class="name">${d.businessName||'Business'}</div>
-    <div class="addr">${d.address||'Faisalabad'}</div>
-   </div>`;
-  list.appendChild(div);
+// build offer boxes
+for(let i=1;i<=5;i++){
+ offersForm.innerHTML+=`
+ <div class="offerBox">
+  <b>Offer ${i}</b>
+  <input type="file" id="offerImg${i}">
+  <input id="offerTitle${i}" placeholder="Title">
+  <textarea id="offerDesc${i}" placeholder="Description"></textarea>
+ </div>`;
+}
+
+function resizeImage(file){
+ return new Promise(res=>{
+  const img=new Image();
+  img.onload=()=>{
+   const c=document.createElement("canvas");
+   const max=1024;
+   let w=img.width,h=img.height;
+   const r=Math.min(max/w,max/h,1);
+   w*=r; h*=r;
+   c.width=w; c.height=h;
+   c.getContext("2d").drawImage(img,0,0,w,h);
+   res(c.toDataURL("image/jpeg",0.8));
+  }
+  img.src=URL.createObjectURL(file);
  });
- statusBox.style.display="none";
 }
 
-/* ---------- STEP 1: LOAD CACHE (if any) ---------- */
-const cached = localStorage.getItem("fsd_cards");
-if(cached){
- try{
-  render(JSON.parse(cached));
- }catch(e){}
-}
+async function generate(){
 
-/* ---------- STEP 2: FETCH FROM SUPABASE ---------- */
-async function loadFromServer(){
- statusBox.innerHTML = "⏳ کنکشن قائم کیا جا رہا ہے…";
+ const name = fullName.value.trim();
+ const phone = phoneNumber.value.trim();
+ if(name=="" || phone==""){ alert("Name & Phone required"); return; }
 
- try{
-  // warm up
-  await db.from("cards").select("id").limit(1);
+ const id = Math.random().toString(36).slice(2,8);
 
-  const {data, error} = await db
-    .from("cards")
-    .select("*")
-    .order("id",{ascending:false});
+ const data={
+  name,
+  phone,
+  email:email.value,
+  address:address.value,
+  businessName:businessName.value,
+  businessInfo:businessInfo.value,
+  facebook:facebook.value,
+  instagram:instagram.value,
+  youtube:youtube.value,
+  website:website.value,
 
-  if(error || !data) throw error;
+  shopAppLink: shopAppLink.value,
+  shopAppImage: "",
 
-  localStorage.setItem("fsd_cards", JSON.stringify(data));
-  render(data);
+  profileImage:"",
+  offers:[]
+ };
 
- }catch(err){
-  statusBox.innerHTML = "⚠️ انٹرنیٹ سست ہے<br>دوبارہ کوشش کے لیے یہاں دبائیں";
-  statusBox.onclick = loadFromServer;
+ if(profileImage.files[0])
+  data.profileImage = await resizeImage(profileImage.files[0]);
+
+ if(shopAppImage.files[0])
+  data.shopAppImage = await resizeImage(shopAppImage.files[0]);
+
+ for(let i=1;i<=5;i++){
+  const title=document.getElementById("offerTitle"+i).value;
+  const desc=document.getElementById("offerDesc"+i).value;
+  const img=document.getElementById("offerImg"+i).files[0];
+
+  if(title && desc){
+   let imgData="";
+   if(img) imgData = await resizeImage(img);
+   data.offers.push({title,desc,image:imgData});
+  }
  }
-}
 
-loadFromServer();
+ await db.from("cards").insert({
+  id: id,
+  app_id: APP_ID,
+  data: JSON.stringify(data)
+ });
+
+ /* SAVE LAST CARD */
+ localStorage.setItem("lastCardId", id);
+
+ location.href="card.html?id="+id;
+}
 </script>
 </body>
 </html>
