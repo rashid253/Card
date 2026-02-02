@@ -26,6 +26,11 @@ button{
  background:white;padding:12px;
  border-radius:12px;margin-top:10px
 }
+.multiInput{
+ display:flex;gap:6px;margin-bottom:6px
+}
+.multiInput input{flex:1}
+.multiInput button{padding:8px 12px;background:#2563eb;color:white;border:none;border-radius:8px;cursor:pointer}
 </style>
 
 <script>
@@ -50,13 +55,14 @@ if (
 
 <h2>Business</h2>
 <input id="businessName" placeholder="Business Title">
-
-<!-- UPDATED BUSINESS INFO (GMB STYLE) -->
 <textarea id="aboutBusiness" placeholder="Short description about business"></textarea>
 
+<h3>Working Days & Timing</h3>
 <input id="workingDays" placeholder="Working Days (e.g. Mon – Sat)">
 <input id="timing" placeholder="Business Timing (e.g. 9:00 AM – 9:00 PM)">
 <input id="holidays" placeholder="Holidays / Off Days">
+
+<h3>Services & Payment</h3>
 <input id="services" placeholder="Main Services (comma separated)">
 <input id="payment" placeholder="Payment Methods (Cash, Bank, JazzCash)">
 <input id="established" placeholder="Established Year (optional)">
@@ -89,6 +95,7 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
+// Build offer boxes
 for(let i=1;i<=5;i++){
  offersForm.innerHTML+=`
  <div class="offerBox">
@@ -123,23 +130,16 @@ async function generate(){
 
  const id = Math.random().toString(36).slice(2,8);
 
- /* BUILD BEAUTIFUL BUSINESS INFO */
- const businessInfo =
-`${aboutBusiness.value}
-
-🕒 Timing: ${timing.value}
-📅 Working Days: ${workingDays.value}
-❌ Holidays: ${holidays.value}
-
-🛠 Services:
-${services.value}
-
-💳 Payment Methods:
-${payment.value}
-
-🏢 Established:
-${established.value}
-`;
+ // Build structured business info object
+ const businessInfoFull = {
+  about: aboutBusiness.value.trim(),
+  timing: timing.value.trim(),
+  days: workingDays.value.trim(),
+  holidays: holidays.value.trim(),
+  services: services.value.split(',').map(s=>s.trim()).filter(s=>s),
+  payment: payment.value.split(',').map(p=>p.trim()).filter(p=>p),
+  established: established.value.trim()
+ };
 
  const data={
   name,
@@ -147,13 +147,11 @@ ${established.value}
   email:email.value,
   address:address.value,
   businessName:businessName.value,
-  businessInfo:businessInfo.trim(),
-
+  businessInfoFull, // structured object
   facebook:facebook.value,
   instagram:instagram.value,
   youtube:youtube.value,
   website:website.value,
-
   shopAppLink: shopAppLink.value,
   shopAppImage:"",
   profileImage:"",
