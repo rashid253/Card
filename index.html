@@ -5,65 +5,43 @@
 <title>Faisalabad Business Directory</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2563eb">
+<meta name="theme-color" content="#0f172a">
 
 <style>
 body{margin:0;font-family:system-ui;background:#f1f5f9}
-.wrap{max-width:480px;margin:auto;padding:16px}
-h2{margin-top:20px}
-input,textarea{
- width:100%;padding:12px;margin:6px 0;
- border-radius:10px;border:1px solid #cbd5f5
+.header{background:#0f172a;color:white;padding:14px;text-align:center}
+.list{max-width:480px;margin:auto;padding:12px}
+.item{
+ background:white;border-radius:14px;padding:12px;
+ display:flex;gap:12px;align-items:center;
+ margin-bottom:10px;cursor:pointer;
+ box-shadow:0 4px 10px rgba(0,0,0,.1)
 }
-button{
- width:100%;padding:16px;
- border:none;border-radius:12px;
+.item img{
+ width:60px;height:60px;border-radius:50%;
+ object-fit:cover;background:#e2e8f0
+}
+.name{font-weight:700}
+.addr{font-size:12px;color:#475569}
+.add{
+ position:fixed;right:16px;bottom:16px;
+ width:56px;height:56px;border-radius:50%;
  background:#2563eb;color:white;
- font-size:17px;margin-top:20px
+ display:flex;align-items:center;justify-content:center;
+ font-size:28px
 }
-.offerBox{background:white;padding:12px;border-radius:12px;margin-top:10px}
-.small{font-size:13px;color:#475569}
 </style>
-
-<script>
-if (
- window.matchMedia('(display-mode: standalone)').matches &&
- localStorage.getItem("lastCardId")
-){
- location.replace("card.html?id="+localStorage.getItem("lastCardId"));
-}
-</script>
 </head>
 
 <body>
-<div class="wrap">
 
+<div class="header">
 <h2>Faisalabad Business Directory</h2>
-<p class="small">Register your shop or service in Faisalabad</p>
-
-<h2>Owner Info</h2>
-<input type="file" id="profileImage" accept="image/*">
-<input id="fullName" placeholder="Owner Name">
-<input id="phoneNumber" placeholder="Phone (03xx)">
-<input id="email" placeholder="Email (optional)">
-<input id="address" placeholder="Shop Address, Faisalabad">
-
-<h2>Business</h2>
-<input id="businessName" placeholder="Business Name">
-<textarea id="businessInfo" placeholder="About your business"></textarea>
-
-<h2>Social Links</h2>
-<input id="facebook" placeholder="Facebook link">
-<input id="instagram" placeholder="Instagram link">
-<input id="youtube" placeholder="YouTube link">
-<input id="website" placeholder="Website link">
-
-<h2>Offers</h2>
-<div id="offersForm"></div>
-
-<button onclick="generate()">Add Business</button>
-
+<p style="font-size:13px">Tap business to view profile</p>
 </div>
+
+<div id="list" class="list"></div>
+<div class="add" onclick="location.href='create.html'">+</div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
@@ -76,63 +54,21 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-for(let i=1;i<=3;i++){
- offersForm.innerHTML+=`
- <div class="offerBox">
-  <b>Offer ${i}</b>
-  <input id="offerTitle${i}" placeholder="Title">
-  <textarea id="offerDesc${i}" placeholder="Description"></textarea>
- </div>`;
-}
-
-function resizeImage(file){
- return new Promise(res=>{
-  const img=new Image();
-  img.onload=()=>{
-   const c=document.createElement("canvas");
-   const r=Math.min(1024/img.width,1024/img.height,1);
-   c.width=img.width*r; c.height=img.height*r;
-   c.getContext("2d").drawImage(img,0,0,c.width,c.height);
-   res(c.toDataURL("image/jpeg",0.8));
-  }
-  img.src=URL.createObjectURL(file);
+db.from("cards").select("*").order("id",{ascending:false}).then(r=>{
+ r.data.forEach(row=>{
+  const d = JSON.parse(row.data);
+  const div = document.createElement("div");
+  div.className = "item";
+  div.onclick = () => location.href = "card.html?id=" + row.id;
+  div.innerHTML = `
+    <img src="${d.profileImage||''}">
+    <div>
+      <div class="name">${d.businessName||'Business'}</div>
+      <div class="addr">${d.address||'Faisalabad'}</div>
+    </div>`;
+  list.appendChild(div);
  });
-}
-
-async function generate(){
- if(!fullName.value || !phoneNumber.value){
-  alert("Name & phone required"); return;
- }
-
- const id=Math.random().toString(36).slice(2,8);
- const data={
-  name:fullName.value,
-  phone:phoneNumber.value,
-  email:email.value,
-  address:address.value,
-  businessName:businessName.value,
-  businessInfo:businessInfo.value,
-  facebook:facebook.value,
-  instagram:instagram.value,
-  youtube:youtube.value,
-  website:website.value,
-  profileImage:"",
-  offers:[]
- };
-
- if(profileImage.files[0])
-  data.profileImage=await resizeImage(profileImage.files[0]);
-
- for(let i=1;i<=3;i++){
-  const t=document.getElementById("offerTitle"+i).value;
-  const d=document.getElementById("offerDesc"+i).value;
-  if(t && d) data.offers.push({title:t,desc:d});
- }
-
- await db.from("cards").insert({id,data:JSON.stringify(data)});
- localStorage.setItem("lastCardId",id);
- location.href="card.html?id="+id;
-}
+});
 </script>
 </body>
 </html>
