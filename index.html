@@ -37,7 +37,7 @@ body{margin:0;font-family:system-ui;background:#f1f5f9}
 
 <div class="header">
 <h2>Faisalabad Business Directory</h2>
-<p style="font-size:13px">Tap business to view profile</p>
+<p style="font-size:13px">Tap a business to view details</p>
 </div>
 
 <div id="list" class="list"></div>
@@ -49,23 +49,23 @@ if('serviceWorker' in navigator){
  navigator.serviceWorker.register("sw.js");
 }
 
-const db = supabase.createClient(
+const db=supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
 db.from("cards").select("*").order("id",{ascending:false}).then(r=>{
  r.data.forEach(row=>{
-  const d = JSON.parse(row.data);
-  const div = document.createElement("div");
-  div.className = "item";
-  div.onclick = () => location.href = "card.html?id=" + row.id;
-  div.innerHTML = `
-    <img src="${d.profileImage||''}">
-    <div>
-      <div class="name">${d.businessName||'Business'}</div>
-      <div class="addr">${d.address||'Faisalabad'}</div>
-    </div>`;
+  const d=JSON.parse(row.data);
+  const div=document.createElement("div");
+  div.className="item";
+  div.onclick=()=>location.href="card.html?id="+row.id;
+  div.innerHTML=`
+   <img src="${d.profileImage||''}">
+   <div>
+    <div class="name">${d.businessName||'Business'}</div>
+    <div class="addr">${d.address||'Faisalabad'}</div>
+   </div>`;
   list.appendChild(div);
  });
 });
