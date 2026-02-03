@@ -11,42 +11,117 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
+:root{
+ --primary:#2563eb;
+ --dark:#0f172a;
+ --muted:#475569;
+ --bg:#f1f5f9;
+}
 
-.topbar{display:flex;justify-content:space-around;padding:12px;background:#0f172a}
-.topbar a{color:white;font-size:20px}
+*{box-sizing:border-box}
 
-.profile{position:relative;display:flex;gap:16px;padding:16px;background:#e2e8f0}
+body{
+ margin:0;
+ font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+ background:var(--bg);
+ color:var(--dark);
+ line-height:1.6;
+}
+
+/* TOP BAR */
+.topbar{
+ display:flex;
+ justify-content:space-around;
+ padding:14px 0;
+ background:var(--dark);
+}
+.topbar a{
+ color:#fff;
+ font-size:20px;
+}
+
+/* PROFILE */
+.profile{
+ position:relative;
+ display:flex;
+ gap:16px;
+ padding:18px;
+ background:#e2e8f0;
+ align-items:center;
+}
+
 .profile img{
- width:110px;height:110px;border-radius:50%;
- object-fit:cover;border:3px solid #2563eb;background:white
+ width:110px;
+ height:110px;
+ aspect-ratio:1/1;
+ border-radius:50%;
+ object-fit:cover;
+ object-position:center;
+ border:3px solid var(--primary);
+ background:#fff;
+ flex-shrink:0;
 }
-.info{font-size:14px}
-#name{font-weight:700;font-size:18px;margin-top:6px}
-#business{font-size:16px;font-weight:600;margin-bottom:6px}
 
+.info{
+ font-size:15px;
+}
+
+#name{
+ font-weight:700;
+ font-size:20px;
+ margin-bottom:4px;
+}
+
+#business{
+ font-size:16px;
+ font-weight:600;
+ color:var(--primary);
+ margin-bottom:6px;
+}
+
+#phone,#email,#address{
+ font-size:14px;
+ color:var(--muted);
+}
+
+/* SAVE ICON */
 .saveIcon{
- position:absolute;right:14px;bottom:14px;
- font-size:22px;color:#2563eb;cursor:pointer
+ position:absolute;
+ right:14px;
+ bottom:14px;
+ font-size:22px;
+ color:var(--primary);
+ cursor:pointer;
 }
 
-.about{padding:12px;background:white;font-size:14px}
+/* ABOUT */
+.about{
+ padding:14px 16px;
+ background:#fff;
+ font-size:15px;
+}
 
+/* BUSINESS BOX */
 .businessBox{
- background:white;
- margin:12px;
- padding:12px;
- border-radius:12px;
- font-size:14px
+ background:#fff;
+ margin:14px;
+ padding:14px;
+ border-radius:14px;
+ font-size:14px;
+ box-shadow:0 2px 6px rgba(0,0,0,.05);
 }
-.businessBox h3{margin:0 0 8px 0}
+.businessBox h3{
+ margin:0 0 10px 0;
+ font-size:16px;
+}
 
+/* HOURS */
 .hoursRow{
  display:flex;
  justify-content:space-between;
- font-size:13px;
- padding:4px 0;
- border-bottom:1px dashed #e5e7eb
+ padding:6px 0;
+ font-size:14px;
+ border-bottom:1px dashed #e5e7eb;
 }
 .hoursRow:last-child{border-bottom:none}
 .closed{color:#dc2626;font-weight:600}
@@ -54,60 +129,124 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 
 /* SHOP CTA */
 .ctaBar{
- margin:12px;padding:12px;border-radius:12px;
- background:linear-gradient(90deg,#2563eb,#0f172a);
- color:white;font-size:14px;font-weight:600;
- display:none;align-items:center;gap:10px;
- box-shadow:0 4px 10px rgba(0,0,0,.25);cursor:pointer
+ margin:14px;
+ padding:14px;
+ border-radius:14px;
+ background:linear-gradient(90deg,var(--primary),var(--dark));
+ color:#fff;
+ font-size:15px;
+ font-weight:600;
+ display:none;
+ align-items:center;
+ gap:12px;
+ box-shadow:0 4px 12px rgba(0,0,0,.25);
+ cursor:pointer;
 }
 .ctaBar img{
- width:40px;height:40px;border-radius:8px;
- object-fit:cover;background:white
+ width:42px;
+ height:42px;
+ border-radius:10px;
+ object-fit:cover;
+ background:#fff;
 }
 
-.offers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
+/* OFFERS */
+.offers{
+ display:flex;
+ overflow-x:auto;
+ scroll-snap-type:x mandatory;
+}
 .offer{
- min-width:90%;margin:12px;background:#2563eb;
- border-radius:16px;padding:12px;scroll-snap-align:center;
- color:white;display:flex;gap:12px;align-items:center
+ min-width:90%;
+ margin:14px;
+ background:var(--primary);
+ border-radius:18px;
+ padding:14px;
+ scroll-snap-align:center;
+ color:#fff;
+ display:flex;
+ gap:14px;
+ align-items:center;
 }
 .offer img{
- max-width:120px;max-height:100px;
- object-fit:contain;border-radius:8px;background:white
+ max-width:120px;
+ max-height:100px;
+ object-fit:contain;
+ border-radius:10px;
+ background:#fff;
 }
-.offerContent{flex:1}
+.offerContent h3{
+ margin:0 0 6px 0;
+ font-size:17px;
+}
+.offerContent p{
+ margin:0;
+ font-size:14px;
+}
 
-.dots{text-align:center;margin-bottom:10px}
+/* DOTS */
+.dots{text-align:center;margin-bottom:12px}
 .dots span{
- display:inline-block;width:8px;height:8px;
- border-radius:50%;background:#94a3b8;margin:0 4px
+ display:inline-block;
+ width:8px;
+ height:8px;
+ border-radius:50%;
+ background:#94a3b8;
+ margin:0 4px;
 }
-.dots .active{background:#2563eb;width:18px;border-radius:10px}
+.dots .active{
+ background:var(--primary);
+ width:18px;
+ border-radius:10px;
+}
 
+/* ACTIONS */
 .actions{
- display:flex;justify-content:space-around;
- padding:14px;background:#0f172a
+ display:flex;
+ justify-content:space-around;
+ padding:16px 0;
+ background:var(--dark);
 }
-.actions a{color:white;font-size:22px}
+.actions a{
+ color:#fff;
+ font-size:22px;
+}
 
-/* Floating Social */
+/* FLOATING SOCIAL */
 .socialStack{
- position:fixed;right:14px;bottom:80px;
- width:46px;height:46px;border-radius:50%;
- background:#2563eb;color:white;
- display:flex;align-items:center;justify-content:center;
- font-size:20px;z-index:10;
- box-shadow:0 4px 12px rgba(0,0,0,.3)
+ position:fixed;
+ right:14px;
+ bottom:80px;
+ width:48px;
+ height:48px;
+ border-radius:50%;
+ background:var(--primary);
+ color:#fff;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:20px;
+ z-index:10;
+ box-shadow:0 4px 12px rgba(0,0,0,.3);
 }
 .socialExpand{
- position:absolute;bottom:56px;right:0;
- display:none;flex-direction:column;gap:10px
+ position:absolute;
+ bottom:58px;
+ right:0;
+ display:none;
+ flex-direction:column;
+ gap:10px;
 }
 .socialExpand a{
- width:40px;height:40px;border-radius:50%;
- background:#0f172a;color:white;
- display:flex;align-items:center;justify-content:center;
- font-size:18px
+ width:42px;
+ height:42px;
+ border-radius:50%;
+ background:var(--dark);
+ color:#fff;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:18px;
 }
 </style>
 </head>
@@ -115,36 +254,34 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 <body>
 
 <div class="topbar">
-<a id="share"><i class="fa fa-share"></i></a>
-<a id="map"><i class="fa-solid fa-location-dot"></i></a>
-<a id="sms"><i class="fa fa-comment"></i></a>
+ <a id="share"><i class="fa fa-share"></i></a>
+ <a id="map"><i class="fa-solid fa-location-dot"></i></a>
+ <a id="sms"><i class="fa fa-comment"></i></a>
 </div>
 
 <div class="profile">
-<img id="photo">
-<div class="info">
-<div id="name"></div>
-<div id="business"></div>
-<div id="phone"></div>
-<div id="email"></div>
-<div id="address"></div>
-</div>
-<i class="fa fa-floppy-disk saveIcon" onclick="saveCard()"></i>
+ <img id="photo">
+ <div class="info">
+  <div id="name"></div>
+  <div id="business"></div>
+  <div id="phone"></div>
+  <div id="email"></div>
+  <div id="address"></div>
+ </div>
+ <i class="fa fa-floppy-disk saveIcon" onclick="saveCard()"></i>
 </div>
 
 <div class="about" id="about"></div>
-
 <div class="businessBox" id="businessDetails" style="display:none"></div>
-
 <div id="shopCTA" class="ctaBar"></div>
 
 <div class="offers" id="offers"></div>
 <div class="dots" id="dots"></div>
 
 <div class="actions">
-<a id="call"><i class="fa fa-phone"></i></a>
-<a id="wa"><i class="fab fa-whatsapp"></i></a>
-<a id="mail"><i class="fa fa-envelope"></i></a>
+ <a id="call"><i class="fa fa-phone"></i></a>
+ <a id="wa"><i class="fab fa-whatsapp"></i></a>
+ <a id="mail"><i class="fa fa-envelope"></i></a>
 </div>
 
 <div class="socialStack" onclick="toggleSocial()">
@@ -188,11 +325,9 @@ function loadCard(data){
  map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
  sms.href="sms:"+data.phone;
 
- /* BUSINESS HOURS */
  if(data.business?.hours){
   businessDetails.style.display="block";
   businessDetails.innerHTML="<h3>Business Hours</h3>";
-
   Object.keys(data.business.hours).forEach(day=>{
    const h=data.business.hours[day];
    businessDetails.innerHTML+=`
@@ -203,12 +338,6 @@ function loadCard(data){
      </span>
     </div>`;
   });
-
-  if(data.business.holidays)
-   businessDetails.innerHTML+=`<p class="closed">Closed on public holidays</p>`;
-
-  if(data.business.notes)
-   businessDetails.innerHTML+=`<p>ℹ️ ${data.business.notes}</p>`;
  }
 
  if(data.shopAppLink){
@@ -254,5 +383,6 @@ function toggleSocial(){
   socialExpand.style.display=="flex"?"none":"flex";
 }
 </script>
+
 </body>
 </html>
