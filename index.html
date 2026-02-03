@@ -6,20 +6,47 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2563eb">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-body{margin:0;font-family:system-ui;background:#f1f5f9}
-.wrap{max-width:480px;margin:auto;padding:16px}
-h2{margin-top:20px;margin-bottom:10px}
+body{
+ margin:0;
+ font-family:system-ui,-apple-system,sans-serif;
+ background:#f1f5f9;
+ min-height:100vh;
+}
+.wrap{
+ max-width:480px;
+ margin:auto;
+ padding:20px;
+}
+h2{
+ color:#0f172a;
+ margin-top:24px;
+ margin-bottom:12px;
+ padding-bottom:8px;
+ border-bottom:2px solid #e2e8f0;
+}
+h3{
+ color:#0f172a;
+ margin-top:20px;
+ margin-bottom:10px;
+}
 
 input,textarea,select{
  width:100%;
- padding:12px;
- margin:6px 0;
- border-radius:10px;
- border:1px solid #cbd5f5;
+ padding:12px 16px;
+ margin:8px 0;
+ border-radius:12px;
+ border:2px solid #cbd5e1;
  box-sizing:border-box;
  font-size:15px;
+ font-family:inherit;
+ transition:border-color 0.3s;
+}
+input:focus,textarea:focus,select:focus{
+ outline:none;
+ border-color:#2563eb;
 }
 button{
  width:100%;
@@ -32,132 +59,178 @@ button{
  margin-top:20px;
  cursor:pointer;
  font-weight:600;
+ transition:background 0.3s,transform 0.2s;
+}
+button:hover{
+ background:#1d4ed8;
+ transform:translateY(-2px);
+}
+button:active{
+ transform:translateY(0);
 }
 
 .offerBox{
  background:#fff;
- padding:12px;
+ padding:16px;
  border-radius:12px;
- margin-top:12px;
- border:1px solid #e2e8f0;
+ margin-top:16px;
+ border:2px solid #e2e8f0;
+}
+.offerBox h3{
+ margin-top:0;
+ color:#2563eb;
 }
 
 .badgeGrid{
  display:grid;
  grid-template-columns:1fr 1fr;
- gap:8px;
- margin-top:10px;
+ gap:10px;
+ margin-top:12px;
  font-size:14px;
 }
 .badgeGrid label{
  display:flex;
  gap:8px;
  align-items:center;
+ padding:8px;
+ background:#f8fafc;
+ border-radius:8px;
  cursor:pointer;
+ transition:background 0.3s;
+}
+.badgeGrid label:hover{
+ background:#e2e8f0;
 }
 
 .dayBox{
  background:#fff;
- padding:10px;
- border-radius:10px;
- margin-bottom:8px;
+ padding:14px;
+ border-radius:12px;
+ margin-bottom:10px;
+ border:2px solid #e2e8f0;
  display:grid;
  grid-template-columns:28px 1fr;
- gap:8px;
+ gap:12px;
  align-items:center;
- border:1px solid #e2e8f0;
 }
-.dayCheck{display:flex;justify-content:center}
-.dayContent{display:flex;flex-direction:column;gap:6px}
-.dayRow{display:flex;align-items:center;gap:8px}
-.dayRow label{font-weight:500;min-width:80px}
+.dayCheck{
+ display:flex;
+ justify-content:center;
+}
+.dayContent{
+ display:flex;
+ flex-direction:column;
+ gap:8px;
+}
+.dayRow{
+ display:flex;
+ align-items:center;
+ gap:12px;
+}
+.dayRow label{
+ font-weight:600;
+ min-width:100px;
+ color:#0f172a;
+}
 
 .holidayBox{
  background:#fff;
- padding:12px;
- border-radius:10px;
- margin:8px 0;
- border:1px solid #e2e8f0;
+ padding:16px;
+ border-radius:12px;
+ margin:16px 0;
+ border:2px solid #e2e8f0;
 }
 .holidayHeader{
  display:flex;
  justify-content:space-between;
  align-items:center;
- margin-bottom:8px;
+ margin-bottom:12px;
 }
 .holidayHeader label{
  font-weight:600;
- font-size:15px;
+ font-size:16px;
+ color:#0f172a;
 }
 .addHolidayBtn{
  background:#10b981;
  color:white;
  border:none;
- padding:8px 12px;
- border-radius:8px;
+ padding:10px 16px;
+ border-radius:10px;
  cursor:pointer;
  font-size:14px;
+ font-weight:600;
+ transition:background 0.3s;
+}
+.addHolidayBtn:hover{
+ background:#0ea271;
 }
 .holidayItem{
  display:grid;
  grid-template-columns:1fr 1fr auto;
- gap:8px;
+ gap:10px;
  align-items:center;
- margin:8px 0;
- padding:10px;
+ margin:10px 0;
+ padding:12px;
  background:#f8fafc;
- border-radius:8px;
+ border-radius:10px;
+ border:1px solid #e2e8f0;
 }
 .holidayItem input[type="text"]{
- padding:8px;
+ padding:10px;
  border:1px solid #e2e8f0;
- border-radius:6px;
+ border-radius:8px;
  width:100%;
 }
 .holidayItem input[type="date"]{
- padding:8px;
+ padding:10px;
  border:1px solid #e2e8f0;
- border-radius:6px;
+ border-radius:8px;
  width:100%;
 }
 .removeHoliday{
  background:#ef4444;
  color:white;
  border:none;
- border-radius:6px;
- padding:8px 12px;
+ border-radius:8px;
+ padding:10px 14px;
  cursor:pointer;
- width:36px;
+ min-width:36px;
  height:36px;
  display:flex;
  align-items:center;
  justify-content:center;
+ font-weight:bold;
+ transition:background 0.3s;
+}
+.removeHoliday:hover{
+ background:#dc2626;
 }
 
 .websiteBox{
  background:#fff;
- padding:12px;
- border-radius:10px;
- margin:12px 0;
- border:1px solid #e2e8f0;
+ padding:16px;
+ border-radius:12px;
+ margin:16px 0;
+ border:2px solid #e2e8f0;
 }
 .websiteBox label{
  display:block;
- margin-bottom:6px;
+ margin-bottom:8px;
  font-weight:600;
  color:#0f172a;
 }
 
 .paymentBox{
  background:#fff;
- padding:12px;
- border-radius:10px;
- margin:12px 0;
- border:1px solid #e2e8f0;
+ padding:16px;
+ border-radius:12px;
+ margin:16px 0;
+ border:2px solid #e2e8f0;
 }
 .paymentBox label{
  display:block;
- margin-bottom:6px;
+ margin-bottom:8px;
  font-weight:600;
  color:#0f172a;
 }
@@ -165,46 +238,70 @@ button{
  display:grid;
  grid-template-columns:1fr 1fr;
  gap:12px;
- margin-top:10px;
+ margin-top:12px;
 }
 .paymentOption{
  display:flex;
  align-items:center;
- gap:8px;
- padding:10px;
+ gap:10px;
+ padding:12px;
  background:#f8fafc;
- border-radius:8px;
+ border-radius:10px;
  cursor:pointer;
+ border:2px solid #e2e8f0;
+ transition:border-color 0.3s,background 0.3s;
 }
-.paymentOption input[type="radio"]{
- width:18px;
- height:18px;
+.paymentOption:hover{
+ background:#e2e8f0;
+}
+.paymentOption input[type="radio"]:checked + span{
+ color:#2563eb;
+ font-weight:600;
 }
 
 .jazzcashSection{
  background:#f8fafc;
- padding:12px;
- border-radius:8px;
- margin-top:12px;
+ padding:16px;
+ border-radius:10px;
+ margin-top:16px;
+ border:1px solid #e2e8f0;
 }
 .jazzcashSection label{
  display:block;
- margin-bottom:6px;
+ margin-bottom:8px;
  font-weight:500;
+ color:#0f172a;
 }
 .jazzcashNote{
- font-size:12px;
- color:#666;
- margin-top:6px;
+ font-size:13px;
+ color:#64748b;
+ margin-top:8px;
+ font-style:italic;
 }
 
 .priceInput{
  display:flex;
- gap:8px;
- margin-top:10px;
+ gap:10px;
+ margin-top:12px;
 }
 .priceInput input{
  flex:1;
+}
+
+.fileInput{
+ position:relative;
+ margin:10px 0;
+}
+.fileInput input[type="file"]{
+ width:100%;
+ padding:12px;
+ border:2px dashed #cbd5e1;
+ border-radius:12px;
+ background:#f8fafc;
+ cursor:pointer;
+}
+.fileInput input[type="file"]:hover{
+ border-color:#2563eb;
 }
 
 #loading{
@@ -213,146 +310,199 @@ button{
  left:0;
  right:0;
  bottom:0;
- background:rgba(255,255,255,0.9);
+ background:rgba(255,255,255,0.95);
  display:none;
  justify-content:center;
  align-items:center;
  z-index:1000;
  font-size:18px;
  color:#2563eb;
+ flex-direction:column;
+ gap:20px;
+}
+.spinner{
+ width:40px;
+ height:40px;
+ border:4px solid #e2e8f0;
+ border-top-color:#2563eb;
+ border-radius:50%;
+ animation:spin 1s linear infinite;
+}
+@keyframes spin{
+ to{transform:rotate(360deg)}
+}
+
+.header{
+ text-align:center;
+ padding:20px 0;
+}
+.header h1{
+ color:#2563eb;
+ margin:0;
+ font-size:28px;
+}
+.header p{
+ color:#64748b;
+ margin:5px 0 20px 0;
+}
+
+.required::after{
+ content:" *";
+ color:#ef4444;
 }
 </style>
-
-<script>
-// Redirect if PWA and has saved card
-if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standalone)){
- const last=localStorage.getItem("lastCardId");
- if(last) window.location.replace("card.html?id="+last);
-}
-</script>
 </head>
 
 <body>
-<div id="loading">Creating your digital card...</div>
+<div id="loading">
+ <div class="spinner"></div>
+ <div>Creating your digital card...</div>
+</div>
 
 <div class="wrap">
-
-<h2>👤 Profile</h2>
-<input type="file" id="profileImage" accept="image/*">
-<input id="fullName" placeholder="Full Name *" required>
-<input id="phoneNumber" placeholder="Phone *" type="tel" required>
-<input id="email" placeholder="Email" type="email">
-<input id="address" placeholder="Address">
-
-<h2>🏢 Business</h2>
-<input id="businessName" placeholder="Business Title">
-<textarea id="businessAbout" placeholder="About your business" rows="4"></textarea>
-
-<div class="websiteBox">
- <label>🌐 Website / E-commerce Link</label>
- <input type="url" id="website" placeholder="https://example.com">
-</div>
-
-<h3>🕐 Business Hours</h3>
-<div id="daysContainer"></div>
-
-<div class="holidayBox">
- <div class="holidayHeader">
-  <label>📅 Special Holidays / Closed Days</label>
-  <button type="button" class="addHolidayBtn" onclick="addHoliday()">+ Add</button>
+ <div class="header">
+  <h1><i class="fas fa-id-card"></i> Digital Card Creator</h1>
+  <p>Create your professional digital business card</p>
  </div>
- <div id="holidaysContainer">
-  <!-- Holidays will be added here -->
- </div>
-</div>
 
-<div class="paymentBox">
- <label>💳 Payment Methods</label>
- <div class="paymentGrid">
-  <label class="paymentOption">
-   <input type="radio" name="payment" value="whatsapp" checked>
-   <span>WhatsApp Order</span>
-  </label>
-  <label class="paymentOption">
-   <input type="radio" name="payment" value="jazzcash">
-   <span>JazzCash</span>
-  </label>
+ <h2><i class="fas fa-user"></i> Profile Information</h2>
+ <div class="fileInput">
+  <input type="file" id="profileImage" accept="image/*" title="Upload profile picture">
  </div>
- 
- <div class="jazzcashSection" id="jazzcashSection" style="display:none;">
-  <label>📱 JazzCash QR Code / Account Number</label>
-  <input type="file" id="jazzcashQr" accept="image/*">
-  <input type="text" id="jazzcashNumber" placeholder="JazzCash Account Number">
-  <div class="jazzcashNote">Upload QR code image or enter account number</div>
+ <input id="fullName" placeholder="Full Name *" class="required" required>
+ <input id="phoneNumber" placeholder="Phone Number *" type="tel" class="required" required>
+ <input id="email" placeholder="Email Address" type="email">
+ <input id="address" placeholder="Business Address">
+
+ <h2><i class="fas fa-briefcase"></i> Business Information</h2>
+ <input id="businessName" placeholder="Business Title">
+ <textarea id="businessAbout" placeholder="About your business..." rows="4"></textarea>
+
+ <div class="websiteBox">
+  <label><i class="fas fa-globe"></i> Website / E-commerce Link</label>
+  <input type="url" id="website" placeholder="https://yourwebsite.com">
  </div>
-</div>
 
-<h2>🎁 Offers</h2>
-<div id="offersForm"></div>
-<button type="button" onclick="addOffer()" style="background:#8b5cf6;margin-top:12px">➕ Add Offer</button>
+ <h3><i class="fas fa-clock"></i> Business Hours</h3>
+ <div id="daysContainer"></div>
 
-<button type="button" onclick="generateCard()" style="background:#2563eb;margin-top:24px">✨ Generate Digital Card</button>
+ <div class="holidayBox">
+  <div class="holidayHeader">
+   <label><i class="fas fa-calendar-times"></i> Special Holidays / Closed Days</label>
+   <button type="button" class="addHolidayBtn" onclick="addHoliday()">+ Add Holiday</button>
+  </div>
+  <div id="holidaysContainer">
+   <!-- Holidays will be added here -->
+  </div>
+ </div>
+
+ <div class="paymentBox">
+  <label><i class="fas fa-credit-card"></i> Payment Methods</label>
+  <div class="paymentGrid">
+   <label class="paymentOption">
+    <input type="radio" name="payment" value="whatsapp" checked>
+    <span><i class="fab fa-whatsapp"></i> WhatsApp Order</span>
+   </label>
+   <label class="paymentOption">
+    <input type="radio" name="payment" value="jazzcash">
+    <span><i class="fas fa-wallet"></i> JazzCash</span>
+   </label>
+  </div>
+  
+  <div class="jazzcashSection" id="jazzcashSection" style="display:none;">
+   <label><i class="fas fa-qrcode"></i> JazzCash QR Code</label>
+   <div class="fileInput">
+    <input type="file" id="jazzcashQr" accept="image/*">
+   </div>
+   <label style="margin-top:16px;"><i class="fas fa-phone"></i> Account Number</label>
+   <input type="text" id="jazzcashNumber" placeholder="03XX-XXXXXXX">
+   <div class="jazzcashNote">Upload QR code image or enter your JazzCash account number</div>
+  </div>
+ </div>
+
+ <h2><i class="fas fa-gift"></i> Special Offers</h2>
+ <div id="offersForm"></div>
+ <button type="button" onclick="addOffer()" style="background:#8b5cf6;">
+  <i class="fas fa-plus"></i> Add New Offer
+ </button>
+
+ <button type="button" onclick="generateCard()" style="background:#2563eb;margin-top:30px;">
+  <i class="fas fa-magic"></i> Generate Digital Card
+ </button>
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-// ============ YOUR SUPABASE CREDENTIALS ============
+// ============ SUPABASE CONFIGURATION ============
 const SUPABASE_URL = 'https://dfvnefbxgayxqgjjgtrr.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE';
-// ===================================================
+// =================================================
 
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Initialize Supabase
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Initialize business hours
-const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-days.forEach(d => {
- const dayBox = document.createElement("div");
- dayBox.className = "dayBox";
- dayBox.innerHTML = `
-  <div class="dayCheck">
-   <input type="checkbox" checked class="dayOpen">
-  </div>
-  <div class="dayContent">
-   <div class="dayRow">
-    <label style="min-width:100px">${d}</label>
-    <select class="dayStatus" style="width:100px;padding:6px;">
-     <option value="open">Open</option>
-     <option value="closed">Closed</option>
-    </select>
-   </div>
-   <div class="dayRow">
-    <input type="time" class="dayStart" value="09:00" style="width:100px;">
-    <span>to</span>
-    <input type="time" class="dayEnd" value="17:00" style="width:100px;">
-   </div>
-  </div>
- `;
- document.getElementById('daysContainer').appendChild(dayBox);
- 
- // Add event listener for status change
- const statusSelect = dayBox.querySelector('.dayStatus');
- const timeInputs = dayBox.querySelectorAll('.dayStart, .dayEnd');
- const openCheckbox = dayBox.querySelector('.dayOpen');
- 
- statusSelect.addEventListener('change', function() {
-  if(this.value === 'closed') {
-   timeInputs.forEach(input => input.disabled = true);
-   openCheckbox.checked = false;
-  } else {
-   timeInputs.forEach(input => input.disabled = false);
-   openCheckbox.checked = true;
-  }
- });
-});
-
-// Payment method toggle
+// Initialize business hours on page load
 document.addEventListener('DOMContentLoaded', function() {
+ const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+ const daysContainer = document.getElementById('daysContainer');
+ 
+ days.forEach(day => {
+  const dayBox = document.createElement("div");
+  dayBox.className = "dayBox";
+  dayBox.innerHTML = `
+   <div class="dayCheck">
+    <input type="checkbox" checked class="dayOpen">
+   </div>
+   <div class="dayContent">
+    <div class="dayRow">
+     <label>${day}</label>
+     <select class="dayStatus" style="width:120px;padding:8px;">
+      <option value="open">Open</option>
+      <option value="closed">Closed</option>
+     </select>
+    </div>
+    <div class="dayRow">
+     <input type="time" class="dayStart" value="09:00" style="width:120px;">
+     <span>to</span>
+     <input type="time" class="dayEnd" value="17:00" style="width:120px;">
+    </div>
+   </div>
+  `;
+  
+  daysContainer.appendChild(dayBox);
+  
+  // Add event listener for status change
+  const statusSelect = dayBox.querySelector('.dayStatus');
+  const timeInputs = dayBox.querySelectorAll('.dayStart, .dayEnd');
+  const openCheckbox = dayBox.querySelector('.dayOpen');
+  
+  statusSelect.addEventListener('change', function() {
+   if(this.value === 'closed') {
+    timeInputs.forEach(input => {
+     input.disabled = true;
+     input.style.opacity = '0.5';
+    });
+    openCheckbox.checked = false;
+   } else {
+    timeInputs.forEach(input => {
+     input.disabled = false;
+     input.style.opacity = '1';
+    });
+    openCheckbox.checked = true;
+   }
+  });
+ });
+
+ // Payment method toggle
  document.querySelectorAll('input[name="payment"]').forEach(radio => {
   radio.addEventListener('change', function() {
    document.getElementById('jazzcashSection').style.display = 
     this.value === 'jazzcash' ? 'block' : 'none';
   });
  });
+
+ // Add initial offer
+ addOffer();
 });
 
 // Holiday management
@@ -379,15 +529,18 @@ function addOffer(){
  const box = document.createElement("div");
  box.className = "offerBox";
  box.innerHTML = `
-  <h3 style="margin-top:0">🎁 Offer ${offerCount}</h3>
-  <input type="file" class="offerImg" accept="image/*">
-  <input class="offerTitle" placeholder="Title (e.g., 20% Off)">
-  <textarea class="offerDesc" placeholder="Description" rows="3"></textarea>
+  <h3>🎁 Offer ${offerCount}</h3>
+  <div class="fileInput">
+   <input type="file" class="offerImg" accept="image/*" title="Upload offer image">
+  </div>
+  <input class="offerTitle" placeholder="Offer Title (e.g., 20% Discount)">
+  <textarea class="offerDesc" placeholder="Offer Description" rows="3"></textarea>
   <div class="priceInput">
-   <input type="text" class="offerPrice" placeholder="Price (e.g., Rs 999)" style="flex:2">
+   <input type="text" class="offerPrice" placeholder="Current Price (e.g., Rs 999)" style="flex:2">
    <input type="text" class="offerOriginalPrice" placeholder="Original Price (e.g., Rs 1499)" style="flex:2">
   </div>
   
+  <label style="margin-top:12px;display:block;font-weight:600;">Tags:</label>
   <div class="badgeGrid">
    <label><input type="checkbox" value="🔥 Hot Deal"> Hot Deal</label>
    <label><input type="checkbox" value="⭐ Best Seller"> Best Seller</label>
@@ -400,87 +553,116 @@ function addOffer(){
  document.getElementById('offersForm').appendChild(box);
 }
 
-// Add one offer by default
-addOffer();
-
-// Image compression
-function compressImage(file) {
+// Image compression function
+function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.7) {
  return new Promise((resolve, reject) => {
+  if (!file.type.match('image.*')) {
+   reject(new Error('File is not an image'));
+   return;
+  }
+  
   const reader = new FileReader();
-  reader.readAsDataURL(file);
-  reader.onload = function(event) {
+  reader.onload = function(e) {
    const img = new Image();
-   img.src = event.target.result;
    img.onload = function() {
     const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    
-    // Set maximum dimensions
-    const MAX_WIDTH = 800;
-    const MAX_HEIGHT = 800;
-    
     let width = img.width;
     let height = img.height;
     
     // Calculate new dimensions
     if (width > height) {
-      if (width > MAX_WIDTH) {
-        height *= MAX_WIDTH / width;
-        width = MAX_WIDTH;
-      }
+     if (width > maxWidth) {
+      height = Math.round((height * maxWidth) / width);
+      width = maxWidth;
+     }
     } else {
-      if (height > MAX_HEIGHT) {
-        width *= MAX_HEIGHT / height;
-        height = MAX_HEIGHT;
-      }
+     if (height > maxHeight) {
+      width = Math.round((width * maxHeight) / height);
+      height = maxHeight;
+     }
     }
     
     canvas.width = width;
     canvas.height = height;
     
-    // Draw and compress image
+    const ctx = canvas.getContext('2d');
     ctx.drawImage(img, 0, 0, width, height);
     
     // Convert to data URL with compression
-    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+    const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
     resolve(compressedDataUrl);
    };
    img.onerror = reject;
+   img.src = e.target.result;
   };
   reader.onerror = reject;
+  reader.readAsDataURL(file);
  });
 }
 
-// Generate card
+// Generate card function
 async function generateCard() {
+ // Validate required fields
  const fullName = document.getElementById('fullName').value.trim();
  const phoneNumber = document.getElementById('phoneNumber').value.trim();
  
  if(!fullName || !phoneNumber){
-  alert("Name & Phone number are required");
+  alert("❌ Name and Phone number are required fields!");
+  document.getElementById('fullName').focus();
+  return;
+ }
+
+ // Validate phone number format
+ const phoneRegex = /^[\+]?[0-9]{10,15}$/;
+ const cleanedPhone = phoneNumber.replace(/\D/g, '');
+ if(!phoneRegex.test(cleanedPhone)){
+  alert("❌ Please enter a valid phone number!");
+  document.getElementById('phoneNumber').focus();
   return;
  }
 
  // Show loading
- document.getElementById('loading').style.display = 'flex';
+ const loadingEl = document.getElementById('loading');
+ loadingEl.style.display = 'flex';
 
  try {
+  // Generate unique ID
   const id = crypto.randomUUID();
+
+  // Collect profile data
+  const profileImageFile = document.getElementById('profileImage').files[0];
+  let profileImageData = '';
+  if(profileImageFile){
+   try {
+    profileImageData = await compressImage(profileImageFile);
+   } catch(err) {
+    console.warn("Profile image compression failed:", err);
+    // Use original file as fallback
+    const reader = new FileReader();
+    profileImageData = await new Promise((resolve) => {
+     reader.onload = () => resolve(reader.result);
+     reader.readAsDataURL(profileImageFile);
+    });
+   }
+  }
 
   // Collect business hours
   const businessHoursArray = [];
   const dayBoxes = document.querySelectorAll(".dayBox");
-  dayBoxes.forEach(box => {
+  const dayNames = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+  
+  dayBoxes.forEach((box, index) => {
    const open = box.querySelector(".dayOpen").checked;
    const status = box.querySelector(".dayStatus").value;
    const start = box.querySelector(".dayStart").value;
    const end = box.querySelector(".dayEnd").value;
    
    businessHoursArray.push({
+    day: dayNames[index] || `Day ${index + 1}`,
     open: open && status === 'open',
     status: status,
-    start: (open && status === 'open') ? start : "",
-    end: (open && status === 'open') ? end : ""
+    start: (open && status === 'open') ? start || "09:00" : "",
+    end: (open && status === 'open') ? end || "17:00" : ""
    });
   });
 
@@ -488,12 +670,12 @@ async function generateCard() {
   const holidaysArray = [];
   const holidayItems = document.querySelectorAll(".holidayItem");
   holidayItems.forEach(item => {
-   const name = item.querySelector(".holidayName").value;
+   const name = item.querySelector(".holidayName").value.trim();
    const date = item.querySelector(".holidayDate").value;
-   if(name && name.trim()) {
+   if(name) {
     holidaysArray.push({
-     name: name.trim(),
-     date: date || ""
+     name: name,
+     date: date || "Date not specified"
     });
    }
   });
@@ -503,17 +685,22 @@ async function generateCard() {
   let jazzcashData = null;
   
   if(paymentMethod === 'jazzcash') {
-   const jazzcashNumber = document.getElementById('jazzcashNumber').value;
+   const jazzcashNumber = document.getElementById('jazzcashNumber').value.trim();
    const jazzcashQrFile = document.getElementById('jazzcashQr').files[0];
+   let jazzcashQrData = '';
+   
+   if(jazzcashQrFile){
+    try {
+     jazzcashQrData = await compressImage(jazzcashQrFile, 400, 400, 0.8);
+    } catch(err) {
+     console.warn("JazzCash QR compression failed:", err);
+    }
+   }
    
    jazzcashData = {
     number: jazzcashNumber || '',
-    qr: ''
+    qr: jazzcashQrData
    };
-   
-   if(jazzcashQrFile) {
-    jazzcashData.qr = await compressImage(jazzcashQrFile);
-   }
   }
 
   // Collect offers
@@ -522,20 +709,21 @@ async function generateCard() {
   
   for(let i = 0; i < offerBoxes.length; i++){
    const box = offerBoxes[i];
-   const title = box.querySelector(".offerTitle").value;
-   const desc = box.querySelector(".offerDesc").value;
-   const price = box.querySelector(".offerPrice").value;
-   const originalPrice = box.querySelector(".offerOriginalPrice").value;
+   const title = box.querySelector(".offerTitle").value.trim();
+   const desc = box.querySelector(".offerDesc").value.trim();
+   const price = box.querySelector(".offerPrice").value.trim();
+   const originalPrice = box.querySelector(".offerOriginalPrice").value.trim();
    const file = box.querySelector(".offerImg").files[0];
    
-   if(title || desc || file || price){
+   // Only add if there's any data
+   if(title || desc || price || originalPrice || file){
     const badges = Array.from(box.querySelectorAll("input[type=checkbox]:checked"))
      .map(cb => cb.value);
     
     const offerData = {
-     title: title || "",
+     title: title || "Special Offer",
      desc: desc || "",
-     price: price || "",
+     price: price || "Contact for price",
      originalPrice: originalPrice || "",
      badges: badges,
      image: "",
@@ -543,17 +731,21 @@ async function generateCard() {
     };
     
     if(file){
-     offerData.image = await compressImage(file);
+     try {
+      offerData.image = await compressImage(file);
+     } catch(err) {
+      console.warn("Offer image compression failed:", err);
+     }
     }
     
     offersArray.push(offerData);
    }
   }
 
-  // Prepare data
+  // Prepare complete card data
   const cardData = {
    name: fullName,
-   phone: phoneNumber,
+   phone: cleanedPhone,
    email: document.getElementById('email').value.trim(),
    address: document.getElementById('address').value.trim(),
    website: document.getElementById('website').value.trim(),
@@ -563,19 +755,15 @@ async function generateCard() {
    holidays: holidaysArray,
    paymentMethod: paymentMethod,
    jazzcash: jazzcashData,
-   offers: offersArray
+   offers: offersArray,
+   profileImage: profileImageData,
+   createdAt: new Date().toISOString()
   };
 
-  // Add profile image if exists
-  const profileImageFile = document.getElementById('profileImage').files[0];
-  if(profileImageFile){
-   cardData.profileImage = await compressImage(profileImageFile);
-  }
-
-  console.log("Card data to save:", cardData);
+  console.log("Prepared card data:", cardData);
 
   // Save to Supabase
-  const { data, error } = await db
+  const { data, error } = await supabase
     .from('cards')
     .insert([
       {
@@ -589,21 +777,31 @@ async function generateCard() {
 
   if(error){
     console.error("Supabase insert error:", error);
-    alert("Error creating card: " + error.message);
-    document.getElementById('loading').style.display = 'none';
-    return;
+    throw new Error(`Database error: ${error.message}`);
   }
 
   console.log("Card saved successfully:", data);
 
-  // Store ID and redirect
+  // Store ID in localStorage and redirect
   localStorage.setItem("lastCardId", id);
-  window.location.href = "card.html?id=" + id;
+  window.location.href = `card.html?id=${id}`;
 
  } catch (error) {
   console.error("Generate card error:", error);
-  alert("Error: " + error.message);
-  document.getElementById('loading').style.display = 'none';
+  loadingEl.style.display = 'none';
+  
+  // Show user-friendly error message
+  let errorMessage = error.message;
+  if(error.message.includes('network') || error.message.includes('fetch')) {
+   errorMessage = "Network error. Please check your internet connection and try again.";
+  } else if(error.message.includes('Database error')) {
+   errorMessage = "Database error. Please check your Supabase configuration.";
+  }
+  
+  alert(`❌ Error creating card: ${errorMessage}`);
+  
+  // Log to console for debugging
+  console.error("Full error details:", error);
  }
 }
 </script>
