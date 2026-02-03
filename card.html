@@ -17,29 +17,9 @@ body{
  background:#f1f5f9;color:#0f172a
 }
 
-/* SHOP / WEBSITE BANNER */
-.banner{
- display:none;
- margin:12px;
- border-radius:12px;
- overflow:hidden;
- position:relative;
-}
-.banner img{
- width:100%;
- border-radius:12px;
- object-fit:cover;
-}
-
-/* CTA BADGES */
-.ctaBadges{
- display:flex;gap:8px;flex-wrap:wrap;margin:8px 12px;
-}
-.ctaBadge{
- background:#2563eb;color:#fff;
- font-weight:600;padding:6px 10px;border-radius:8px;
- font-size:13px;
-}
+/* TOP BAR */
+.topbar{display:flex;justify-content:space-around;padding:12px;background:#0f172a}
+.topbar a{color:#fff;font-size:20px}
 
 /* PROFILE */
 .profile{
@@ -81,60 +61,72 @@ body{
 .open{color:#16a34a;font-weight:600}
 .closed{color:#dc2626;font-weight:600}
 
-/* OFFERS */
+/* CTA */
+.ctaBar{
+ margin:12px;padding:14px;border-radius:14px;
+ background:linear-gradient(90deg,#2563eb,#0f172a);
+ color:#fff;font-weight:600;display:none;
+ align-items:center;gap:12px;cursor:pointer
+}
+.ctaBar img{width:42px;height:42px;border-radius:10px;background:#fff}
+
+/* ================= OFFERS (UPDATED) ================= */
+
 .offers{
  display:flex;
+ gap:12px;
+ padding:12px;
  overflow-x:auto;
- scroll-snap-type:x mandatory;
- padding-bottom:20px;
- margin-top:8px;
 }
+
 .offer{
- min-width:250px;
- margin:12px;
- background:#fff;
- border-radius:18px;
+ min-width:160px;
+ height:200px;
+ border-radius:16px;
  overflow:hidden;
- scroll-snap-align:center;
- box-shadow:0 6px 18px rgba(0,0,0,.12);
- flex-shrink:0;
- display:flex;
- flex-direction:column;
+ background:#e5e7eb;
+ position:relative;
+ cursor:pointer;
 }
+
 .offer img{
  width:100%;
- height:150px;
+ height:100%;
  object-fit:cover;
- display:block;
 }
-.offerContent{
- padding:10px;
+
+/* BADGES */
+.offerBadges{
+ position:absolute;
+ top:10px;
+ left:10px;
  display:flex;
  flex-direction:column;
- flex:1;
+ gap:6px;
 }
-.offerContent h3{margin:0 0 6px;font-size:15px}
-.offerContent p{font-size:14px;opacity:.85;flex:1}
 
-/* OFFER BUTTON */
-.offerBtn{
- margin-top:10px;
- background:#2563eb;color:#fff;
- padding:10px;
- border-radius:10px;
+.offerBadges span{
+ background:#ef4444;
+ color:#fff;
+ font-size:12px;
  font-weight:700;
- text-align:center;
- cursor:pointer;
- font-size:14px;
+ padding:4px 8px;
+ border-radius:8px;
 }
 
-/* DOTS */
-.dots{text-align:center;margin-bottom:12px}
-.dots span{
- display:inline-block;width:8px;height:8px;
- border-radius:50%;background:#94a3b8;margin:0 4px
+/* HERO VIEW */
+#offerHero{
+ display:none;
+ position:fixed;
+ inset:0;
+ background:#000;
+ z-index:999;
 }
-.dots .active{background:#2563eb;width:18px;border-radius:10px}
+#offerHero img{
+ width:100%;
+ height:100%;
+ object-fit:contain;
+}
 
 /* ACTIONS */
 .actions{display:flex;justify-content:space-around;padding:16px;background:#0f172a}
@@ -162,13 +154,11 @@ body{
 
 <body>
 
-<!-- SHOP / WEBSITE BANNER -->
-<div class="banner" id="shopBanner">
- <img id="shopBannerImg">
+<div class="topbar">
+ <a id="share"><i class="fa fa-share"></i></a>
+ <a id="map"><i class="fa-solid fa-location-dot"></i></a>
+ <a id="sms"><i class="fa fa-comment"></i></a>
 </div>
-
-<!-- CTA BADGES -->
-<div class="ctaBadges" id="ctaBadges"></div>
 
 <div class="profile">
  <img id="photo">
@@ -188,14 +178,12 @@ body{
 </div>
 
 <div class="businessBox" id="businessDetails" style="display:none"></div>
+<div id="shopCTA" class="ctaBar"></div>
 
-<!-- OFFERS -->
 <div class="offers" id="offers"></div>
-<div class="dots" id="dots"></div>
 
 <div class="actions">
  <a id="call"><i class="fa fa-phone"></i></a>
- <a id="wa"><i class="fab fa-whatsapp"></i></a>
  <a id="mail"><i class="fa fa-envelope"></i></a>
 </div>
 
@@ -209,6 +197,11 @@ body{
  </div>
 </div>
 
+<!-- HERO OFFER VIEW -->
+<div id="offerHero">
+ <img id="heroImg">
+</div>
+
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
 const db=supabase.createClient(
@@ -216,20 +209,17 @@ const db=supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-let id=new URLSearchParams(location.search).get("id")||localStorage.getItem("lastCardId");
+let id=new URLSearchParams(location.search).get("id")
+ || localStorage.getItem("lastCardId");
 if(!id){document.body.innerHTML="<h2>No card found</h2>";throw"";}
 
 let aboutExpanded=false;
-let sellerPhone="";
 
 db.from("cards").select("*").eq("id",id).single().then(r=>{
  if(r.data) loadCard(JSON.parse(r.data.data));
 });
 
 function loadCard(data){
- sellerPhone=(data.phone||"").replace(/\D/g,"");
-
- // Profile
  photo.src=data.profileImage||"";
  name.textContent=data.name||"";
  business.textContent=data.businessName||"";
@@ -241,15 +231,16 @@ function loadCard(data){
  if(aboutText.textContent.length<120)aboutMore.style.display="none";
 
  call.href="tel:"+data.phone;
- wa.href="https://wa.me/"+sellerPhone;
  mail.href="mailto:"+data.email;
+ map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
+ sms.href="sms:"+data.phone;
 
  fb.href=data.facebook||"#";
  ig.href=data.instagram||"#";
  yt.href=data.youtube||"#";
  web.href=data.website||"#";
 
- // Business Hours
+ /* BUSINESS HOURS */
  if(data.business?.hours){
   businessDetails.style.display="block";
   businessDetails.innerHTML="<h3>Business Hours</h3>";
@@ -265,47 +256,36 @@ function loadCard(data){
   });
  }
 
- // Shop Banner
- if(data.website){
-  shopBanner.style.display="block";
-  shopBannerImg.src=data.websiteImage || "https://via.placeholder.com/480x120?text=Shop+Website";
+ /* SHOP CTA */
+ if(data.shopAppLink){
+  shopCTA.style.display="flex";
+  shopCTA.onclick=()=>location.href=data.shopAppLink;
+  shopCTA.innerHTML=`
+   ${data.shopAppImage?`<img src="${data.shopAppImage}">`:""}
+   <div>Shop on our official app</div>`;
  }
 
- // CTA Badges (from index.html checkboxes)
- ctaBadges.innerHTML="";
- if(data.cta?.length){
-  data.cta.forEach(badge=>{
-   const span=document.createElement("span");
-   span.className="ctaBadge";
-   span.textContent=badge;
-   ctaBadges.appendChild(span);
-  });
- }
-
- // Offers
- offers.innerHTML="";dots.innerHTML="";
- data.offers?.forEach((o,i)=>{
-  const waMsg=`Hello, I’m interested in this offer:\n🔥 ${o.title}\nPlease share details.\n${location.href}`;
-  const waLink=`https://wa.me/${sellerPhone}?text=${encodeURIComponent(waMsg)}`;
-
+ /* OFFERS (IMAGE ONLY) */
+ offers.innerHTML="";
+ data.offers?.forEach(o=>{
   const d=document.createElement("div");
   d.className="offer";
   d.innerHTML=`
-   ${o.image?`<img src="${o.image}">`:""}
-   <div class="offerContent">
-    <h3>🔥 ${o.title}</h3>
-    <p>${o.desc}</p>
-    <div class="offerBtn" onclick="window.open('${waLink}','_blank')">
-     Get Offer on WhatsApp
-    </div>
-   </div>`;
+   <img src="${o.image}">
+   <div class="offerBadges">
+    ${data.badges?.map(b=>b?`<span>${b}</span>`:"").join("")}
+   </div>
+  `;
+  d.onclick=()=>openOfferHero(o.image);
   offers.appendChild(d);
-
-  const dot=document.createElement("span");
-  if(i==0)dot.classList.add("active");
-  dots.appendChild(dot);
  });
 }
+
+function openOfferHero(img){
+ heroImg.src=img;
+ offerHero.style.display="block";
+}
+offerHero.onclick=()=>offerHero.style.display="none";
 
 function toggleAbout(){
  aboutExpanded=!aboutExpanded;
@@ -325,7 +305,8 @@ END:VCARD`;
 }
 
 function toggleSocial(){
- socialExpand.style.display=socialExpand.style.display=="flex"?"none":"flex";
+ socialExpand.style.display =
+  socialExpand.style.display=="flex"?"none":"flex";
 }
 </script>
 </body>
