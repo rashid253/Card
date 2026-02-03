@@ -78,10 +78,8 @@ body{
  display:flex;gap:14px;scroll-snap-align:center
 }
 .offer img{
- max-width:180px; /* updated */
- max-height:150px; /* updated */
- object-fit:cover; /* updated */
- background:#fff;border-radius:10px
+ max-width:180px; max-height:150px; /* bigger attractive */
+ object-fit:cover; background:#fff;border-radius:10px
 }
 .offerContent{flex:1}
 .offerContent h3{margin:0 0 6px}
@@ -149,19 +147,19 @@ body{
 </div>
 
 <div class="profile">
- <img id="photo">
+ <img id="photo" src="">
  <div class="info">
-  <div id="name"></div>
-  <div id="business"></div>
-  <div id="phone"></div>
-  <div id="email"></div>
-  <div id="address"></div>
+  <div id="name">Your Name</div>
+  <div id="business">Business Name</div>
+  <div id="phone">📞 0000000000</div>
+  <div id="email">✉️ example@mail.com</div>
+  <div id="address">📍 Address</div>
  </div>
  <i class="fa fa-floppy-disk saveIcon" onclick="saveCard()"></i>
 </div>
 
 <div class="about" id="aboutBox" onclick="toggleAbout()">
- <div class="aboutText" id="aboutText"></div>
+ <div class="aboutText" id="aboutText">Business description...</div>
  <span class="aboutMore" id="aboutMore">See more</span>
 </div>
 
@@ -180,10 +178,10 @@ body{
 <div class="socialStack" onclick="toggleSocial()">
  <i class="fab fa-facebook-f"></i>
  <div class="socialExpand" id="socialExpand">
-  <a id="fb"><i class="fab fa-facebook-f"></i></a>
-  <a id="ig"><i class="fab fa-instagram"></i></a>
-  <a id="yt"><i class="fab fa-youtube"></i></a>
-  <a id="web"><i id="web"><i class="fa fa-globe"></i></a>
+  <a id="fb" href="#"><i class="fab fa-facebook-f"></i></a>
+  <a id="ig" href="#"><i class="fab fa-instagram"></i></a>
+  <a id="yt" href="#"><i class="fab fa-youtube"></i></a>
+  <a id="web" href="#"><i class="fa fa-globe"></i></a>
  </div>
 </div>
 
@@ -218,11 +216,11 @@ function loadCard(data){
  aboutText.textContent=data.business?.about||"";
  if(aboutText.textContent.length<120)aboutMore.style.display="none";
 
- call.href="tel:"+data.phone;
- wa.href="https://wa.me/"+sellerPhone;
- mail.href="mailto:"+data.email;
- map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
- sms.href="sms:"+data.phone;
+ call.href=data.phone?"tel:"+data.phone:"#";
+ wa.href=sellerPhone?"https://wa.me/"+sellerPhone:"#";
+ mail.href=data.email?"mailto:"+data.email:"#";
+ map.href=data.address?"https://maps.google.com/?q="+encodeURIComponent(data.address):"#";
+ sms.href=data.phone?"sms:"+data.phone:"#";
 
  fb.href=data.facebook||"#";
  ig.href=data.instagram||"#";
