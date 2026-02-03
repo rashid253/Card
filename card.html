@@ -70,7 +70,7 @@ body{
 }
 .ctaBar img{width:42px;height:42px;border-radius:10px;background:#fff}
 
-/* ================= OFFERS (UPDATED) ================= */
+/* ================= OFFERS ================= */
 
 .offers{
  display:flex;
@@ -114,18 +114,39 @@ body{
  border-radius:8px;
 }
 
-/* HERO VIEW */
-#offerHero{
- display:none;
+/* ===== OFFER DETAIL PANEL ===== */
+#offerPanel{
  position:fixed;
  inset:0;
- background:#000;
+ background:#fff;
  z-index:999;
+ display:none;
+ overflow-y:auto;
 }
-#offerHero img{
+
+#offerPanel img{
  width:100%;
- height:100%;
- object-fit:contain;
+ max-height:280px;
+ object-fit:cover;
+}
+
+.panelContent{
+ padding:16px;
+}
+
+.panelContent h2{
+ margin:0 0 10px;
+}
+
+.panelCTA{
+ margin-top:16px;
+ background:#16a34a;
+ color:#fff;
+ padding:16px;
+ text-align:center;
+ border-radius:12px;
+ font-weight:700;
+ cursor:pointer;
 }
 
 /* ACTIONS */
@@ -197,9 +218,14 @@ body{
  </div>
 </div>
 
-<!-- HERO OFFER VIEW -->
-<div id="offerHero">
- <img id="heroImg">
+<!-- OFFER DETAIL PANEL -->
+<div id="offerPanel">
+ <img id="panelImg">
+ <div class="panelContent">
+  <h2 id="panelTitle"></h2>
+  <p id="panelDesc"></p>
+  <div class="panelCTA" id="panelCTA">Inquire on WhatsApp</div>
+ </div>
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -213,6 +239,7 @@ let id=new URLSearchParams(location.search).get("id")
  || localStorage.getItem("lastCardId");
 if(!id){document.body.innerHTML="<h2>No card found</h2>";throw"";}
 
+let sellerPhone="";
 let aboutExpanded=false;
 
 db.from("cards").select("*").eq("id",id).single().then(r=>{
@@ -220,6 +247,8 @@ db.from("cards").select("*").eq("id",id).single().then(r=>{
 });
 
 function loadCard(data){
+ sellerPhone=(data.phone||"").replace(/\D/g,"");
+
  photo.src=data.profileImage||"";
  name.textContent=data.name||"";
  business.textContent=data.businessName||"";
@@ -265,7 +294,7 @@ function loadCard(data){
    <div>Shop on our official app</div>`;
  }
 
- /* OFFERS (IMAGE ONLY) */
+ /* OFFERS */
  offers.innerHTML="";
  data.offers?.forEach(o=>{
   const d=document.createElement("div");
@@ -276,16 +305,35 @@ function loadCard(data){
     ${data.badges?.map(b=>b?`<span>${b}</span>`:"").join("")}
    </div>
   `;
-  d.onclick=()=>openOfferHero(o.image);
+  d.onclick=()=>openOffer(o);
   offers.appendChild(d);
  });
 }
 
-function openOfferHero(img){
- heroImg.src=img;
- offerHero.style.display="block";
+function openOffer(o){
+ panelImg.src=o.image;
+ panelTitle.textContent=o.title;
+ panelDesc.textContent=o.desc;
+
+ const msg=`Hello, I'm interested in this offer:
+
+🔥 ${o.title}
+
+${o.desc}
+
+Card link:
+${location.href}`;
+
+ panelCTA.onclick=()=>{
+  location.href=`https://wa.me/${sellerPhone}?text=${encodeURIComponent(msg)}`;
+ };
+
+ offerPanel.style.display="block";
 }
-offerHero.onclick=()=>offerHero.style.display="none";
+
+offerPanel.onclick=e=>{
+ if(e.target.id==="offerPanel") offerPanel.style.display="none";
+};
 
 function toggleAbout(){
  aboutExpanded=!aboutExpanded;
