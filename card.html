@@ -2,249 +2,217 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Create Digital Card</title>
+<title>My Digital Card</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2563eb">
+<meta name="theme-color" content="#0f172a">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-body{margin:0;font-family:system-ui;background:#f1f5f9}
-.wrap{max-width:480px;margin:auto;padding:16px}
-h2{margin-top:20px}
-
-input,textarea{
- width:100%;padding:12px;margin:6px 0;
- border-radius:10px;border:1px solid #cbd5f5
+:root{--fs:15.5px;--lh:1.75}
+*{box-sizing:border-box}
+body{
+ margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+ font-size:var(--fs);line-height:var(--lh);background:#f1f5f9;
+ color:#0f172a;padding-bottom:160px;
 }
 
-button{
- width:100%;padding:16px;
- border:none;border-radius:12px;
- background:#2563eb;color:white;
- font-size:17px;margin-top:20px
+/* TOP CTA & BADGES */
+.topCTA{
+ background:#2563eb;color:#fff;text-align:center;padding:12px;border-radius:12px;margin:12px;
+ font-weight:600;font-size:16px;position:relative;
+}
+.badge{
+ display:inline-block;background:#dc2626;color:#fff;padding:4px 8px;border-radius:8px;
+ font-size:13px;margin:0 4px;font-weight:700;
+}
+.countdown{display:block;font-size:14px;margin-top:6px;color:#fff}
+
+/* PROFILE */
+.profile{display:flex;gap:16px;padding:16px;background:#e2e8f0;align-items:flex-start;position:relative}
+.profile img{width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid #2563eb;background:#fff}
+.info{flex:1;display:flex;flex-direction:column;gap:4px}
+#name{font-size:17px;font-weight:700}
+#business{font-weight:600}
+#phone,#email,#address{font-size:14px;opacity:.85}
+
+/* ABOUT */
+.about{background:#fff;padding:14px 16px;cursor:pointer;margin:12px 0}
+.aboutText{overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.about.expanded .aboutText{-webkit-line-clamp:unset}
+.aboutMore{color:#2563eb;font-weight:600;margin-top:6px;display:inline-block}
+
+/* OFFERS */
+.offers{display:flex;flex-direction:column;gap:14px;margin:12px}
+.offer{
+ background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.12);cursor:pointer
+}
+.offer img{width:100%;height:180px;object-fit:cover;background:#e5e7eb;display:block}
+.offerContent{padding:12px}
+.offerContent h3{margin:0 0 6px;font-size:16px}
+.offerBtn{margin-top:10px;background:#2563eb;color:#fff;padding:10px;border-radius:10px;text-align:center;font-weight:700;cursor:pointer}
+
+/* MODAL */
+.modalOverlay{
+ display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+ background:rgba(0,0,0,.6);align-items:center;justify-content:center;
+ z-index:9999
+}
+.modal{
+ background:#fff;padding:16px;border-radius:12px;max-width:360px;width:90%;
+ text-align:center;position:relative
+}
+.modalClose{
+ position:absolute;top:8px;right:8px;font-size:18px;cursor:pointer;color:#2563eb
 }
 
-.offerBox{
- background:white;padding:12px;
- border-radius:12px;margin-top:10px
-}
-
-/* ===== BUSINESS HOURS (LHS TICK COLUMN) ===== */
-.dayBox{
- background:#fff;
- padding:10px;
- border-radius:10px;
- margin-bottom:8px;
- display:grid;
- grid-template-columns: 28px 1fr;
- gap:8px;
- align-items:center
-}
-
-.dayCheck{
- display:flex;
- justify-content:center
-}
-
-.dayContent{
- display:flex;
- flex-direction:column;
- gap:6px
-}
-
-.dayRow{
- display:flex;
- align-items:center;
- gap:8px
-}
-
-.dayRow label{
- font-weight:500
-}
-
-.small{
- font-size:13px;
- color:#475569
-}
+/* ACTIONS */
+.actions{display:flex;justify-content:space-around;padding:16px;background:#0f172a;position:fixed;bottom:0;left:0;right:0}
+.actions a{color:#fff;font-size:22px}
 </style>
-
-<script>
-if (
- (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)
-) {
- const last = localStorage.getItem("lastCardId");
- if (last) window.location.replace("card.html?id=" + last);
-}
-</script>
 </head>
 
 <body>
-<div class="wrap">
 
-<h2>Profile</h2>
-<input type="file" id="profileImage" accept="image/*">
-<input id="fullName" placeholder="Full Name">
-<input id="phoneNumber" placeholder="Phone">
-<input id="email" placeholder="Email">
-<input id="address" placeholder="Address">
+<!-- TOP CTA -->
+<div class="topCTA" id="topCTA">
+ <span id="ctaText"></span>
+ <span class="badge" id="badge1"></span>
+ <span class="badge" id="badge2"></span>
+ <span class="countdown" id="countdown"></span>
+</div>
 
-<h2>Business</h2>
-<input id="businessName" placeholder="Business Title">
-<textarea id="businessAbout" placeholder="About your business"></textarea>
+<!-- PROFILE -->
+<div class="profile">
+ <img id="photo">
+ <div class="info">
+  <div id="name"></div>
+  <div id="business"></div>
+  <div id="phone"></div>
+  <div id="email"></div>
+  <div id="address"></div>
+ </div>
+</div>
 
-<h3>Business Hours</h3>
-<div id="daysContainer"></div>
+<div class="about" id="aboutBox" onclick="toggleAbout()">
+ <div class="aboutText" id="aboutText"></div>
+ <span class="aboutMore" id="aboutMore">See more</span>
+</div>
 
-<label class="small">
- <input type="checkbox" id="holidayEnabled">
- Closed on Public Holidays
-</label>
+<div class="offers" id="offers"></div>
 
-<textarea id="businessNotes"
- placeholder="Special notes (e.g. Friday break 1–2 PM)"></textarea>
+<div class="actions">
+ <a id="call"><i class="fa fa-phone"></i></a>
+ <a id="wa"><i class="fab fa-whatsapp"></i></a>
+ <a id="mail"><i class="fa fa-envelope"></i></a>
+</div>
 
-<h2>Social Media</h2>
-<input id="facebook" placeholder="Facebook link">
-<input id="instagram" placeholder="Instagram link">
-<input id="youtube" placeholder="YouTube link">
-<input id="website" placeholder="Website link">
-
-<h2>Shop App (Optional)</h2>
-<input id="shopAppLink" placeholder="Play Store app link">
-<input type="file" id="shopAppImage" accept="image/*">
-
-<h2>Offers</h2>
-<div id="offersForm"></div>
-
-<button type="button" onclick="generate()">Generate Card</button>
-
+<!-- OFFER MODAL -->
+<div class="modalOverlay" id="modalOverlay">
+ <div class="modal">
+  <span class="modalClose" onclick="closeModal()">×</span>
+  <h3 id="modalTitle"></h3>
+  <p id="modalDesc"></p>
+  <div class="offerBtn" id="modalWA">Contact on WhatsApp</div>
+ </div>
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-if('serviceWorker' in navigator){
- navigator.serviceWorker.register("sw.js", { scope: "./" });
-}
-
 const db = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-/* BUSINESS DAYS UI — LHS TICK */
-const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-days.forEach(d=>{
- daysContainer.innerHTML += `
- <div class="dayBox">
-  <div class="dayCheck">
-   <input type="checkbox" id="open_${d}" checked>
-  </div>
+let id = new URLSearchParams(location.search).get("id") || localStorage.getItem("lastCardId");
+if(!id){document.body.innerHTML="<h2>No card found</h2>";throw"";}
 
-  <div class="dayContent">
-   <div class="dayRow">
-    <label>${d}</label>
-   </div>
-   <div class="dayRow">
-    <input type="time" id="from_${d}">
-    <input type="time" id="to_${d}">
-   </div>
-  </div>
- </div>`;
+let sellerPhone="";
+db.from("cards").select("*").eq("id",id).single().then(r=>{
+ if(r.data) loadCard(JSON.parse(r.data.data));
 });
 
-/* OFFERS */
-for(let i=1;i<=5;i++){
- offersForm.innerHTML+=`
- <div class="offerBox">
-  <b>Offer ${i}</b>
-  <input type="file" id="offerImg${i}">
-  <input id="offerTitle${i}" placeholder="Title">
-  <textarea id="offerDesc${i}" placeholder="Description"></textarea>
- </div>`;
-}
-
-function resizeImage(file){
- return new Promise(res=>{
-  const img=new Image();
-  img.onload=()=>{
-   const c=document.createElement("canvas");
-   const max=1024;
-   let w=img.width,h=img.height;
-   const r=Math.min(max/w,max/h,1);
-   c.width=w*r; c.height=h*r;
-   c.getContext("2d").drawImage(img,0,0,c.width,c.height);
-   res(c.toDataURL("image/jpeg",0.8));
-  }
-  img.src=URL.createObjectURL(file);
- });
-}
-
-async function generate(){
-
- if(!fullName.value || !phoneNumber.value){
-  alert("Name & Phone required"); return;
- }
-
- const id = Math.random().toString(36).slice(2,8);
-
- const businessHours = {};
- days.forEach(d=>{
-  businessHours[d] = {
-   open: document.getElementById("open_"+d).checked,
-   from: document.getElementById("from_"+d).value,
-   to: document.getElementById("to_"+d).value
-  };
- });
-
- const data={
-  name:fullName.value,
-  phone:phoneNumber.value,
-  email:email.value,
-  address:address.value,
-
-  businessName:businessName.value,
-  business:{
-   about: businessAbout.value,
-   hours: businessHours,
-   holidays: holidayEnabled.checked,
-   notes: businessNotes.value
-  },
-
-  facebook:facebook.value,
-  instagram:instagram.value,
-  youtube:youtube.value,
-  website:website.value,
-
-  shopAppLink: shopAppLink.value,
-  shopAppImage:"",
-  profileImage:"",
-  offers:[]
+/* IMAGE COMPRESS */
+function compressImage(src,cb){
+ const img=new Image();
+ img.crossOrigin="anonymous";
+ img.onload=()=>{
+  const c=document.createElement("canvas");
+  const max=900;
+  const s=Math.min(1,max/img.width);
+  c.width=img.width*s;c.height=img.height*s;
+  c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+  cb(c.toDataURL("image/jpeg",0.7));
  };
+ img.src=src;
+}
 
- if(profileImage.files[0])
-  data.profileImage = await resizeImage(profileImage.files[0]);
+/* LOAD CARD */
+function loadCard(data){
+ sellerPhone = (data.phone||"").replace(/\D/g,"");
 
- if(shopAppImage.files[0])
-  data.shopAppImage = await resizeImage(shopAppImage.files[0]);
+ if(data.profileImage) compressImage(data.profileImage,i=>photo.src=i);
 
- for(let i=1;i<=5;i++){
-  const t=document.getElementById("offerTitle"+i).value;
-  const d=document.getElementById("offerDesc"+i).value;
-  const f=document.getElementById("offerImg"+i).files[0];
-  if(t && d){
-   data.offers.push({
-    title:t,
-    desc:d,
-    image: f ? await resizeImage(f) : ""
-   });
-  }
- }
+ name.textContent=data.name||"";
+ business.textContent=data.businessName||"";
+ phone.textContent="📞 "+(data.phone||"");
+ email.textContent="✉️ "+(data.email||"");
+ address.textContent="📍 "+(data.address||"");
 
- await db.from("cards").insert({ id, data: JSON.stringify(data) });
+ call.href="tel:"+data.phone;
+ wa.href="https://wa.me/"+sellerPhone;
+ mail.href="mailto:"+data.email;
 
- localStorage.setItem("lastCardId", id);
- location.href="card.html?id="+id;
+ aboutText.textContent = data.business?.about||"";
+ if(aboutText.textContent.length<120) aboutMore.style.display="none";
+
+ /* TOP CTA & BADGES */
+ ctaText.textContent = data.topCTAText || "";
+ badge1.textContent = data.badges?.[0] || "";
+ badge2.textContent = data.badges?.[1] || "";
+ countdown.textContent = data.countdown || "";
+
+ /* OFFERS */
+ offers.innerHTML="";
+ data.offers?.forEach(o=>{
+  const div=document.createElement("div");
+  div.className="offer";
+  div.innerHTML=`
+   ${o.image?`<img src="${o.image}">`:''}
+   <div class="offerContent">
+    <h3>${o.title}</h3>
+    <div class="offerBtn" onclick="openModal('${o.title}','${o.desc}','${sellerPhone}')">Get Offer</div>
+   </div>`;
+  offers.appendChild(div);
+ });
+}
+
+/* ABOUT TOGGLE */
+function toggleAbout(){
+ aboutBox.classList.toggle("expanded");
+ aboutMore.textContent=aboutBox.classList.contains("expanded")?"See less":"See more";
+}
+
+/* MODAL FUNCTIONS */
+function openModal(title,desc,phone){
+ document.getElementById("modalTitle").textContent = title;
+ document.getElementById("modalDesc").textContent = desc;
+ document.getElementById("modalWA").onclick = ()=>window.open(`https://wa.me/${phone}?text=${encodeURIComponent(title + " - " + desc)}`,'_blank');
+ document.getElementById("modalOverlay").style.display="flex";
+}
+function closeModal(){document.getElementById("modalOverlay").style.display="none";}
+
+/* COUNTDOWN DYNAMIC (if needed) */
+if(countdown.textContent){
+ setInterval(()=>{
+   let parts = countdown.textContent.match(/(\d+)/g);
+   if(parts && parts.length>=2){
+     let hours = parseInt(parts[0]), minutes = parseInt(parts[1]);
+     if(minutes>0) minutes--;
+     else if(hours>0){ hours--; minutes=59; } 
+     countdown.textContent = `Ends in ${hours}h ${minutes}m`;
+   }
+ },60000);
 }
 </script>
 </body>
