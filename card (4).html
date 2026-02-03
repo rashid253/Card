@@ -75,15 +75,11 @@ body{
 .offer{
  min-width:90%;margin:12px;background:#2563eb;
  border-radius:18px;padding:14px;color:#fff;
- display:flex;gap:16px;scroll-snap-align:center
+ display:flex;gap:14px;scroll-snap-align:center
 }
 .offer img{
- max-width:220px;
- max-height:180px;
- aspect-ratio:4/3;
- object-fit:cover;
- background:#fff;
- border-radius:12px
+ max-width:120px;max-height:100px;
+ object-fit:contain;background:#fff;border-radius:10px
 }
 .offerContent{flex:1}
 .offerContent h3{margin:0 0 6px}
@@ -91,20 +87,14 @@ body{
 /* OFFER BUTTON */
 .offerBtn{
  margin-top:10px;
- background:#fff;
- color:#2563eb;
- padding:10px 18px;
- border-radius:999px;
+ background:#fff;color:#2563eb;
+ padding:11px 14px;
+ border-radius:10px;
  font-weight:700;
- display:inline-block;
+ text-align:center;
  cursor:pointer;
- transition:all .25s ease;
- text-align:center
-}
-.offerBtn:hover{
- background:#2563eb;
- color:#fff;
- transform:scale(1.05)
+ white-space:normal;
+ word-break:break-word
 }
 
 /* DOTS */
@@ -148,19 +138,19 @@ body{
 </div>
 
 <div class="profile">
- <img id="photo" src="">
+ <img id="photo">
  <div class="info">
-  <div id="name">Your Name</div>
-  <div id="business">Business Name</div>
-  <div id="phone">📞 0000000000</div>
-  <div id="email">✉️ example@mail.com</div>
-  <div id="address">📍 Address</div>
+  <div id="name"></div>
+  <div id="business"></div>
+  <div id="phone"></div>
+  <div id="email"></div>
+  <div id="address"></div>
  </div>
  <i class="fa fa-floppy-disk saveIcon" onclick="saveCard()"></i>
 </div>
 
 <div class="about" id="aboutBox" onclick="toggleAbout()">
- <div class="aboutText" id="aboutText">Business description...</div>
+ <div class="aboutText" id="aboutText"></div>
  <span class="aboutMore" id="aboutMore">See more</span>
 </div>
 
@@ -205,7 +195,7 @@ db.from("cards").select("*").eq("id",id).single().then(r=>{
 });
 
 function loadCard(data){
- sellerPhone=(data.phone||"").replace(/\D/g,"");
+ sellerPhone = (data.phone||"").replace(/\D/g,"");
 
  photo.src=data.profileImage||"";
  name.textContent=data.name||"";
@@ -217,17 +207,18 @@ function loadCard(data){
  aboutText.textContent=data.business?.about||"";
  if(aboutText.textContent.length<120)aboutMore.style.display="none";
 
- call.href=data.phone?"tel:"+data.phone:"#";
- wa.href=sellerPhone?"https://wa.me/"+sellerPhone:"#";
- mail.href=data.email?"mailto:"+data.email:"#";
- map.href=data.address?"https://maps.google.com/?q="+encodeURIComponent(data.address):"#";
- sms.href=data.phone?"sms:"+data.phone:"#";
+ call.href="tel:"+data.phone;
+ wa.href="https://wa.me/"+sellerPhone;
+ mail.href="mailto:"+data.email;
+ map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
+ sms.href="sms:"+data.phone;
 
  fb.href=data.facebook||"#";
  ig.href=data.instagram||"#";
  yt.href=data.youtube||"#";
  web.href=data.website||"#";
 
+ /* BUSINESS HOURS */
  if(data.business?.hours){
   businessDetails.style.display="block";
   businessDetails.innerHTML="<h3>Business Hours</h3>";
@@ -243,6 +234,7 @@ function loadCard(data){
   });
  }
 
+ /* SHOP CTA */
  if(data.shopAppLink){
   shopCTA.style.display="flex";
   shopCTA.onclick=()=>location.href=data.shopAppLink;
@@ -251,16 +243,20 @@ function loadCard(data){
    <div>Shop on our official app</div>`;
  }
 
+ /* OFFERS + DIRECT SELLER WHATSAPP */
  offers.innerHTML="";dots.innerHTML="";
  data.offers?.forEach((o,i)=>{
-  const waLink=`https://wa.me/${sellerPhone}?text=${encodeURIComponent(
+  const msg =
 `Hello, I’m interested in this offer:
 
 🔥 ${o.title}
 
-Please share complete details.
+Please share complete product details, price & availability.
 
-${location.href}`)}`;
+Card link:
+${location.href}`;
+
+  const waLink = `https://wa.me/${sellerPhone}?text=${encodeURIComponent(msg)}`;
 
   const d=document.createElement("div");
   d.className="offer";
@@ -270,7 +266,7 @@ ${location.href}`)}`;
     <h3>🔥 ${o.title}</h3>
     <p>${o.desc}</p>
     <div class="offerBtn" onclick="window.open('${waLink}','_blank')">
-     Grab Offer
+     Inquire on WhatsApp
     </div>
    </div>`;
   offers.appendChild(d);
@@ -286,6 +282,7 @@ function toggleAbout(){
  aboutBox.classList.toggle("expanded",aboutExpanded);
  aboutMore.textContent=aboutExpanded?"See less":"See more";
 }
+
 function saveCard(){
  const vcf=`BEGIN:VCARD
 VERSION:3.0
@@ -296,6 +293,7 @@ END:VCARD`;
  a.href=URL.createObjectURL(new Blob([vcf],{type:"text/vcard"}));
  a.download="contact.vcf";a.click();
 }
+
 function toggleSocial(){
  socialExpand.style.display =
   socialExpand.style.display=="flex"?"none":"flex";
