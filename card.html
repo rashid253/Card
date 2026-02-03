@@ -34,6 +34,15 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 .panelCTA{margin-top:16px;background:#16a34a;color:#fff;padding:16px;text-align:center;border-radius:12px;font-weight:700;cursor:pointer}
 .actions{display:flex;justify-content:space-around;padding:16px;background:#0f172a}
 .actions a{color:#fff;font-size:22px}
+
+/* Business Hours Styles */
+.hoursContainer{background:#fff;padding:16px;margin-top:8px;}
+.hoursContainer h3{margin:0 0 12px 0;font-size:16px;}
+.dayRow{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f1f1;}
+.dayRow:last-child{border-bottom:none;}
+.dayName{font-weight:500;}
+.dayTime{color:#666;}
+.closed{color:#ef4444;}
 </style>
 </head>
 
@@ -59,6 +68,12 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 <div class="about" id="aboutBox" onclick="toggleAbout()">
  <div class="aboutText" id="aboutText"></div>
  <span class="aboutMore" id="aboutMore">See more</span>
+</div>
+
+<!-- Business Hours Section -->
+<div class="hoursContainer" id="hoursContainer" style="display:none;">
+ <h3>🕐 Business Hours</h3>
+ <div id="businessHours"></div>
 </div>
 
 <div class="offers" id="offers"></div>
@@ -88,7 +103,8 @@ phoneEl=$("phone"), emailEl=$("email"), addressEl=$("address"),
 aboutText=$("aboutText"), aboutMore=$("aboutMore"), aboutBox=$("aboutBox"),
 offers=$("offers"), call=$("call"), mail=$("mail"), map=$("map"), sms=$("sms"),
 panelImg=$("panelImg"), panelTitle=$("panelTitle"), panelDesc=$("panelDesc"),
-panelCTA=$("panelCTA"), offerPanel=$("offerPanel");
+panelCTA=$("panelCTA"), offerPanel=$("offerPanel"),
+hoursContainer=$("hoursContainer"), businessHours=$("businessHours");
 
 const supa = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
@@ -103,42 +119,95 @@ if(error || !data){document.body.innerHTML="<h2>Card not found</h2>";return;}
 
 const card=JSON.parse(data.data);
 
+// Populate basic info
 photo.src=card.profileImage||"";
 nameEl.textContent=card.name||"";
 businessEl.textContent=card.businessName||"";
 phoneEl.textContent="📞 "+(card.phone||"");
 emailEl.textContent="✉️ "+(card.email||"");
 addressEl.textContent="📍 "+(card.address||"");
-aboutText.textContent=card.business?.about||"";
+aboutText.textContent=card.business?.about||card.about||"";
 
 call.href="tel:"+card.phone;
 mail.href="mailto:"+card.email;
 map.href="https://maps.google.com/?q="+encodeURIComponent(card.address);
 sms.href="sms:"+card.phone;
 
+// Populate business hours if they exist
+if(card.businessHours && Array.isArray(card.businessHours) && card.businessHours.length > 0){
+ hoursContainer.style.display = "block";
+ const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+ 
+ card.businessHours.forEach((day, index) => {
+   if(day && day.open !== undefined) {
+     const dayDiv = document.createElement("div");
+     dayDiv.className = "dayRow";
+     
+     if(!day.open || !day.start || !day.end) {
+       dayDiv.innerHTML = `
+         <span class="dayName">${days[index]}</span>
+         <span class="dayTime closed">Closed</span>
+       `;
+     } else {
+       dayDiv.innerHTML = `
+         <span class="dayName">${days[index]}</span>
+         <span class="dayTime">${day.start} - ${day.end}</span>
+       `;
+     }
+     
+     businessHours.appendChild(dayDiv);
+   }
+ });
+}
+
+// Populate offers
 offers.innerHTML="";
 (card.offers||[]).forEach(o=>{
+ if(!o.title && !o.image) return;
+ 
  const d=document.createElement("div");
  d.className="offer";
- d.innerHTML=`<img src="${o.image}">
+ d.innerHTML=`<img src="${o.image||''}" onerror="this.style.display='none'">
  <div class="offerBadges">${(o.badges||[]).map(b=>`<span>${b}</span>`).join("")}</div>`;
+ 
+ if(o.title) {
+   const titleOverlay = document.createElement("div");
+   titleOverlay.style.cssText = "position:absolute;bottom:10px;left:10px;right:10px;background:rgba(0,0,0,0.7);color:white;padding:6px;border-radius:8px;font-size:12px;text-align:center;";
+   titleOverlay.textContent = o.title;
+   d.appendChild(titleOverlay);
+ }
+ 
  d.onclick=()=>{
-  panelImg.src=o.image;
-  panelTitle.textContent=o.title;
-  panelDesc.textContent=o.desc;
-  panelCTA.onclick=()=>location.href=`https://wa.me/${card.phone.replace(/\D/g,"")}`;
+  panelImg.src=o.image||'';
+  panelTitle.textContent=o.title||'';
+  panelDesc.textContent=o.desc||'';
+  panelCTA.onclick=()=>location.href=`https://wa.me/${card.phone.replace(/\D/g,"")}?text=Hi! I'm interested in your offer: ${encodeURIComponent(o.title||'')}`;
   offerPanel.style.display="block";
  };
  offers.appendChild(d);
 });
+
+// If no offers, hide the offers section
+if((card.offers||[]).length === 0) {
+ offers.style.display = "none";
+}
 
 window.toggleAbout=()=>{
  aboutBox.classList.toggle("expanded");
  aboutMore.textContent=aboutBox.classList.contains("expanded")?"See less":"See more";
 };
 
-window.saveCard=()=>alert("Contact saved");
+window.saveCard=()=>{
+ alert("Contact saved to your device");
+ // You could implement actual contact saving here using Web Share API or similar
+};
 
+// Close offer panel when clicking outside
+offerPanel.onclick = (e) => {
+ if(e.target === offerPanel) {
+  offerPanel.style.display = "none";
+ }
+};
 });
 </script>
 </body>
