@@ -29,14 +29,15 @@ button{
  font-size:17px;
  margin-top:20px
 }
+
 .offerBox{
- background:white;
+ background:#fff;
  padding:12px;
  border-radius:12px;
  margin-top:12px
 }
 
-/* BADGES – 2 COLUMN SIMPLE TEXT */
+/* BADGES – SIMPLE 2 COLUMNS */
 .badgeGrid{
  display:grid;
  grid-template-columns:1fr 1fr;
@@ -65,7 +66,6 @@ button{
 .dayContent{display:flex;flex-direction:column;gap:6px}
 .dayRow{display:flex;align-items:center;gap:8px}
 .dayRow label{font-weight:500}
-.small{font-size:13px;color:#475569}
 </style>
 
 <script>
@@ -95,9 +95,9 @@ if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standa
 
 <h2>Offers</h2>
 <div id="offersForm"></div>
-<button onclick="addOffer()">➕ Add Offer</button>
+<button type="button" onclick="addOffer()">➕ Add Offer</button>
 
-<button onclick="generate()">Generate Card</button>
+<button type="button" onclick="generate()">Generate Card</button>
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -129,7 +129,6 @@ function addOffer(){
  offerCount++;
  const box=document.createElement("div");
  box.className="offerBox";
- box.dataset.index=offerCount;
 
  box.innerHTML=`
   <b>Offer ${offerCount}</b>
@@ -149,7 +148,7 @@ function addOffer(){
  offersForm.appendChild(box);
 }
 
-/* IMAGE COMPRESS */
+/* IMAGE COMPRESS (NO CROP) */
 function resizeImage(file){
  return new Promise(res=>{
   const img=new Image();
@@ -166,30 +165,35 @@ function resizeImage(file){
  });
 }
 
-/* GENERATE */
+/* ✅ GENERATE – FIXED, ORDER SAFE */
 async function generate(){
  if(!fullName.value||!phoneNumber.value){
-  alert("Name & Phone required");return;
+  alert("Name & Phone required"); return;
  }
 
  const id=Math.random().toString(36).slice(2,8);
  const offers=[];
 
- document.querySelectorAll(".offerBox").forEach(async box=>{
+ const boxes=[...document.querySelectorAll(".offerBox")];
+
+ for(let i=0;i<boxes.length;i++){
+  const box=boxes[i];
   const t=box.querySelector(".offerTitle").value;
   const d=box.querySelector(".offerDesc").value;
   const f=box.querySelector(".offerImg").files[0];
-  if(t&&d){
+
+  if(t && d){
    const badges=[...box.querySelectorAll("input[type=checkbox]:checked")]
     .map(b=>b.value);
+
    offers.push({
     title:t,
     desc:d,
     badges:badges,
-    image:f?await resizeImage(f):""
+    image:f ? await resizeImage(f) : ""
    });
   }
- });
+ }
 
  const data={
   name:fullName.value,
