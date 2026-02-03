@@ -14,7 +14,7 @@
 body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a;font-size:var(--fs);line-height:var(--lh)}
 .topbar{display:flex;justify-content:space-around;padding:12px;background:#0f172a}
 .topbar a{color:#fff;font-size:20px}
-.profile{display:flex;gap:16px;padding:16px;background:#e2e8f0;align-items:flex-start;position:relative}
+.profile{display:flex;gap:16px;padding:16px;background:#e2e8f0;position:relative}
 .profile img{width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid #2563eb;background:#fff}
 .info{flex:1;display:flex;flex-direction:column;gap:4px}
 #name{font-size:17px;font-weight:700}
@@ -25,37 +25,25 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a;font-size:v
 .aboutText{overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 .about.expanded .aboutText{-webkit-line-clamp:unset}
 .aboutMore{color:#2563eb;font-weight:600;margin-top:6px;display:inline-block}
-.businessBox{background:#fff;margin:12px;padding:14px;border-radius:14px}
-.businessBox h3{margin:0 0 10px;font-size:16px}
-.hoursRow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #e5e7eb}
-.hoursRow:last-child{border-bottom:none}
-.open{color:#16a34a;font-weight:600}
-.closed{color:#dc2626;font-weight:600}
-.ctaBar{margin:12px;padding:14px;border-radius:14px;background:linear-gradient(90deg,#2563eb,#0f172a);color:#fff;font-weight:600;display:none;align-items:center;gap:12px;cursor:pointer}
-.ctaBar img{width:42px;height:42px;border-radius:10px;background:#fff}
 .offers{display:flex;gap:12px;padding:12px;overflow-x:auto}
-.offer{min-width:160px;height:200px;border-radius:16px;overflow:hidden;background:#fff;position:relative;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.offer{min-width:160px;height:200px;border-radius:16px;background:#fff;position:relative;cursor:pointer}
 .offer img{width:100%;height:100%;object-fit:contain}
 .offerBadges{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:6px}
 .offerBadges span{background:#ef4444;color:#fff;font-size:12px;font-weight:700;padding:4px 8px;border-radius:8px}
-#offerPanel{position:fixed;inset:0;background:#fff;z-index:999;display:none;overflow-y:auto}
+#offerPanel{position:fixed;inset:0;background:#fff;z-index:999;display:none}
 #offerPanel img{width:100%;max-height:280px;object-fit:contain}
 .panelContent{padding:16px}
 .panelCTA{margin-top:16px;background:#16a34a;color:#fff;padding:16px;text-align:center;border-radius:12px;font-weight:700;cursor:pointer}
 .actions{display:flex;justify-content:space-around;padding:16px;background:#0f172a}
 .actions a{color:#fff;font-size:22px}
-.socialStack{position:fixed;right:14px;bottom:80px;width:48px;height:48px;border-radius:50%;background:#2563eb;color:#fff;display:flex;align-items:center;justify-content:center}
-.socialExpand{position:absolute;bottom:58px;right:0;display:none;flex-direction:column;gap:10px}
-.socialExpand a{width:42px;height:42px;border-radius:50%;background:#0f172a;color:#fff;display:flex;align-items:center;justify-content:center}
 </style>
 </head>
 
 <body>
 
 <div class="topbar">
- <a id="share" href="#"><i class="fa fa-share"></i></a>
- <a id="map" href="#"><i class="fa-solid fa-location-dot"></i></a>
- <a id="sms" href="#"><i class="fa fa-comment"></i></a>
+ <a id="map"><i class="fa-solid fa-location-dot"></i></a>
+ <a id="sms"><i class="fa fa-comment"></i></a>
 </div>
 
 <div class="profile">
@@ -75,8 +63,6 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a;font-size:v
  <span class="aboutMore" id="aboutMore">See more</span>
 </div>
 
-<div class="businessBox" id="businessDetails" style="display:none"></div>
-<div id="shopCTA" class="ctaBar"></div>
 <div class="offers" id="offers"></div>
 
 <div class="actions">
@@ -84,117 +70,78 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a;font-size:v
  <a id="mail"><i class="fa fa-envelope"></i></a>
 </div>
 
-<div class="socialStack" onclick="toggleSocial()">
- <i class="fab fa-facebook-f"></i>
- <div class="socialExpand" id="socialExpand">
-  <a id="fb"><i class="fab fa-facebook-f"></i></a>
-  <a id="ig"><i class="fab fa-instagram"></i></a>
-  <a id="yt"><i class="fab fa-youtube"></i></a>
-  <a id="web"><i class="fa fa-globe"></i></a>
- </div>
-</div>
-
 <div id="offerPanel">
  <img id="panelImg">
  <div class="panelContent">
   <h2 id="panelTitle"></h2>
   <p id="panelDesc"></p>
-  <div class="panelCTA" id="panelCTA">Inquire on WhatsApp</div>
+  <div class="panelCTA" id="panelCTA">WhatsApp</div>
  </div>
 </div>
 
-<script defer src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<script defer>
-/* ✅ ELEMENT BINDS (FIXED) */
-const photo=document.getElementById("photo");
-const nameEl=document.getElementById("name");
-const businessEl=document.getElementById("business");
-const phoneEl=document.getElementById("phone");
-const emailEl=document.getElementById("email");
-const addressEl=document.getElementById("address");
-const aboutBox=document.getElementById("aboutBox");
-const aboutText=document.getElementById("aboutText");
-const aboutMore=document.getElementById("aboutMore");
-const businessDetails=document.getElementById("businessDetails");
-const shopCTA=document.getElementById("shopCTA");
-const offers=document.getElementById("offers");
-const call=document.getElementById("call");
-const mail=document.getElementById("mail");
-const map=document.getElementById("map");
-const sms=document.getElementById("sms");
-const fb=document.getElementById("fb");
-const ig=document.getElementById("ig");
-const yt=document.getElementById("yt");
-const web=document.getElementById("web");
-const offerPanel=document.getElementById("offerPanel");
-const panelImg=document.getElementById("panelImg");
-const panelTitle=document.getElementById("panelTitle");
-const panelDesc=document.getElementById("panelDesc");
-const panelCTA=document.getElementById("panelCTA");
-const socialExpand=document.getElementById("socialExpand");
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async ()=>{
 
-/* ✅ SUPABASE READY */
-const db=supabase.createClient(
+const $=id=>document.getElementById(id);
+
+const photo=$("photo"), nameEl=$("name"), businessEl=$("business"),
+phoneEl=$("phone"), emailEl=$("email"), addressEl=$("address"),
+aboutText=$("aboutText"), aboutMore=$("aboutMore"), aboutBox=$("aboutBox"),
+offers=$("offers"), call=$("call"), mail=$("mail"), map=$("map"), sms=$("sms"),
+panelImg=$("panelImg"), panelTitle=$("panelTitle"), panelDesc=$("panelDesc"),
+panelCTA=$("panelCTA"), offerPanel=$("offerPanel");
+
+const supa = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-let id=new URLSearchParams(location.search).get("id")||localStorage.getItem("lastCardId");
-if(!id){document.body.innerHTML="<h2>No card found</h2>";throw"";}
+const id=new URLSearchParams(location.search).get("id") || localStorage.getItem("lastCardId");
+if(!id){document.body.innerHTML="<h2>No card found</h2>";return;}
 
-let sellerPhone="",aboutExpanded=false,offerOpen=false;
+const {data,error}=await supa.from("cards").select("*").eq("id",id).single();
+if(error || !data){document.body.innerHTML="<h2>Card not found</h2>";return;}
 
-/* ✅ LOAD DATA */
-db.from("cards").select("*").eq("id",id).single().then(r=>{
- if(r.data) loadCard(JSON.parse(r.data.data));
+const card=JSON.parse(data.data);
+
+photo.src=card.profileImage||"";
+nameEl.textContent=card.name||"";
+businessEl.textContent=card.businessName||"";
+phoneEl.textContent="📞 "+(card.phone||"");
+emailEl.textContent="✉️ "+(card.email||"");
+addressEl.textContent="📍 "+(card.address||"");
+aboutText.textContent=card.business?.about||"";
+
+call.href="tel:"+card.phone;
+mail.href="mailto:"+card.email;
+map.href="https://maps.google.com/?q="+encodeURIComponent(card.address);
+sms.href="sms:"+card.phone;
+
+offers.innerHTML="";
+(card.offers||[]).forEach(o=>{
+ const d=document.createElement("div");
+ d.className="offer";
+ d.innerHTML=`<img src="${o.image}">
+ <div class="offerBadges">${(o.badges||[]).map(b=>`<span>${b}</span>`).join("")}</div>`;
+ d.onclick=()=>{
+  panelImg.src=o.image;
+  panelTitle.textContent=o.title;
+  panelDesc.textContent=o.desc;
+  panelCTA.onclick=()=>location.href=`https://wa.me/${card.phone.replace(/\D/g,"")}`;
+  offerPanel.style.display="block";
+ };
+ offers.appendChild(d);
 });
 
-function loadCard(data){
- sellerPhone=(data.phone||"").replace(/\D/g,"");
- photo.src=data.profileImage||"";
- nameEl.textContent=data.name||"";
- businessEl.textContent=data.businessName||"";
- phoneEl.textContent="📞 "+(data.phone||"");
- emailEl.textContent="✉️ "+(data.email||"");
- addressEl.textContent="📍 "+(data.address||"");
+window.toggleAbout=()=>{
+ aboutBox.classList.toggle("expanded");
+ aboutMore.textContent=aboutBox.classList.contains("expanded")?"See less":"See more";
+};
 
- aboutText.textContent=data.business?.about||"";
- if(aboutText.textContent.length<120)aboutMore.style.display="none";
+window.saveCard=()=>alert("Contact saved");
 
- call.href="tel:"+data.phone;
- mail.href="mailto:"+data.email;
- map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
- sms.href="sms:"+data.phone;
-
- fb.href=data.facebook||"#";
- ig.href=data.instagram||"#";
- yt.href=data.youtube||"#";
- web.href=data.website||"#";
-
- offers.innerHTML="";
- data.offers?.forEach(o=>{
-  const d=document.createElement("div");
-  d.className="offer";
-  d.innerHTML=`<img src="${o.image}"><div class="offerBadges">${(o.badges||[]).map(b=>`<span>${b}</span>`).join("")}</div>`;
-  d.onclick=()=>openOffer(o);
-  offers.appendChild(d);
- });
-}
-
-function openOffer(o){
- panelImg.src=o.image;
- panelTitle.textContent=o.title;
- panelDesc.textContent=o.desc;
- panelCTA.onclick=()=>location.href=`https://wa.me/${sellerPhone}?text=${encodeURIComponent(o.title)}`;
- offerPanel.style.display="block";
- offerOpen=true;
- history.pushState({offer:true},"");
-}
-
-window.onpopstate=()=>{if(offerOpen){offerPanel.style.display="none";offerOpen=false;}};
-function toggleAbout(){aboutExpanded=!aboutExpanded;aboutBox.classList.toggle("expanded",aboutExpanded);aboutMore.textContent=aboutExpanded?"See less":"See more";}
-function saveCard(){alert("Contact saved")}
-function toggleSocial(){socialExpand.style.display=socialExpand.style.display=="flex"?"none":"flex";}
+});
 </script>
 </body>
 </html>
