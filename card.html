@@ -2,261 +2,249 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>My Digital Card</title>
+<title>Create Digital Card</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f172a">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<meta name="theme-color" content="#2563eb">
 
 <style>
-:root{--fs:15.5px;--lh:1.75}
-*{box-sizing:border-box}
+body{margin:0;font-family:system-ui;background:#f1f5f9}
+.wrap{max-width:480px;margin:auto;padding:16px}
+h2{margin-top:20px}
 
-body{
- margin:0;
- font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
- font-size:var(--fs);
- line-height:var(--lh);
- background:#f1f5f9;
- color:#0f172a;
- padding-bottom:140px; /* ✅ SAFE BOTTOM */
+input,textarea{
+ width:100%;padding:12px;margin:6px 0;
+ border-radius:10px;border:1px solid #cbd5f5
 }
 
-/* TOP BAR */
-.topbar{display:flex;justify-content:space-around;padding:12px;background:#0f172a}
-.topbar a{color:#fff;font-size:20px}
-
-/* PROFILE */
-.profile{
- display:flex;gap:16px;padding:16px;background:#e2e8f0;
- align-items:flex-start;position:relative
-}
-.profile img{
- width:110px;height:110px;border-radius:50%;
- object-fit:cover;border:3px solid #2563eb;background:#fff
-}
-.info{flex:1;display:flex;flex-direction:column;gap:4px}
-#name{font-size:17px;font-weight:700}
-#business{font-weight:600}
-#phone,#email,#address{font-size:14px;opacity:.85}
-
-/* SAVE */
-.saveIcon{
- position:absolute;right:14px;bottom:14px;
- font-size:22px;color:#2563eb;cursor:pointer
+button{
+ width:100%;padding:16px;
+ border:none;border-radius:12px;
+ background:#2563eb;color:white;
+ font-size:17px;margin-top:20px
 }
 
-/* ABOUT */
-.about{background:#fff;padding:14px 16px;cursor:pointer}
-.aboutText{
- overflow:hidden;display:-webkit-box;
- -webkit-line-clamp:3;-webkit-box-orient:vertical
+.offerBox{
+ background:white;padding:12px;
+ border-radius:12px;margin-top:10px
 }
-.about.expanded .aboutText{-webkit-line-clamp:unset}
-.aboutMore{color:#2563eb;font-weight:600;margin-top:6px;display:inline-block}
 
-/* BUSINESS */
-.businessBox{background:#fff;margin:12px;padding:14px;border-radius:14px}
-
-/* CTA */
-.ctaBar{
- margin:12px;padding:14px;border-radius:14px;
- background:linear-gradient(90deg,#2563eb,#0f172a);
- color:#fff;font-weight:600;display:none;
- align-items:center;gap:12px;cursor:pointer
-}
-.ctaBar img{width:42px;height:42px;border-radius:10px;background:#fff}
-
-/* OFFERS */
-.offers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
-.offer{
- min-width:92%;
- margin:12px;
+/* ===== BUSINESS HOURS (LHS TICK COLUMN) ===== */
+.dayBox{
  background:#fff;
- border-radius:18px;
- overflow:hidden;
- scroll-snap-align:center;
- box-shadow:0 6px 18px rgba(0,0,0,.12)
-}
-.offer img{
- width:100%;
- height:180px;
- object-fit:cover;
- display:block;
- background:#e5e7eb
-}
-.offerContent{padding:14px}
-.offerContent h3{margin:0 0 6px}
-.offerShort{opacity:.75}
-
-/* DETAILS TOGGLE */
-.offerDetails{display:none;margin-top:10px}
-.offer.open .offerDetails{display:block}
-
-/* BUTTON */
-.offerBtn{
- margin-top:12px;
- background:#2563eb;
- color:#fff;
- padding:12px;
+ padding:10px;
  border-radius:10px;
- font-weight:700;
- text-align:center;
- cursor:pointer
+ margin-bottom:8px;
+ display:grid;
+ grid-template-columns: 28px 1fr;
+ gap:8px;
+ align-items:center
 }
 
-/* ACTIONS */
-.actions{display:flex;justify-content:space-around;padding:16px;background:#0f172a;position:fixed;bottom:0;left:0;right:0}
-.actions a{color:#fff;font-size:22px}
+.dayCheck{
+ display:flex;
+ justify-content:center
+}
 
-/* SOCIAL */
-.socialStack{
- position:fixed;right:14px;bottom:90px;
- width:48px;height:48px;border-radius:50%;
- background:#2563eb;color:#fff;
- display:flex;align-items:center;justify-content:center;
- box-shadow:0 4px 12px rgba(0,0,0,.3)
+.dayContent{
+ display:flex;
+ flex-direction:column;
+ gap:6px
 }
-.socialExpand{
- position:absolute;bottom:58px;right:0;
- display:none;flex-direction:column;gap:10px
+
+.dayRow{
+ display:flex;
+ align-items:center;
+ gap:8px
 }
-.socialExpand a{
- width:42px;height:42px;border-radius:50%;
- background:#0f172a;color:#fff;
- display:flex;align-items:center;justify-content:center
+
+.dayRow label{
+ font-weight:500
+}
+
+.small{
+ font-size:13px;
+ color:#475569
 }
 </style>
+
+<script>
+if (
+ (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)
+) {
+ const last = localStorage.getItem("lastCardId");
+ if (last) window.location.replace("card.html?id=" + last);
+}
+</script>
 </head>
 
 <body>
+<div class="wrap">
 
-<div class="topbar">
- <a id="share"><i class="fa fa-share"></i></a>
- <a id="map"><i class="fa-solid fa-location-dot"></i></a>
- <a id="sms"><i class="fa fa-comment"></i></a>
-</div>
+<h2>Profile</h2>
+<input type="file" id="profileImage" accept="image/*">
+<input id="fullName" placeholder="Full Name">
+<input id="phoneNumber" placeholder="Phone">
+<input id="email" placeholder="Email">
+<input id="address" placeholder="Address">
 
-<div class="profile">
- <img id="photo">
- <div class="info">
-  <div id="name"></div>
-  <div id="business"></div>
-  <div id="phone"></div>
-  <div id="email"></div>
-  <div id="address"></div>
- </div>
- <i class="fa fa-floppy-disk saveIcon" onclick="saveCard()"></i>
-</div>
+<h2>Business</h2>
+<input id="businessName" placeholder="Business Title">
+<textarea id="businessAbout" placeholder="About your business"></textarea>
 
-<div class="about" id="aboutBox" onclick="toggleAbout()">
- <div class="aboutText" id="aboutText"></div>
- <span class="aboutMore" id="aboutMore">See more</span>
-</div>
+<h3>Business Hours</h3>
+<div id="daysContainer"></div>
 
-<div class="businessBox" id="businessDetails" style="display:none"></div>
-<div id="shopCTA" class="ctaBar"></div>
+<label class="small">
+ <input type="checkbox" id="holidayEnabled">
+ Closed on Public Holidays
+</label>
 
-<div class="offers" id="offers"></div>
+<textarea id="businessNotes"
+ placeholder="Special notes (e.g. Friday break 1–2 PM)"></textarea>
 
-<div class="actions">
- <a id="call"><i class="fa fa-phone"></i></a>
- <a id="wa"><i class="fab fa-whatsapp"></i></a>
- <a id="mail"><i class="fa fa-envelope"></i></a>
-</div>
+<h2>Social Media</h2>
+<input id="facebook" placeholder="Facebook link">
+<input id="instagram" placeholder="Instagram link">
+<input id="youtube" placeholder="YouTube link">
+<input id="website" placeholder="Website link">
 
-<div class="socialStack" onclick="toggleSocial()">
- <i class="fab fa-facebook-f"></i>
- <div class="socialExpand" id="socialExpand">
-  <a id="fb"><i class="fab fa-facebook-f"></i></a>
-  <a id="ig"><i class="fab fa-instagram"></i></a>
-  <a id="yt"><i class="fab fa-youtube"></i></a>
-  <a id="web"><i class="fa fa-globe"></i></a>
- </div>
+<h2>Shop App (Optional)</h2>
+<input id="shopAppLink" placeholder="Play Store app link">
+<input type="file" id="shopAppImage" accept="image/*">
+
+<h2>Offers</h2>
+<div id="offersForm"></div>
+
+<button type="button" onclick="generate()">Generate Card</button>
+
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-/* 🔥 IMAGE AUTO COMPRESS */
-function compressImage(src,cb){
- const img=new Image();
- img.crossOrigin="anonymous";
- img.onload=()=>{
-  const c=document.createElement("canvas");
-  const max=900;
-  const s=Math.min(1,max/img.width);
-  c.width=img.width*s;c.height=img.height*s;
-  c.getContext("2d").drawImage(img,0,0,c.width,c.height);
-  cb(c.toDataURL("image/jpeg",0.7));
- };
- img.src=src;
+if('serviceWorker' in navigator){
+ navigator.serviceWorker.register("sw.js", { scope: "./" });
 }
 
-const db=supabase.createClient(
+const db = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-let id=new URLSearchParams(location.search).get("id")||localStorage.getItem("lastCardId");
-if(!id){document.body.innerHTML="<h2>No card found</h2>";throw"";}
+/* BUSINESS DAYS UI — LHS TICK */
+const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+days.forEach(d=>{
+ daysContainer.innerHTML += `
+ <div class="dayBox">
+  <div class="dayCheck">
+   <input type="checkbox" id="open_${d}" checked>
+  </div>
 
-let sellerPhone="";
-db.from("cards").select("*").eq("id",id).single().then(r=>{
- if(r.data) loadCard(JSON.parse(r.data.data));
+  <div class="dayContent">
+   <div class="dayRow">
+    <label>${d}</label>
+   </div>
+   <div class="dayRow">
+    <input type="time" id="from_${d}">
+    <input type="time" id="to_${d}">
+   </div>
+  </div>
+ </div>`;
 });
 
-function loadCard(data){
- sellerPhone=(data.phone||"").replace(/\D/g,"");
+/* OFFERS */
+for(let i=1;i<=5;i++){
+ offersForm.innerHTML+=`
+ <div class="offerBox">
+  <b>Offer ${i}</b>
+  <input type="file" id="offerImg${i}">
+  <input id="offerTitle${i}" placeholder="Title">
+  <textarea id="offerDesc${i}" placeholder="Description"></textarea>
+ </div>`;
+}
 
- compressImage(data.profileImage||"",i=>photo.src=i);
-
- name.textContent=data.name||"";
- business.textContent=data.businessName||"";
- phone.textContent="📞 "+(data.phone||"");
- email.textContent="✉️ "+(data.email||"");
- address.textContent="📍 "+(data.address||"");
-
- call.href="tel:"+data.phone;
- wa.href="https://wa.me/"+sellerPhone;
- mail.href="mailto:"+data.email;
- map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
- sms.href="sms:"+data.phone;
-
- offers.innerHTML="";
- data.offers?.forEach(o=>{
-  const d=document.createElement("div");
-  d.className="offer";
-  d.innerHTML=`
-   <img>
-   <div class="offerContent">
-    <h3>${o.title}</h3>
-    <div class="offerShort">${o.desc.slice(0,60)}...</div>
-    <div class="offerDetails">
-     <p>${o.desc}</p>
-     <div class="offerBtn" onclick="window.open('https://wa.me/${sellerPhone}','_blank')">
-      Get Offer on WhatsApp
-     </div>
-    </div>
-    <div class="offerBtn" onclick="this.closest('.offer').classList.toggle('open')">
-     View Details
-    </div>
-   </div>`;
-  offers.appendChild(d);
-
-  if(o.image){
-   compressImage(o.image,i=>d.querySelector("img").src=i);
+function resizeImage(file){
+ return new Promise(res=>{
+  const img=new Image();
+  img.onload=()=>{
+   const c=document.createElement("canvas");
+   const max=1024;
+   let w=img.width,h=img.height;
+   const r=Math.min(max/w,max/h,1);
+   c.width=w*r; c.height=h*r;
+   c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+   res(c.toDataURL("image/jpeg",0.8));
   }
+  img.src=URL.createObjectURL(file);
  });
 }
 
-function toggleAbout(){
- aboutBox.classList.toggle("expanded");
- aboutMore.textContent=aboutBox.classList.contains("expanded")?"See less":"See more";
-}
-function saveCard(){/* unchanged */}
-function toggleSocial(){
- socialExpand.style.display=socialExpand.style.display=="flex"?"none":"flex";
+async function generate(){
+
+ if(!fullName.value || !phoneNumber.value){
+  alert("Name & Phone required"); return;
+ }
+
+ const id = Math.random().toString(36).slice(2,8);
+
+ const businessHours = {};
+ days.forEach(d=>{
+  businessHours[d] = {
+   open: document.getElementById("open_"+d).checked,
+   from: document.getElementById("from_"+d).value,
+   to: document.getElementById("to_"+d).value
+  };
+ });
+
+ const data={
+  name:fullName.value,
+  phone:phoneNumber.value,
+  email:email.value,
+  address:address.value,
+
+  businessName:businessName.value,
+  business:{
+   about: businessAbout.value,
+   hours: businessHours,
+   holidays: holidayEnabled.checked,
+   notes: businessNotes.value
+  },
+
+  facebook:facebook.value,
+  instagram:instagram.value,
+  youtube:youtube.value,
+  website:website.value,
+
+  shopAppLink: shopAppLink.value,
+  shopAppImage:"",
+  profileImage:"",
+  offers:[]
+ };
+
+ if(profileImage.files[0])
+  data.profileImage = await resizeImage(profileImage.files[0]);
+
+ if(shopAppImage.files[0])
+  data.shopAppImage = await resizeImage(shopAppImage.files[0]);
+
+ for(let i=1;i<=5;i++){
+  const t=document.getElementById("offerTitle"+i).value;
+  const d=document.getElementById("offerDesc"+i).value;
+  const f=document.getElementById("offerImg"+i).files[0];
+  if(t && d){
+   data.offers.push({
+    title:t,
+    desc:d,
+    image: f ? await resizeImage(f) : ""
+   });
+  }
+ }
+
+ await db.from("cards").insert({ id, data: JSON.stringify(data) });
+
+ localStorage.setItem("lastCardId", id);
+ location.href="card.html?id="+id;
 }
 </script>
 </body>
