@@ -30,34 +30,51 @@ button{
  border-radius:12px;margin-top:10px
 }
 
-/* BUSINESS INFO TICK STYLE */
-.infoBox{
- background:white;
- padding:12px;
- border-radius:12px;
- margin-top:8px
+/* ===== BUSINESS HOURS (LHS TICK COLUMN) ===== */
+.dayBox{
+ background:#fff;
+ padding:10px;
+ border-radius:10px;
+ margin-bottom:8px;
+ display:grid;
+ grid-template-columns: 28px 1fr;
+ gap:8px;
+ align-items:center
 }
-.infoRow{
+
+.dayCheck{
+ display:flex;
+ justify-content:center
+}
+
+.dayContent{
+ display:flex;
+ flex-direction:column;
+ gap:6px
+}
+
+.dayRow{
  display:flex;
  align-items:center;
- margin:6px 0;
- font-size:15px
+ gap:8px
 }
-.infoRow input{
- width:auto;
- margin-right:10px
+
+.dayRow label{
+ font-weight:500
+}
+
+.small{
+ font-size:13px;
+ color:#475569
 }
 </style>
 
 <script>
-/* AUTO OPEN LAST CARD IN APP MODE */
 if (
  (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)
 ) {
  const last = localStorage.getItem("lastCardId");
- if (last) {
-  window.location.replace("card.html?id=" + last);
- }
+ if (last) window.location.replace("card.html?id=" + last);
 }
 </script>
 </head>
@@ -74,14 +91,18 @@ if (
 
 <h2>Business</h2>
 <input id="businessName" placeholder="Business Title">
+<textarea id="businessAbout" placeholder="About your business"></textarea>
 
-<div class="infoBox">
- <div class="infoRow"><input type="checkbox" value="Shop Open"><span>Shop Open</span></div>
- <div class="infoRow"><input type="checkbox" value="Shop Closed"><span>Shop Closed</span></div>
- <div class="infoRow"><input type="checkbox" value="Home Delivery Available"><span>Home Delivery Available</span></div>
- <div class="infoRow"><input type="checkbox" value="Cash & Online Payment"><span>Cash & Online Payment</span></div>
- <div class="infoRow"><input type="checkbox" value="Wholesale & Retail"><span>Wholesale & Retail</span></div>
-</div>
+<h3>Business Hours</h3>
+<div id="daysContainer"></div>
+
+<label class="small">
+ <input type="checkbox" id="holidayEnabled">
+ Closed on Public Holidays
+</label>
+
+<textarea id="businessNotes"
+ placeholder="Special notes (e.g. Friday break 1–2 PM)"></textarea>
 
 <h2>Social Media</h2>
 <input id="facebook" placeholder="Facebook link">
@@ -111,7 +132,28 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-// build offer boxes
+/* BUSINESS DAYS UI — LHS TICK */
+const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+days.forEach(d=>{
+ daysContainer.innerHTML += `
+ <div class="dayBox">
+  <div class="dayCheck">
+   <input type="checkbox" id="open_${d}" checked>
+  </div>
+
+  <div class="dayContent">
+   <div class="dayRow">
+    <label>${d}</label>
+   </div>
+   <div class="dayRow">
+    <input type="time" id="from_${d}">
+    <input type="time" id="to_${d}">
+   </div>
+  </div>
+ </div>`;
+});
+
+/* OFFERS */
 for(let i=1;i<=5;i++){
  offersForm.innerHTML+=`
  <div class="offerBox">
@@ -130,9 +172,8 @@ function resizeImage(file){
    const max=1024;
    let w=img.width,h=img.height;
    const r=Math.min(max/w,max/h,1);
-   w*=r; h*=r;
-   c.width=w; c.height=h;
-   c.getContext("2d").drawImage(img,0,0,w,h);
+   c.width=w*r; c.height=h*r;
+   c.getContext("2d").drawImage(img,0,0,c.width,c.height);
    res(c.toDataURL("image/jpeg",0.8));
   }
   img.src=URL.createObjectURL(file);
@@ -141,24 +182,34 @@ function resizeImage(file){
 
 async function generate(){
 
- const name = fullName.value.trim();
- const phone = phoneNumber.value.trim();
- if(name=="" || phone==""){ alert("Name & Phone required"); return; }
+ if(!fullName.value || !phoneNumber.value){
+  alert("Name & Phone required"); return;
+ }
 
  const id = Math.random().toString(36).slice(2,8);
 
- /* collect checked business info */
- let info=[];
- document.querySelectorAll(".infoBox input:checked")
-  .forEach(i=>info.push("✔ "+i.value));
+ const businessHours = {};
+ days.forEach(d=>{
+  businessHours[d] = {
+   open: document.getElementById("open_"+d).checked,
+   from: document.getElementById("from_"+d).value,
+   to: document.getElementById("to_"+d).value
+  };
+ });
 
  const data={
-  name,
-  phone,
+  name:fullName.value,
+  phone:phoneNumber.value,
   email:email.value,
   address:address.value,
+
   businessName:businessName.value,
-  businessInfo: info.join("\n"),
+  business:{
+   about: businessAbout.value,
+   hours: businessHours,
+   holidays: holidayEnabled.checked,
+   notes: businessNotes.value
+  },
 
   facebook:facebook.value,
   instagram:instagram.value,
@@ -166,8 +217,7 @@ async function generate(){
   website:website.value,
 
   shopAppLink: shopAppLink.value,
-  shopAppImage: "",
-
+  shopAppImage:"",
   profileImage:"",
   offers:[]
  };
@@ -179,21 +229,19 @@ async function generate(){
   data.shopAppImage = await resizeImage(shopAppImage.files[0]);
 
  for(let i=1;i<=5;i++){
-  const title=document.getElementById("offerTitle"+i).value;
-  const desc=document.getElementById("offerDesc"+i).value;
-  const img=document.getElementById("offerImg"+i).files[0];
-
-  if(title && desc){
-   let imgData="";
-   if(img) imgData = await resizeImage(img);
-   data.offers.push({title,desc,image:imgData});
+  const t=document.getElementById("offerTitle"+i).value;
+  const d=document.getElementById("offerDesc"+i).value;
+  const f=document.getElementById("offerImg"+i).files[0];
+  if(t && d){
+   data.offers.push({
+    title:t,
+    desc:d,
+    image: f ? await resizeImage(f) : ""
+   });
   }
  }
 
- await db.from("cards").insert({
-  id:id,
-  data:JSON.stringify(data)
- });
+ await db.from("cards").insert({ id, data: JSON.stringify(data) });
 
  localStorage.setItem("lastCardId", id);
  location.href="card.html?id="+id;
