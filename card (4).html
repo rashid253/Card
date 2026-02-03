@@ -75,11 +75,15 @@ body{
 .offer{
  min-width:90%;margin:12px;background:#2563eb;
  border-radius:18px;padding:14px;color:#fff;
- display:flex;gap:14px;scroll-snap-align:center
+ display:flex;gap:16px;scroll-snap-align:center
 }
 .offer img{
- max-width:180px; max-height:150px; /* bigger attractive */
- object-fit:cover; background:#fff;border-radius:10px
+ max-width:220px;
+ max-height:180px;
+ aspect-ratio:4/3;
+ object-fit:cover;
+ background:#fff;
+ border-radius:12px
 }
 .offerContent{flex:1}
 .offerContent h3{margin:0 0 6px}
@@ -93,17 +97,14 @@ body{
  border-radius:999px;
  font-weight:700;
  display:inline-block;
- width:auto;
  cursor:pointer;
  transition:all .25s ease;
- text-align:center;
- white-space:normal;
- word-break:break-word;
+ text-align:center
 }
 .offerBtn:hover{
  background:#2563eb;
  color:#fff;
- transform:scale(1.05);
+ transform:scale(1.05)
 }
 
 /* DOTS */
@@ -178,10 +179,10 @@ body{
 <div class="socialStack" onclick="toggleSocial()">
  <i class="fab fa-facebook-f"></i>
  <div class="socialExpand" id="socialExpand">
-  <a id="fb" href="#"><i class="fab fa-facebook-f"></i></a>
-  <a id="ig" href="#"><i class="fab fa-instagram"></i></a>
-  <a id="yt" href="#"><i class="fab fa-youtube"></i></a>
-  <a id="web" href="#"><i class="fa fa-globe"></i></a>
+  <a id="fb"><i class="fab fa-facebook-f"></i></a>
+  <a id="ig"><i class="fab fa-instagram"></i></a>
+  <a id="yt"><i class="fab fa-youtube"></i></a>
+  <a id="web"><i class="fa fa-globe"></i></a>
  </div>
 </div>
 
@@ -204,7 +205,7 @@ db.from("cards").select("*").eq("id",id).single().then(r=>{
 });
 
 function loadCard(data){
- sellerPhone = (data.phone||"").replace(/\D/g,"");
+ sellerPhone=(data.phone||"").replace(/\D/g,"");
 
  photo.src=data.profileImage||"";
  name.textContent=data.name||"";
@@ -227,7 +228,6 @@ function loadCard(data){
  yt.href=data.youtube||"#";
  web.href=data.website||"#";
 
- /* BUSINESS HOURS */
  if(data.business?.hours){
   businessDetails.style.display="block";
   businessDetails.innerHTML="<h3>Business Hours</h3>";
@@ -243,7 +243,6 @@ function loadCard(data){
   });
  }
 
- /* SHOP CTA */
  if(data.shopAppLink){
   shopCTA.style.display="flex";
   shopCTA.onclick=()=>location.href=data.shopAppLink;
@@ -252,20 +251,16 @@ function loadCard(data){
    <div>Shop on our official app</div>`;
  }
 
- /* OFFERS + DIRECT SELLER WHATSAPP */
  offers.innerHTML="";dots.innerHTML="";
  data.offers?.forEach((o,i)=>{
-  const msg =
+  const waLink=`https://wa.me/${sellerPhone}?text=${encodeURIComponent(
 `Hello, I’m interested in this offer:
 
 🔥 ${o.title}
 
-Please share complete product details, price & availability.
+Please share complete details.
 
-Card link:
-${location.href}`;
-
-  const waLink = `https://wa.me/${sellerPhone}?text=${encodeURIComponent(msg)}`;
+${location.href}`)}`;
 
   const d=document.createElement("div");
   d.className="offer";
@@ -291,7 +286,6 @@ function toggleAbout(){
  aboutBox.classList.toggle("expanded",aboutExpanded);
  aboutMore.textContent=aboutExpanded?"See less":"See more";
 }
-
 function saveCard(){
  const vcf=`BEGIN:VCARD
 VERSION:3.0
@@ -302,7 +296,6 @@ END:VCARD`;
  a.href=URL.createObjectURL(new Blob([vcf],{type:"text/vcard"}));
  a.download="contact.vcf";a.click();
 }
-
 function toggleSocial(){
  socialExpand.style.display =
   socialExpand.style.display=="flex"?"none":"flex";
