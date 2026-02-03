@@ -37,6 +37,7 @@ body{
  padding:16px;
  background:#e2e8f0;
  align-items:flex-start;
+ position:relative;
 }
 .profile img{
  width:110px;
@@ -67,6 +68,7 @@ body{
  font-size:22px;
  color:#2563eb;
  cursor:pointer;
+ z-index:10;
 }
 
 /* ===== ABOUT ===== */
@@ -154,14 +156,12 @@ body{
 }
 .offerContent h3{margin:0 0 6px;font-size:16px;}
 .offerContent p{margin:0;font-size:14px;line-height:1.4;}
-
-/* GET OFFER BUTTON MODERN */
 .offerButton{
  margin-top:8px;
  align-self:flex-start;
  background:#25D366;
  color:#fff;
- padding:8px 14px;
+ padding:6px 12px;
  border-radius:12px;
  font-weight:600;
  cursor:pointer;
@@ -171,10 +171,9 @@ body{
  align-items:center;
  gap:6px;
  transition:0.2s;
+ white-space:nowrap;
 }
-.offerButton i{
- font-size:16px;
-}
+.offerButton i{font-size:16px;}
 .offerButton:hover{
  background:#1ebe57;
  transform:scale(1.05);
@@ -237,7 +236,6 @@ body{
 }
 </style>
 </head>
-
 <body>
 
 <div class="topbar">
@@ -292,14 +290,23 @@ const db=supabase.createClient(
 );
 
 let id=new URLSearchParams(location.search).get("id")
-||localStorage.getItem("last_card_id");
-if(!id){document.body.innerHTML="<h2>No card found</h2>";throw"";}
+      ||localStorage.getItem("last_card_id");
+let cardData = localStorage.getItem('last_card_data');
+
+if(!id && !cardData){
+    document.body.innerHTML="<h2>No card found</h2>";
+    throw "";
+}
 
 let aboutExpanded=false;
 
-db.from("cards").select("*").eq("id",id).single().then(r=>{
- if(r.data) loadCard(JSON.parse(r.data.data));
-});
+// Load from localStorage if exists
+if(cardData) loadCard(JSON.parse(cardData));
+else {
+    db.from("cards").select("*").eq("id",id).single().then(r=>{
+        if(r.data) loadCard(JSON.parse(r.data.data));
+    });
+}
 
 function loadCard(data){
  photo.src=data.profileImage||"";
