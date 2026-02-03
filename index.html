@@ -10,14 +10,16 @@
 <style>
 body{margin:0;font-family:system-ui;background:#f1f5f9}
 .wrap{max-width:480px;margin:auto;padding:16px}
-h2{margin-top:20px}
+h2{margin-top:20px;margin-bottom:10px}
 
-input,textarea{
+input,textarea,select{
  width:100%;
  padding:12px;
  margin:6px 0;
  border-radius:10px;
- border:1px solid #cbd5f5
+ border:1px solid #cbd5f5;
+ box-sizing:border-box;
+ font-size:15px;
 }
 button{
  width:100%;
@@ -27,15 +29,19 @@ button{
  background:#2563eb;
  color:white;
  font-size:17px;
- margin-top:20px
+ margin-top:20px;
+ cursor:pointer;
+ font-weight:600;
 }
 
 .offerBox{
  background:#fff;
  padding:12px;
  border-radius:12px;
- margin-top:12px
+ margin-top:12px;
+ border:1px solid #e2e8f0;
 }
+
 .badgeGrid{
  display:grid;
  grid-template-columns:1fr 1fr;
@@ -47,7 +53,9 @@ button{
  display:flex;
  gap:8px;
  align-items:center;
+ cursor:pointer;
 }
+
 .dayBox{
  background:#fff;
  padding:10px;
@@ -56,15 +64,73 @@ button{
  display:grid;
  grid-template-columns:28px 1fr;
  gap:8px;
- align-items:center
+ align-items:center;
+ border:1px solid #e2e8f0;
 }
 .dayCheck{display:flex;justify-content:center}
 .dayContent{display:flex;flex-direction:column;gap:6px}
 .dayRow{display:flex;align-items:center;gap:8px}
-.dayRow label{font-weight:500}
+.dayRow label{font-weight:500;min-width:80px}
+
+.holidayBox{
+ background:#fff;
+ padding:12px;
+ border-radius:10px;
+ margin:8px 0;
+ border:1px solid #e2e8f0;
+}
+.holidayHeader{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:8px;
+}
+.holidayHeader label{
+ font-weight:600;
+ font-size:15px;
+}
+.addHolidayBtn{
+ background:#10b981;
+ color:white;
+ border:none;
+ padding:8px 12px;
+ border-radius:8px;
+ cursor:pointer;
+ font-size:14px;
+}
+.holidayItem{
+ display:flex;
+ align-items:center;
+ gap:10px;
+ margin:6px 0;
+ padding:8px;
+ background:#f8fafc;
+ border-radius:8px;
+}
+.holidayItem input[type="text"]{
+ flex:1;
+ padding:8px;
+ border:1px solid #e2e8f0;
+ border-radius:6px;
+}
+
+.websiteBox{
+ background:#fff;
+ padding:12px;
+ border-radius:10px;
+ margin:12px 0;
+ border:1px solid #e2e8f0;
+}
+.websiteBox label{
+ display:block;
+ margin-bottom:6px;
+ font-weight:600;
+ color:#0f172a;
+}
 </style>
 
 <script>
+// Redirect if PWA and has saved card
 if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standalone)){
  const last=localStorage.getItem("lastCardId");
  if(last) location.replace("card.html?id="+last);
@@ -75,25 +141,49 @@ if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standa
 <body>
 <div class="wrap">
 
-<h2>Profile</h2>
-<input type="file" id="profileImage">
+<h2>👤 Profile</h2>
+<input type="file" id="profileImage" accept="image/*">
 <input id="fullName" placeholder="Full Name">
-<input id="phoneNumber" placeholder="Phone">
-<input id="email" placeholder="Email">
+<input id="phoneNumber" placeholder="Phone" type="tel">
+<input id="email" placeholder="Email" type="email">
 <input id="address" placeholder="Address">
 
-<h2>Business</h2>
+<h2>🏢 Business</h2>
 <input id="businessName" placeholder="Business Title">
-<textarea id="businessAbout" placeholder="About your business"></textarea>
+<textarea id="businessAbout" placeholder="About your business" rows="4"></textarea>
 
-<h3>Business Hours</h3>
+<div class="websiteBox">
+ <label>🌐 Website / E-commerce Link</label>
+ <input type="url" id="website" placeholder="https://example.com">
+</div>
+
+<h3>🕐 Business Hours</h3>
 <div id="daysContainer"></div>
 
-<h2>Offers</h2>
-<div id="offersForm"></div>
-<button type="button" onclick="addOffer()">➕ Add Offer</button>
+<div class="holidayBox">
+ <div class="holidayHeader">
+  <label>📅 Special Holidays / Closed Days</label>
+  <button type="button" class="addHolidayBtn" onclick="addHoliday()">+ Add</button>
+ </div>
+ <div id="holidaysContainer">
+  <div class="holidayItem">
+   <input type="text" class="holidayName" placeholder="E.g., Eid ul-Fitr" value="Eid ul-Fitr">
+   <input type="date" class="holidayDate">
+   <button type="button" class="removeHoliday" onclick="removeHoliday(this)" style="background:#ef4444;color:white;border:none;border-radius:6px;padding:6px 10px;cursor:pointer">×</button>
+  </div>
+  <div class="holidayItem">
+   <input type="text" class="holidayName" placeholder="E.g., Quaid Day" value="Quaid Day">
+   <input type="date" class="holidayDate">
+   <button type="button" class="removeHoliday" onclick="removeHoliday(this)" style="background:#ef4444;color:white;border:none;border-radius:6px;padding:6px 10px;cursor:pointer">×</button>
+  </div>
+ </div>
+</div>
 
-<button type="button" onclick="generate()">Generate Card</button>
+<h2>🎁 Offers</h2>
+<div id="offersForm"></div>
+<button type="button" onclick="addOffer()" style="background:#8b5cf6;margin-top:12px">➕ Add Offer</button>
+
+<button type="button" onclick="generate()" style="background:#2563eb;margin-top:24px">✨ Generate Digital Card</button>
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -103,33 +193,77 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-// BUSINESS DAYS
-const weekDays = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-weekDays.forEach(d=>{
- daysContainer.innerHTML += `
- <div class="dayBox">
-  <div class="dayCheck"><input type="checkbox" checked></div>
+// Initialize business hours
+const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+days.forEach(d => {
+ const dayBox = document.createElement("div");
+ dayBox.className = "dayBox";
+ dayBox.innerHTML = `
+  <div class="dayCheck">
+   <input type="checkbox" checked class="dayOpen">
+  </div>
   <div class="dayContent">
-   <div class="dayRow"><label>${d}</label></div>
    <div class="dayRow">
-    <input type="time">
-    <input type="time">
+    <label style="min-width:100px">${d}</label>
+    <select class="dayStatus" style="width:100px;padding:6px;">
+     <option value="open">Open</option>
+     <option value="closed">Closed</option>
+    </select>
+   </div>
+   <div class="dayRow">
+    <input type="time" class="dayStart" value="09:00" style="width:100px;">
+    <span>to</span>
+    <input type="time" class="dayEnd" value="17:00" style="width:100px;">
    </div>
   </div>
- </div>`;
+ `;
+ daysContainer.appendChild(dayBox);
+ 
+ // Add event listener for status change
+ const statusSelect = dayBox.querySelector('.dayStatus');
+ const timeInputs = dayBox.querySelectorAll('.dayStart, .dayEnd');
+ const openCheckbox = dayBox.querySelector('.dayOpen');
+ 
+ statusSelect.addEventListener('change', function() {
+  if(this.value === 'closed') {
+   timeInputs.forEach(input => input.disabled = true);
+   openCheckbox.checked = false;
+  } else {
+   timeInputs.forEach(input => input.disabled = false);
+   openCheckbox.checked = true;
+  }
+ });
 });
 
-// OFFERS
-let offerCount=0;
+// Holiday management
+function addHoliday() {
+ const container = document.getElementById('holidaysContainer');
+ const holidayItem = document.createElement('div');
+ holidayItem.className = 'holidayItem';
+ holidayItem.innerHTML = `
+  <input type="text" class="holidayName" placeholder="E.g., Eid ul-Fitr">
+  <input type="date" class="holidayDate">
+  <button type="button" class="removeHoliday" onclick="removeHoliday(this)" style="background:#ef4444;color:white;border:none;border-radius:6px;padding:6px 10px;cursor:pointer">×</button>
+ `;
+ container.appendChild(holidayItem);
+}
+
+function removeHoliday(button) {
+ button.parentElement.remove();
+}
+
+// Offer management
+let offerCount = 0;
 function addOffer(){
  offerCount++;
- const box=document.createElement("div");
- box.className="offerBox";
- box.innerHTML=`
-  <b>Offer ${offerCount}</b>
-  <input type="file" class="offerImg">
-  <input class="offerTitle" placeholder="Title">
-  <textarea class="offerDesc" placeholder="Description"></textarea>
+ const box = document.createElement("div");
+ box.className = "offerBox";
+ box.innerHTML = `
+  <h3 style="margin-top:0">🎁 Offer ${offerCount}</h3>
+  <input type="file" class="offerImg" accept="image/*">
+  <input class="offerTitle" placeholder="Title (e.g., 20% Off)">
+  <textarea class="offerDesc" placeholder="Description (e.g., Valid until Dec 31)" rows="3"></textarea>
+  
   <div class="badgeGrid">
    <label><input type="checkbox" value="🔥 Hot Deal"> Hot Deal</label>
    <label><input type="checkbox" value="⭐ Best Seller"> Best Seller</label>
@@ -142,76 +276,129 @@ function addOffer(){
  offersForm.appendChild(box);
 }
 
-// IMAGE RESIZE
+// Image compression
 function resizeImage(file){
- return new Promise(res=>{
+ return new Promise(res => {
   const img = new Image();
-  img.onload = ()=>{
-   const c = document.createElement("canvas");
+  img.onload = () => {
+   const canvas = document.createElement("canvas");
    const max = 1024;
-   const r = Math.min(max/img.width, max/img.height,1);
-   c.width = img.width*r;
-   c.height = img.height*r;
-   c.getContext("2d").drawImage(img,0,0,c.width,c.height);
-   res(c.toDataURL("image/jpeg",0.85));
+   const ratio = Math.min(max/img.width, max/img.height, 1);
+   canvas.width = img.width * ratio;
+   canvas.height = img.height * ratio;
+   const ctx = canvas.getContext("2d");
+   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+   res(canvas.toDataURL("image/jpeg", 0.85));
   };
   img.src = URL.createObjectURL(file);
  });
 }
 
-// GENERATE CARD
+// Generate card
 async function generate(){
- if(!fullName.value||!phoneNumber.value){ alert("Name & Phone required"); return; }
+ if(!fullName.value || !phoneNumber.value){
+  alert("Name & Phone number are required");
+  return;
+ }
 
- const cardId = crypto.randomUUID();
+ const id = crypto.randomUUID();
 
- // BUSINESS HOURS
- const hours = {};
- document.querySelectorAll(".dayBox").forEach(box=>{
-   const day = box.querySelector("label").textContent;
-   const checked = box.querySelector("input[type=checkbox]").checked;
-   const from = box.querySelectorAll("input[type=time]")[0].value;
-   const to = box.querySelectorAll("input[type=time]")[1].value;
-   hours[day] = { open: checked, from, to };
+ // Collect business hours
+ const businessHoursArray = [];
+ const dayBoxes = document.querySelectorAll(".dayBox");
+ dayBoxes.forEach(box => {
+  const open = box.querySelector(".dayOpen").checked;
+  const status = box.querySelector(".dayStatus").value;
+  const start = box.querySelector(".dayStart").value;
+  const end = box.querySelector(".dayEnd").value;
+  
+  businessHoursArray.push({
+   open: open && status === 'open',
+   status: status,
+   start: (open && status === 'open') ? start : null,
+   end: (open && status === 'open') ? end : null
+  });
  });
 
- // OFFERS
+ // Collect holidays
+ const holidaysArray = [];
+ const holidayItems = document.querySelectorAll(".holidayItem");
+ holidayItems.forEach(item => {
+  const name = item.querySelector(".holidayName").value;
+  const date = item.querySelector(".holidayDate").value;
+  if(name.trim() && date) {
+   holidaysArray.push({
+    name: name.trim(),
+    date: date
+   });
+  }
+ });
+
+ // Collect offers
  const offersArray = [];
- document.querySelectorAll(".offerBox").forEach(async box=>{
-   const t = box.querySelector(".offerTitle").value;
-   const d = box.querySelector(".offerDesc").value;
-   const f = box.querySelector(".offerImg").files[0];
-   if(t && d){
-     const badges = [...box.querySelectorAll("input[type=checkbox]:checked")].map(b=>b.value);
-     offersArray.push({
-       title: t,
-       desc: d,
-       badges: badges,
-       image: f ? await resizeImage(f) : ""
-     });
+ const offerBoxes = document.querySelectorAll(".offerBox");
+ 
+ for(let i = 0; i < offerBoxes.length; i++){
+  const box = offerBoxes[i];
+  const title = box.querySelector(".offerTitle").value;
+  const desc = box.querySelector(".offerDesc").value;
+  const file = box.querySelector(".offerImg").files[0];
+  
+  if(title || desc || file){
+   const badges = Array.from(box.querySelectorAll("input[type=checkbox]:checked"))
+    .map(cb => cb.value);
+   
+   const offerData = {
+    title: title || "",
+    desc: desc || "",
+    badges: badges,
+    image: ""
+   };
+   
+   if(file){
+    offerData.image = await resizeImage(file);
    }
- });
+   
+   offersArray.push(offerData);
+  }
+ }
 
- const data = {
-   name: fullName.value,
-   phone: phoneNumber.value,
-   email: email.value,
-   address: address.value,
-   profileImage: profileImage.files[0]?await resizeImage(profileImage.files[0]):"",
-   businessName: businessName.value,
-   business: { about: businessAbout.value, hours },
-   offers: offersArray
+ // Prepare data
+ const cardData = {
+  name: fullName.value.trim(),
+  phone: phoneNumber.value.trim(),
+  email: email.value.trim(),
+  address: address.value.trim(),
+  website: website.value.trim(),
+  businessName: businessName.value.trim(),
+  business: {
+   about: businessAbout.value.trim()
+  },
+  businessHours: businessHoursArray,
+  holidays: holidaysArray,
+  offers: offersArray
  };
 
+ // Add profile image if exists
+ if(profileImage.files[0]){
+  cardData.profileImage = await resizeImage(profileImage.files[0]);
+ }
+
+ // Save to Supabase
  const { data: inserted, error } = await db.from("cards").insert({
-   id: cardId,
-   data: JSON.stringify(data)
+   id: id,
+   data: JSON.stringify(cardData)
  }).select().single();
 
- if(error){ alert("Insert failed: " + error.message); return; }
+ if(error){
+   console.error("Supabase error:", error);
+   alert("Failed to save card: " + error.message);
+   return;
+ }
 
+ // Store ID and redirect
  localStorage.setItem("lastCardId", inserted.id);
- location.href="card.html?id="+inserted.id;
+ location.href = "card.html?id=" + inserted.id;
 }
 </script>
 </body>
