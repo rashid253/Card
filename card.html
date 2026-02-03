@@ -11,104 +11,41 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-body{
- margin:0;
- font-family:system-ui;
- background:#f1f5f9;
- color:#0f172a;
-}
+body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 
-/* Topbar */
-.topbar{
- display:flex;
- justify-content:space-around;
- padding:12px;
- background:#0f172a;
- border-bottom:1px solid #1e293b;
-}
+.topbar{display:flex;justify-content:space-around;padding:12px;background:#0f172a}
 .topbar a{color:white;font-size:20px}
 
-/* Profile */
-.profile{
- position:relative;
- display:flex;
- gap:16px;
- padding:16px;
- background:#e2e8f0;
- border-radius:12px;
- margin:12px;
- align-items:center;
-}
+.profile{position:relative;display:flex;gap:16px;padding:16px;background:#e2e8f0}
 .profile img{
- width:110px;
- height:110px;
- border-radius:50%;
- object-fit:cover;
- border:3px solid #2563eb;
- background:white
+ width:110px;height:110px;border-radius:50%;
+ object-fit:cover;border:3px solid #2563eb;background:white
 }
+.info{font-size:14px}
+#name{font-weight:700;font-size:18px;margin-top:6px}
+#business{font-size:16px;font-weight:600;margin-bottom:6px}
 
-/* Info column */
-.info{
- font-size:14px;
- display:flex;
- flex-direction:column;
- justify-content:center;
- gap:8px;
-}
-#name{font-weight:700;font-size:20px;margin:0}
-#business{font-size:16px;font-weight:600;color:#334155;margin-bottom:4px}
-
-/* Contact items */
-.infoItem{
- display:flex;
- align-items:center;
- gap:8px;
- font-size:15px;
- color:#1e293b;
-}
-.infoItem i{
- width:22px;
- text-align:center;
- color:#2563eb;
-}
-
-/* Save Icon */
 .saveIcon{
- position:absolute;
- right:14px;
- bottom:14px;
- font-size:22px;
- color:#2563eb;
- cursor:pointer
+ position:absolute;right:14px;bottom:14px;
+ font-size:22px;color:#2563eb;cursor:pointer
 }
 
-/* About */
-.about{
- padding:12px;
- background:white;
- font-size:14px;
- margin:12px;
- border-radius:12px;
- line-height:1.5;
- box-shadow:0 2px 6px rgba(0,0,0,0.1);
-}
+.about{padding:12px;background:white;font-size:14px}
 
-/* Business Box */
 .businessBox{
  background:white;
  margin:12px;
  padding:12px;
  border-radius:12px;
- font-size:14px;
- box-shadow:0 2px 6px rgba(0,0,0,0.1);
+ font-size:14px
 }
-.businessBox h3{margin:0 0 8px 0;font-size:16px;color:#1e293b;font-weight:600;}
+.businessBox h3{margin:0 0 8px 0}
+
 .hoursRow{
  display:flex;
  justify-content:space-between;
- font-size:14px;
- padding:6px 0;
+ font-size:13px;
+ padding:4px 0;
  border-bottom:1px dashed #e5e7eb
 }
 .hoursRow:last-child{border-bottom:none}
@@ -121,47 +58,25 @@ body{
  background:linear-gradient(90deg,#2563eb,#0f172a);
  color:white;font-size:14px;font-weight:600;
  display:none;align-items:center;gap:10px;
- box-shadow:0 4px 10px rgba(0,0,0,.25);
- cursor:pointer;
- border-radius:16px;
+ box-shadow:0 4px 10px rgba(0,0,0,.25);cursor:pointer
 }
 .ctaBar img{
  width:40px;height:40px;border-radius:8px;
  object-fit:cover;background:white
 }
 
-/* Offers */
-.offers{
- display:flex;
- overflow-x:auto;
- scroll-snap-type:x mandatory;
- padding-bottom:12px;
-}
+.offers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
 .offer{
- min-width:85%;
- margin:12px;
- background:#2563eb;
- border-radius:16px;
- padding:12px;
- scroll-snap-align:center;
- color:white;
- display:flex;
- gap:12px;
- align-items:center;
- box-shadow:0 3px 8px rgba(0,0,0,0.2);
+ min-width:90%;margin:12px;background:#2563eb;
+ border-radius:16px;padding:12px;scroll-snap-align:center;
+ color:white;display:flex;gap:12px;align-items:center
 }
 .offer img{
- max-width:120px;
- max-height:100px;
- object-fit:contain;
- border-radius:8px;
- background:white
+ max-width:120px;max-height:100px;
+ object-fit:contain;border-radius:8px;background:white
 }
 .offerContent{flex:1}
-.offerContent h3{margin:0;font-size:16px}
-.offerContent p{font-size:14px;line-height:1.4}
 
-/* Dots */
 .dots{text-align:center;margin-bottom:10px}
 .dots span{
  display:inline-block;width:8px;height:8px;
@@ -169,10 +84,9 @@ body{
 }
 .dots .active{background:#2563eb;width:18px;border-radius:10px}
 
-/* Actions */
 .actions{
  display:flex;justify-content:space-around;
- padding:14px;background:#0f172a;border-top:1px solid #1e293b;
+ padding:14px;background:#0f172a
 }
 .actions a{color:white;font-size:22px}
 
@@ -209,11 +123,11 @@ body{
 <div class="profile">
 <img id="photo">
 <div class="info">
- <div id="name"></div>
- <div id="business"></div>
- <div class="infoItem"><i class="fa fa-phone"></i><span id="phone"></span></div>
- <div class="infoItem"><i class="fa fa-envelope"></i><span id="email"></span></div>
- <div class="infoItem"><i class="fa fa-location-dot"></i><span id="address"></span></div>
+<div id="name"></div>
+<div id="business"></div>
+<div id="phone"></div>
+<div id="email"></div>
+<div id="address"></div>
 </div>
 <i class="fa fa-floppy-disk saveIcon" onclick="saveCard()"></i>
 </div>
@@ -262,10 +176,9 @@ function loadCard(data){
  photo.src=data.profileImage||"";
  name.textContent=data.name||"";
  business.textContent=data.businessName||"";
-
- phone.textContent=data.phone||"";
- email.textContent=data.email||"";
- address.textContent=data.address||"";
+ phone.textContent="📞 "+(data.phone||"");
+ email.textContent="✉️ "+(data.email||"");
+ address.textContent="📍 "+(data.address||"");
 
  about.textContent=data.business?.about || data.businessInfo || "";
 
@@ -279,6 +192,7 @@ function loadCard(data){
  if(data.business?.hours){
   businessDetails.style.display="block";
   businessDetails.innerHTML="<h3>Business Hours</h3>";
+
   Object.keys(data.business.hours).forEach(day=>{
    const h=data.business.hours[day];
    businessDetails.innerHTML+=`
@@ -289,8 +203,10 @@ function loadCard(data){
      </span>
     </div>`;
   });
+
   if(data.business.holidays)
    businessDetails.innerHTML+=`<p class="closed">Closed on public holidays</p>`;
+
   if(data.business.notes)
    businessDetails.innerHTML+=`<p>ℹ️ ${data.business.notes}</p>`;
  }
@@ -326,8 +242,7 @@ function saveCard(){
  const vcf=`BEGIN:VCARD
 VERSION:3.0
 FN:${name.textContent}
-TEL:${phone.textContent}
-EMAIL:${email.textContent}
+TEL:${phone.textContent.replace("📞 ","")}
 END:VCARD`;
  const a=document.createElement("a");
  a.href=URL.createObjectURL(new Blob([vcf],{type:"text/vcard"}));
