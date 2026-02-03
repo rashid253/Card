@@ -11,77 +11,73 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-:root{
- --primary:#2563eb;
- --dark:#0f172a;
- --muted:#475569;
- --bg:#f1f5f9;
-}
-
-*{box-sizing:border-box}
-
+/* ===== GLOBAL ===== */
 body{
  margin:0;
- font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
- background:var(--bg);
- color:var(--dark);
+ font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+ background:#f1f5f9;
+ color:#0f172a;
  line-height:1.6;
 }
 
-/* TOP BAR */
+/* ===== TOP BAR ===== */
 .topbar{
  display:flex;
  justify-content:space-around;
- padding:14px 0;
- background:var(--dark);
+ padding:12px;
+ background:#0f172a;
 }
 .topbar a{
- color:#fff;
+ color:white;
  font-size:20px;
 }
 
-/* PROFILE */
+/* ===== PROFILE ===== */
 .profile{
  position:relative;
  display:flex;
  gap:16px;
- padding:18px;
+ padding:16px;
  background:#e2e8f0;
  align-items:center;
 }
 
+/* STRICT PERFECT CIRCLE */
 .profile img{
  width:110px;
  height:110px;
- aspect-ratio:1/1;
+ min-width:110px;
+ min-height:110px;
  border-radius:50%;
+ aspect-ratio:1 / 1;
  object-fit:cover;
  object-position:center;
- border:3px solid var(--primary);
- background:#fff;
- flex-shrink:0;
+ border:3px solid #2563eb;
+ background:white;
+ display:block;
 }
 
 .info{
  font-size:15px;
+ line-height:1.55;
 }
 
 #name{
  font-weight:700;
- font-size:20px;
- margin-bottom:4px;
+ font-size:19px;
+ margin-bottom:2px;
 }
 
 #business{
  font-size:16px;
  font-weight:600;
- color:var(--primary);
  margin-bottom:6px;
+ color:#1e293b;
 }
 
 #phone,#email,#address{
  font-size:14px;
- color:var(--muted);
+ color:#334155;
 }
 
 /* SAVE ICON */
@@ -90,56 +86,56 @@ body{
  right:14px;
  bottom:14px;
  font-size:22px;
- color:var(--primary);
+ color:#2563eb;
  cursor:pointer;
 }
 
-/* ABOUT */
+/* ===== ABOUT ===== */
 .about{
  padding:14px 16px;
- background:#fff;
+ background:white;
  font-size:15px;
+ line-height:1.7;
 }
 
-/* BUSINESS BOX */
+/* ===== BUSINESS BOX ===== */
 .businessBox{
- background:#fff;
- margin:14px;
+ background:white;
+ margin:12px;
  padding:14px;
  border-radius:14px;
  font-size:14px;
- box-shadow:0 2px 6px rgba(0,0,0,.05);
 }
 .businessBox h3{
  margin:0 0 10px 0;
  font-size:16px;
 }
 
-/* HOURS */
 .hoursRow{
  display:flex;
  justify-content:space-between;
- padding:6px 0;
  font-size:14px;
+ padding:6px 0;
  border-bottom:1px dashed #e5e7eb;
 }
 .hoursRow:last-child{border-bottom:none}
+
 .closed{color:#dc2626;font-weight:600}
 .open{color:#16a34a;font-weight:600}
 
-/* SHOP CTA */
+/* ===== SHOP CTA ===== */
 .ctaBar{
- margin:14px;
+ margin:12px;
  padding:14px;
  border-radius:14px;
- background:linear-gradient(90deg,var(--primary),var(--dark));
- color:#fff;
+ background:linear-gradient(90deg,#2563eb,#0f172a);
+ color:white;
  font-size:15px;
  font-weight:600;
  display:none;
  align-items:center;
  gap:12px;
- box-shadow:0 4px 12px rgba(0,0,0,.25);
+ box-shadow:0 4px 10px rgba(0,0,0,.25);
  cursor:pointer;
 }
 .ctaBar img{
@@ -147,10 +143,10 @@ body{
  height:42px;
  border-radius:10px;
  object-fit:cover;
- background:#fff;
+ background:white;
 }
 
-/* OFFERS */
+/* ===== OFFERS ===== */
 .offers{
  display:flex;
  overflow-x:auto;
@@ -158,12 +154,12 @@ body{
 }
 .offer{
  min-width:90%;
- margin:14px;
- background:var(--primary);
+ margin:12px;
+ background:#2563eb;
  border-radius:18px;
  padding:14px;
  scroll-snap-align:center;
- color:#fff;
+ color:white;
  display:flex;
  gap:14px;
  align-items:center;
@@ -173,7 +169,7 @@ body{
  max-height:100px;
  object-fit:contain;
  border-radius:10px;
- background:#fff;
+ background:white;
 }
 .offerContent h3{
  margin:0 0 6px 0;
@@ -182,6 +178,7 @@ body{
 .offerContent p{
  margin:0;
  font-size:14px;
+ line-height:1.5;
 }
 
 /* DOTS */
@@ -195,24 +192,24 @@ body{
  margin:0 4px;
 }
 .dots .active{
- background:var(--primary);
+ background:#2563eb;
  width:18px;
  border-radius:10px;
 }
 
-/* ACTIONS */
+/* ===== ACTIONS ===== */
 .actions{
  display:flex;
  justify-content:space-around;
- padding:16px 0;
- background:var(--dark);
+ padding:16px;
+ background:#0f172a;
 }
 .actions a{
- color:#fff;
+ color:white;
  font-size:22px;
 }
 
-/* FLOATING SOCIAL */
+/* ===== FLOATING SOCIAL ===== */
 .socialStack{
  position:fixed;
  right:14px;
@@ -220,8 +217,8 @@ body{
  width:48px;
  height:48px;
  border-radius:50%;
- background:var(--primary);
- color:#fff;
+ background:#2563eb;
+ color:white;
  display:flex;
  align-items:center;
  justify-content:center;
@@ -241,8 +238,8 @@ body{
  width:42px;
  height:42px;
  border-radius:50%;
- background:var(--dark);
- color:#fff;
+ background:#0f172a;
+ color:white;
  display:flex;
  align-items:center;
  justify-content:center;
@@ -272,7 +269,9 @@ body{
 </div>
 
 <div class="about" id="about"></div>
+
 <div class="businessBox" id="businessDetails" style="display:none"></div>
+
 <div id="shopCTA" class="ctaBar"></div>
 
 <div class="offers" id="offers"></div>
@@ -328,6 +327,7 @@ function loadCard(data){
  if(data.business?.hours){
   businessDetails.style.display="block";
   businessDetails.innerHTML="<h3>Business Hours</h3>";
+
   Object.keys(data.business.hours).forEach(day=>{
    const h=data.business.hours[day];
    businessDetails.innerHTML+=`
@@ -338,6 +338,12 @@ function loadCard(data){
      </span>
     </div>`;
   });
+
+  if(data.business.holidays)
+   businessDetails.innerHTML+=`<p class="closed">Closed on public holidays</p>`;
+
+  if(data.business.notes)
+   businessDetails.innerHTML+=`<p>ℹ️ ${data.business.notes}</p>`;
  }
 
  if(data.shopAppLink){
@@ -375,14 +381,14 @@ TEL:${phone.textContent.replace("📞 ","")}
 END:VCARD`;
  const a=document.createElement("a");
  a.href=URL.createObjectURL(new Blob([vcf],{type:"text/vcard"}));
- a.download="contact.vcf";a.click();
+ a.download="contact.vcf";
+ a.click();
 }
 
 function toggleSocial(){
- socialExpand.style.display=
-  socialExpand.style.display=="flex"?"none":"flex";
+ socialExpand.style.display =
+  socialExpand.style.display=="flex" ? "none" : "flex";
 }
 </script>
-
 </body>
 </html>
