@@ -1,258 +1,268 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>My Digital Card</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Visiting Card</title>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f172a">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
-
-.topbar{display:flex;justify-content:space-around;padding:12px;background:#0f172a}
-.topbar a{color:white;font-size:20px}
-
-.profile{position:relative;display:flex;gap:16px;padding:16px;background:#e2e8f0}
-.profile img{
- width:110px;height:110px;border-radius:50%;
- object-fit:cover;border:3px solid #2563eb;background:white
-}
-.info{font-size:14px}
-#name{font-weight:700;font-size:18px;margin-top:6px}
-#business{font-size:16px;font-weight:600;margin-bottom:6px}
-
-.saveIcon{
- position:absolute;right:14px;bottom:14px;
- font-size:22px;color:#2563eb;cursor:pointer
+/* ================= THEME VARIABLES ================= */
+:root{
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#475569;
+  --accent:#2563eb;
+  --border:#e5e7eb;
 }
 
-.about{padding:12px;background:white;font-size:14px}
-
-.businessBox{
- background:white;
- margin:12px;
- padding:12px;
- border-radius:12px;
- font-size:14px
-}
-.businessBox h3{margin:0 0 8px 0}
-
-.hoursRow{
- display:flex;
- justify-content:space-between;
- font-size:13px;
- padding:4px 0;
- border-bottom:1px dashed #e5e7eb
-}
-.hoursRow:last-child{border-bottom:none}
-.closed{color:#dc2626;font-weight:600}
-.open{color:#16a34a;font-weight:600}
-
-/* SHOP CTA */
-.ctaBar{
- margin:12px;padding:12px;border-radius:12px;
- background:linear-gradient(90deg,#2563eb,#0f172a);
- color:white;font-size:14px;font-weight:600;
- display:none;align-items:center;gap:10px;
- box-shadow:0 4px 10px rgba(0,0,0,.25);cursor:pointer
-}
-.ctaBar img{
- width:40px;height:40px;border-radius:8px;
- object-fit:cover;background:white
+[data-theme="dark"]{
+  --bg:#020617;
+  --card:#020617;
+  --text:#e5e7eb;
+  --muted:#94a3b8;
+  --accent:#38bdf8;
+  --border:#1e293b;
 }
 
-.offers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
-.offer{
- min-width:90%;margin:12px;background:#2563eb;
- border-radius:16px;padding:12px;scroll-snap-align:center;
- color:white;display:flex;gap:12px;align-items:center
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:'Inter',system-ui,sans-serif;
 }
-.offer img{
- max-width:120px;max-height:100px;
- object-fit:contain;border-radius:8px;background:white
-}
-.offerContent{flex:1}
 
-.dots{text-align:center;margin-bottom:10px}
-.dots span{
- display:inline-block;width:8px;height:8px;
- border-radius:50%;background:#94a3b8;margin:0 4px
+body{
+  background:var(--bg);
+  display:flex;
+  justify-content:center;
+  padding:20px;
+  transition:.3s;
 }
-.dots .active{background:#2563eb;width:18px;border-radius:10px}
+
+/* ================= CARD ================= */
+
+.card{
+  width:100%;
+  max-width:420px;
+  background:var(--card);
+  border-radius:22px;
+  box-shadow:0 15px 40px rgba(0,0,0,.15);
+  overflow:hidden;
+}
+
+/* ================= HEADER ================= */
+
+.card-header{
+  padding:26px 20px 18px;
+  text-align:center;
+  position:relative;
+}
+
+/* DARK MODE BUTTON */
+.theme-toggle{
+  position:absolute;
+  right:16px;
+  top:16px;
+  border:none;
+  background:var(--border);
+  color:var(--text);
+  border-radius:50%;
+  width:38px;
+  height:38px;
+  font-size:18px;
+  cursor:pointer;
+}
+
+/* PROFILE IMAGE */
+.profile-img{
+  width:110px;
+  aspect-ratio:1/1;
+  border-radius:50%;
+  overflow:hidden;
+  margin:0 auto 14px;
+  border:4px solid var(--border);
+}
+
+.profile-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.name{
+  font-size:22px;
+  font-weight:700;
+  color:var(--text);
+}
+
+.designation{
+  font-size:14px;
+  font-weight:500;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+/* ================= INFO ================= */
+
+.info{
+  padding:0 22px 22px;
+}
+
+.info-item{
+  display:flex;
+  gap:12px;
+  padding:12px 0;
+  border-bottom:1px solid var(--border);
+}
+
+.info-item:last-child{
+  border-bottom:none;
+}
+
+.icon{
+  width:38px;
+  height:38px;
+  border-radius:10px;
+  background:var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.info-text{
+  font-size:15px;
+  color:var(--text);
+  line-height:1.6;
+  word-break:break-word;
+}
+
+/* ================= BUTTONS ================= */
 
 .actions{
- display:flex;justify-content:space-around;
- padding:14px;background:#0f172a
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+  padding:18px 22px 24px;
 }
-.actions a{color:white;font-size:22px}
 
-/* Floating Social */
-.socialStack{
- position:fixed;right:14px;bottom:80px;
- width:46px;height:46px;border-radius:50%;
- background:#2563eb;color:white;
- display:flex;align-items:center;justify-content:center;
- font-size:20px;z-index:10;
- box-shadow:0 4px 12px rgba(0,0,0,.3)
+.btn{
+  text-decoration:none;
+  background:var(--accent);
+  color:#fff;
+  padding:14px 0;
+  text-align:center;
+  border-radius:14px;
+  font-size:15px;
+  font-weight:600;
+  transition:.25s;
 }
-.socialExpand{
- position:absolute;bottom:56px;right:0;
- display:none;flex-direction:column;gap:10px
+
+.btn.secondary{
+  background:#0f172a;
 }
-.socialExpand a{
- width:40px;height:40px;border-radius:50%;
- background:#0f172a;color:white;
- display:flex;align-items:center;justify-content:center;
- font-size:18px
+
+[data-theme="dark"] .btn.secondary{
+  background:#020617;
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+}
+
+/* ================= INSTALL HINT ================= */
+.install-hint{
+  text-align:center;
+  font-size:13px;
+  color:var(--muted);
+  padding-bottom:14px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
-<a id="share"><i class="fa fa-share"></i></a>
-<a id="map"><i class="fa-solid fa-location-dot"></i></a>
-<a id="sms"><i class="fa fa-comment"></i></a>
+<div class="card">
+
+  <div class="card-header">
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+
+    <div class="profile-img">
+      <img id="profileImage" src="https://i.imgur.com/8Km9tLL.jpg">
+    </div>
+
+    <div id="name" class="name">Your Name</div>
+    <div id="title" class="designation">Business Title</div>
+  </div>
+
+  <div class="info">
+    <div class="info-item">
+      <div class="icon">📞</div>
+      <div id="phone" class="info-text">0300-1234567</div>
+    </div>
+
+    <div class="info-item">
+      <div class="icon">📧</div>
+      <div id="email" class="info-text">email@example.com</div>
+    </div>
+
+    <div class="info-item">
+      <div class="icon">📍</div>
+      <div id="address" class="info-text">Your Business Address</div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <a id="callBtn" class="btn" href="#">Call</a>
+    <a id="waBtn" class="btn secondary" href="#">WhatsApp</a>
+  </div>
+
+  <div class="install-hint">
+    Add to Home Screen for app-like experience
+  </div>
+
 </div>
 
-<div class="profile">
-<img id="photo">
-<div class="info">
-<div id="name"></div>
-<div id="business"></div>
-<div id="phone"></div>
-<div id="email"></div>
-<div id="address"></div>
-</div>
-<i class="fa fa-floppy-disk saveIcon" onclick="saveCard()"></i>
-</div>
-
-<div class="about" id="about"></div>
-
-<div class="businessBox" id="businessDetails" style="display:none"></div>
-
-<div id="shopCTA" class="ctaBar"></div>
-
-<div class="offers" id="offers"></div>
-<div class="dots" id="dots"></div>
-
-<div class="actions">
-<a id="call"><i class="fa fa-phone"></i></a>
-<a id="wa"><i class="fab fa-whatsapp"></i></a>
-<a id="mail"><i class="fa fa-envelope"></i></a>
-</div>
-
-<div class="socialStack" onclick="toggleSocial()">
- <i class="fab fa-facebook-f"></i>
- <div class="socialExpand" id="socialExpand">
-  <a id="fb"><i class="fab fa-facebook-f"></i></a>
-  <a id="ig"><i class="fab fa-instagram"></i></a>
-  <a id="yt"><i class="fab fa-youtube"></i></a>
-  <a id="web"><i class="fa fa-globe"></i></a>
- </div>
-</div>
-
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-const db = supabase.createClient(
- "https://dfvnefbxgayxqgjjgtrr.supabase.co",
- "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
-);
-
-let id=new URLSearchParams(location.search).get("id")
- || localStorage.getItem("last_card_id");
-if(!id){document.body.innerHTML="<h2>No card found</h2>";throw"";}
-
-db.from("cards").select("*").eq("id",id).single().then(r=>{
- if(r.data) loadCard(JSON.parse(r.data.data));
-});
-
-function loadCard(data){
- photo.src=data.profileImage||"";
- name.textContent=data.name||"";
- business.textContent=data.businessName||"";
- phone.textContent="📞 "+(data.phone||"");
- email.textContent="✉️ "+(data.email||"");
- address.textContent="📍 "+(data.address||"");
-
- about.textContent=data.business?.about || data.businessInfo || "";
-
- call.href="tel:"+data.phone;
- wa.href="https://wa.me/"+data.phone;
- mail.href="mailto:"+data.email;
- map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
- sms.href="sms:"+data.phone;
-
- /* BUSINESS HOURS */
- if(data.business?.hours){
-  businessDetails.style.display="block";
-  businessDetails.innerHTML="<h3>Business Hours</h3>";
-
-  Object.keys(data.business.hours).forEach(day=>{
-   const h=data.business.hours[day];
-   businessDetails.innerHTML+=`
-    <div class="hoursRow">
-     <span>${day}</span>
-     <span class="${h.open?'open':'closed'}">
-      ${h.open ? `${h.from} – ${h.to}` : 'Closed'}
-     </span>
-    </div>`;
-  });
-
-  if(data.business.holidays)
-   businessDetails.innerHTML+=`<p class="closed">Closed on public holidays</p>`;
-
-  if(data.business.notes)
-   businessDetails.innerHTML+=`<p>ℹ️ ${data.business.notes}</p>`;
- }
-
- if(data.shopAppLink){
-  shopCTA.style.display="flex";
-  shopCTA.onclick=()=>location.href=data.shopAppLink;
-  shopCTA.innerHTML=`
-   ${data.shopAppImage?`<img src="${data.shopAppImage}">`:""}
-   <div>Shop on our official app</div>`;
- }
-
- offers.innerHTML=""; dots.innerHTML="";
- data.offers?.forEach((o,i)=>{
-  const d=document.createElement("div");
-  d.className="offer";
-  d.innerHTML=`
-   ${o.image?`<img src="${o.image}">`:""}
-   <div class="offerContent">
-    <h3>🔥 ${o.title}</h3>
-    <p>${o.desc}</p>
-   </div>`;
-  d.onclick=()=>location.href="https://wa.me/"+data.phone;
-  offers.appendChild(d);
-
-  const dot=document.createElement("span");
-  if(i==0) dot.classList.add("active");
-  dots.appendChild(dot);
- });
+/* ================= DARK MODE ================= */
+function toggleTheme(){
+  const theme=document.body.getAttribute("data-theme")==="dark"?"light":"dark";
+  document.body.setAttribute("data-theme",theme);
+  localStorage.setItem("theme",theme);
 }
 
-function saveCard(){
- const vcf=`BEGIN:VCARD
-VERSION:3.0
-FN:${name.textContent}
-TEL:${phone.textContent.replace("📞 ","")}
-END:VCARD`;
- const a=document.createElement("a");
- a.href=URL.createObjectURL(new Blob([vcf],{type:"text/vcard"}));
- a.download="contact.vcf";a.click();
+const savedTheme=localStorage.getItem("theme");
+if(savedTheme) document.body.setAttribute("data-theme",savedTheme);
+
+/* ================= URL AUTO DATA LOAD ================= */
+const params=new URLSearchParams(window.location.search);
+
+function set(id,value){
+  if(value) document.getElementById(id).innerText=value;
 }
 
-function toggleSocial(){
- socialExpand.style.display=
-  socialExpand.style.display=="flex"?"none":"flex";
+if(params.get("img")){
+  document.getElementById("profileImage").src=params.get("img");
+}
+
+set("name",params.get("name"));
+set("title",params.get("title"));
+set("phone",params.get("phone"));
+set("email",params.get("email"));
+set("address",params.get("address"));
+
+if(params.get("phone")){
+  document.getElementById("callBtn").href="tel:"+params.get("phone");
+  document.getElementById("waBtn").href="https://wa.me/"+params.get("phone").replace(/\D/g,"");
+}
+
+/* ================= PWA FEEL ================= */
+if("standalone" in navigator || window.matchMedia("(display-mode: standalone)").matches){
+  document.querySelector(".install-hint").style.display="none";
 }
 </script>
+
 </body>
 </html>
