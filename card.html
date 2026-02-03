@@ -78,8 +78,10 @@ body{
  display:flex;gap:14px;scroll-snap-align:center
 }
 .offer img{
- max-width:120px;max-height:100px;
- object-fit:contain;background:#fff;border-radius:10px
+ max-width:180px;   /* updated size */
+ max-height:150px;  /* updated size */
+ object-fit:cover;   /* better visual */
+ background:#fff;border-radius:10px
 }
 .offerContent{flex:1}
 .offerContent h3{margin:0 0 6px}
@@ -87,14 +89,20 @@ body{
 /* OFFER BUTTON */
 .offerBtn{
  margin-top:10px;
- background:#fff;color:#2563eb;
- padding:11px 14px;
- border-radius:10px;
+ background:#fff;
+ color:#2563eb;
+ padding:10px 18px;
+ border-radius:999px;
  font-weight:700;
- text-align:center;
+ display:inline-block;
+ width:auto;
  cursor:pointer;
- white-space:normal;
- word-break:break-word
+ transition:all .25s ease;
+}
+.offerBtn:hover{
+ background:#2563eb;
+ color:#fff;
+ transform:scale(1.05);
 }
 
 /* DOTS */
@@ -195,7 +203,7 @@ db.from("cards").select("*").eq("id",id).single().then(r=>{
 });
 
 function loadCard(data){
- sellerPhone = (data.phone||"").replace(/\D/g,"");
+ sellerPhone=(data.phone||"").replace(/\D/g,"");
 
  photo.src=data.profileImage||"";
  name.textContent=data.name||"";
@@ -218,45 +226,10 @@ function loadCard(data){
  yt.href=data.youtube||"#";
  web.href=data.website||"#";
 
- /* BUSINESS HOURS */
- if(data.business?.hours){
-  businessDetails.style.display="block";
-  businessDetails.innerHTML="<h3>Business Hours</h3>";
-  Object.keys(data.business.hours).forEach(d=>{
-   const h=data.business.hours[d];
-   businessDetails.innerHTML+=`
-    <div class="hoursRow">
-     <span>${d}</span>
-     <span class="${h.open?'open':'closed'}">
-      ${h.open?`${h.from} – ${h.to}`:"Closed"}
-     </span>
-    </div>`;
-  });
- }
-
- /* SHOP CTA */
- if(data.shopAppLink){
-  shopCTA.style.display="flex";
-  shopCTA.onclick=()=>location.href=data.shopAppLink;
-  shopCTA.innerHTML=`
-   ${data.shopAppImage?`<img src="${data.shopAppImage}">`:""}
-   <div>Shop on our official app</div>`;
- }
-
- /* OFFERS + DIRECT SELLER WHATSAPP */
  offers.innerHTML="";dots.innerHTML="";
  data.offers?.forEach((o,i)=>{
-  const msg =
-`Hello, I’m interested in this offer:
-
-🔥 ${o.title}
-
-Please share complete product details, price & availability.
-
-Card link:
-${location.href}`;
-
-  const waLink = `https://wa.me/${sellerPhone}?text=${encodeURIComponent(msg)}`;
+  const msg=`Hello, I’m interested in this offer:\n\n🔥 ${o.title}\n\nPlease share details.\n\n${location.href}`;
+  const waLink=`https://wa.me/${sellerPhone}?text=${encodeURIComponent(msg)}`;
 
   const d=document.createElement("div");
   d.className="offer";
@@ -266,7 +239,7 @@ ${location.href}`;
     <h3>🔥 ${o.title}</h3>
     <p>${o.desc}</p>
     <div class="offerBtn" onclick="window.open('${waLink}','_blank')">
-     Inquire on WhatsApp
+     Grab Offer
     </div>
    </div>`;
   offers.appendChild(d);
@@ -295,7 +268,7 @@ END:VCARD`;
 }
 
 function toggleSocial(){
- socialExpand.style.display =
+ socialExpand.style.display=
   socialExpand.style.display=="flex"?"none":"flex";
 }
 </script>
