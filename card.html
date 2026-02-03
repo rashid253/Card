@@ -4,104 +4,135 @@
 <meta charset="UTF-8">
 <title>My Digital Card</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f172a">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
 :root{--fs:15.5px;--lh:1.75}
-*{box-sizing:border-box;}
+*{box-sizing:border-box}
+
 body{
- margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
- font-size:var(--fs);line-height:var(--lh);
- background:#f1f5f9;color:#0f172a;
- padding-bottom:140px; /* safe bottom for actions */
+ margin:0;
+ font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+ font-size:var(--fs);
+ line-height:var(--lh);
+ background:#f1f5f9;
+ color:#0f172a;
+ padding-bottom:140px;
 }
 
-/* TOPBAR */
-.topbar{
- position:fixed;top:0;left:0;right:0;z-index:1000;
- display:flex;justify-content:space-around;padding:12px;
- background:#0f172a;
-}
-.topbar a{color:#fff;font-size:20px;}
+/* TOP BAR */
+.topbar{display:flex;justify-content:space-around;padding:12px;background:#0f172a}
+.topbar a{color:#fff;font-size:20px}
 
 /* PROFILE */
 .profile{
- display:flex;gap:16px;padding:16px;margin-top:60px; /* below topbar */
- background:#e2e8f0;
- align-items:flex-start;position:relative;
+ display:flex;gap:16px;padding:16px;background:#e2e8f0;
+ align-items:flex-start;position:relative
 }
 .profile img{
  width:110px;height:110px;border-radius:50%;
- object-fit:cover;border:3px solid #2563eb;background:#fff;
+ object-fit:cover;border:3px solid #2563eb;background:#fff
 }
 .info{flex:1;display:flex;flex-direction:column;gap:4px}
 #name{font-size:17px;font-weight:700}
 #business{font-weight:600}
 #phone,#email,#address{font-size:14px;opacity:.85}
 
-/* SAVE ICON */
+/* SAVE */
 .saveIcon{
  position:absolute;right:14px;bottom:14px;
  font-size:22px;color:#2563eb;cursor:pointer
 }
 
-/* SHOP / BANNER */
-.shopBanner{
- margin:12px;background:#2563eb;color:#fff;
- border-radius:12px;padding:14px;
- font-weight:600;text-align:center;
+/* ABOUT */
+.about{background:#fff;padding:14px 16px;cursor:pointer}
+.aboutText{
+ overflow:hidden;display:-webkit-box;
+ -webkit-line-clamp:3;-webkit-box-orient:vertical
+}
+.about.expanded .aboutText{-webkit-line-clamp:unset}
+.aboutMore{color:#2563eb;font-weight:600;margin-top:6px;display:inline-block}
+
+/* SHOP BANNER */
+#shopBanner{
+ display:none;
+ margin:12px;
+ border-radius:14px;
+ overflow:hidden;
+ cursor:pointer;
+ position:relative;
+}
+#shopBanner img{
+ width:100%;
+ height:160px;
+ object-fit:cover;
+ display:block;
+ background:#e5e7eb;
+}
+#shopBanner .bannerText{
+ position:absolute;
+ bottom:12px;left:12px;
+ color:#fff;font-weight:700;
+ text-shadow:1px 1px 4px #000;font-size:17px;
 }
 
-/* BADGES / CTA */
+/* BUSINESS */
+.businessBox{background:#fff;margin:12px;padding:14px;border-radius:14px}
+
+/* CTA / BADGES */
 .ctaBar{
  margin:12px;padding:14px;border-radius:14px;
  background:linear-gradient(90deg,#2563eb,#0f172a);
- color:#fff;font-weight:600;display:flex;
- align-items:center;gap:12px;cursor:pointer;
- justify-content:center;
+ color:#fff;font-weight:600;display:none;
+ align-items:center;gap:12px;cursor:pointer
 }
 .ctaBar img{width:42px;height:42px;border-radius:10px;background:#fff}
 
-/* BUSINESS HOURS */
-.businessBox{background:#fff;margin:12px;padding:14px;border-radius:14px}
-.hoursRow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #e5e7eb}
-.hoursRow:last-child{border-bottom:none}
-.open{color:#16a34a;font-weight:600}
-.closed{color:#dc2626;font-weight:600}
-
 /* OFFERS */
-.offers{
- display:flex;overflow-x:auto;scroll-snap-type:x mandatory;
- padding-bottom:12px;
-}
+.offers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px}
 .offer{
- min-width:260px; margin:12px; background:#fff;
- border-radius:18px; overflow:hidden; scroll-snap-align:center;
- box-shadow:0 6px 18px rgba(0,0,0,.12); flex-shrink:0;
- display:flex;flex-direction:column;
+ min-width:92%;
+ margin:12px;
+ background:#fff;
+ border-radius:18px;
+ overflow:hidden;
+ scroll-snap-align:center;
+ box-shadow:0 6px 18px rgba(0,0,0,.12);
+ flex-shrink:0;
+ position:relative;
 }
 .offer img{
- width:100%; height:160px; object-fit:cover; display:block;
- background:#e5e7eb;
+ width:100%;
+ height:180px;
+ object-fit:cover;
+ display:block;
+ background:#e5e7eb
 }
-.offerContent{padding:12px}
-.offerContent h3{margin:0 0 6px;font-size:16px}
-.offerShort{opacity:.75;font-size:14px}
+.offerContent{padding:14px}
+.offerContent h3{margin:0 0 6px}
+.offerShort{opacity:.75}
 
-/* BUTTONS INSIDE OFFER MODAL */
+/* DETAILS TOGGLE */
+.offerDetails{display:none;margin-top:10px}
+.offer.open .offerDetails{display:block}
+
+/* BUTTON */
 .offerBtn{
- margin-top:10px;background:#2563eb;color:#fff;
- padding:10px;border-radius:10px;
- font-weight:700;text-align:center;cursor:pointer
+ margin-top:12px;
+ background:#2563eb;
+ color:#fff;
+ padding:12px;
+ border-radius:10px;
+ font-weight:700;
+ text-align:center;
+ cursor:pointer
 }
 
 /* ACTIONS */
-.actions{
- display:flex;justify-content:space-around;
- padding:16px;background:#0f172a;position:fixed;bottom:0;left:0;right:0;
-}
+.actions{display:flex;justify-content:space-around;padding:16px;background:#0f172a;position:fixed;bottom:0;left:0;right:0}
 .actions a{color:#fff;font-size:22px}
 
 /* SOCIAL */
@@ -126,14 +157,6 @@ body{
 
 <body>
 
-<!-- TOPBAR -->
-<div class="topbar">
- <a id="share"><i class="fa fa-share"></i></a>
- <a id="map"><i class="fa-solid fa-location-dot"></i></a>
- <a id="sms"><i class="fa fa-comment"></i></a>
-</div>
-
-<!-- PROFILE -->
 <div class="profile">
  <img id="photo">
  <div class="info">
@@ -146,26 +169,28 @@ body{
  <i class="fa fa-floppy-disk saveIcon" onclick="saveCard()"></i>
 </div>
 
-<!-- SHOP BANNER -->
-<div class="shopBanner" id="shopBanner"></div>
+<!-- SHOP / WEBSITE BANNER -->
+<div id="shopBanner" onclick="openShopLink()">
+ <img id="shopBannerImg">
+ <div class="bannerText" id="shopBannerText"></div>
+</div>
 
-<!-- BADGES / CTA -->
-<div id="ctaBar" class="ctaBar" style="display:none"></div>
+<div class="about" id="aboutBox" onclick="toggleAbout()">
+ <div class="aboutText" id="aboutText"></div>
+ <span class="aboutMore" id="aboutMore">See more</span>
+</div>
 
-<!-- BUSINESS HOURS -->
 <div class="businessBox" id="businessDetails" style="display:none"></div>
+<div id="shopCTA" class="ctaBar"></div>
 
-<!-- OFFERS -->
 <div class="offers" id="offers"></div>
 
-<!-- ACTIONS -->
 <div class="actions">
  <a id="call"><i class="fa fa-phone"></i></a>
  <a id="wa"><i class="fab fa-whatsapp"></i></a>
  <a id="mail"><i class="fa fa-envelope"></i></a>
 </div>
 
-<!-- SOCIAL -->
 <div class="socialStack" onclick="toggleSocial()">
  <i class="fab fa-facebook-f"></i>
  <div class="socialExpand" id="socialExpand">
@@ -178,6 +203,21 @@ body{
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
+/* IMAGE AUTO COMPRESS */
+function compressImage(src,cb){
+ const img=new Image();
+ img.crossOrigin="anonymous";
+ img.onload=()=>{
+  const c=document.createElement("canvas");
+  const max=900;
+  const s=Math.min(1,max/img.width);
+  c.width=img.width*s;c.height=img.height*s;
+  c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+  cb(c.toDataURL("image/jpeg",0.7));
+ };
+ img.src=src;
+}
+
 const db=supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
@@ -187,6 +227,7 @@ let id=new URLSearchParams(location.search).get("id")||localStorage.getItem("las
 if(!id){document.body.innerHTML="<h2>No card found</h2>";throw"";}
 
 let sellerPhone="";
+let shopLink="";
 db.from("cards").select("*").eq("id",id).single().then(r=>{
  if(r.data) loadCard(JSON.parse(r.data.data));
 });
@@ -194,7 +235,9 @@ db.from("cards").select("*").eq("id",id).single().then(r=>{
 function loadCard(data){
  sellerPhone=(data.phone||"").replace(/\D/g,"");
 
- photo.src=data.profileImage||"";
+ /* PROFILE IMAGE */
+ compressImage(data.profileImage||"",i=>photo.src=i);
+
  name.textContent=data.name||"";
  business.textContent=data.businessName||"";
  phone.textContent="📞 "+(data.phone||"");
@@ -204,16 +247,18 @@ function loadCard(data){
  call.href="tel:"+data.phone;
  wa.href="https://wa.me/"+sellerPhone;
  mail.href="mailto:"+data.email;
- map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
- sms.href="sms:"+data.phone;
+
+ fb.href=data.facebook||"#";
+ ig.href=data.instagram||"#";
+ yt.href=data.youtube||"#";
+ web.href=data.website||"#";
 
  /* SHOP BANNER */
- shopBanner.textContent=data.shopBanner||"🔥 Black Friday 50% OFF! Limited time!";
-
- /* CTA BADGES */
- if(data.ctaBadges?.length){
-  ctaBar.style.display="flex";
-  ctaBar.innerHTML=data.ctaBadges.join(" • ");
+ if(data.shopAppLink){
+  shopLink=data.shopAppLink;
+  shopBanner.style.display="block";
+  shopBannerText.textContent=data.businessName||"Visit Shop";
+  if(data.shopAppImage) compressImage(data.shopAppImage,i=>shopBannerImg.src=i);
  }
 
  /* BUSINESS HOURS */
@@ -238,18 +283,49 @@ function loadCard(data){
   const d=document.createElement("div");
   d.className="offer";
   d.innerHTML=`
-   <img src="${o.image||''}">
+   <img>
    <div class="offerContent">
     <h3>${o.title}</h3>
     <div class="offerShort">${o.desc.slice(0,60)}...</div>
-    <div class="offerBtn" onclick="window.open('https://wa.me/${sellerPhone}?text=${encodeURIComponent('Hello, I am interested in '+o.title)}','_blank')">Get Offer on WhatsApp</div>
+    <div class="offerDetails">
+     <p>${o.desc}</p>
+     <div class="offerBtn" onclick="window.open('https://wa.me/${sellerPhone}','_blank')">
+      Get Offer on WhatsApp
+     </div>
+    </div>
+    <div class="offerBtn" onclick="this.closest('.offer').classList.toggle('open')">
+     View Details
+    </div>
    </div>`;
   offers.appendChild(d);
+
+  if(o.image) compressImage(o.image,i=>d.querySelector("img").src=i);
  });
 }
 
-function saveCard(){/* same as before */ }
-function toggleSocial(){socialExpand.style.display=socialExpand.style.display=="flex"?"none":"flex";}
+function toggleAbout(){
+ aboutBox.classList.toggle("expanded");
+ aboutMore.textContent=aboutBox.classList.contains("expanded")?"See less":"See more";
+}
+
+function saveCard(){
+ const vcf=`BEGIN:VCARD
+VERSION:3.0
+FN:${name.textContent}
+TEL:${phone.textContent.replace("📞 ","")}
+END:VCARD`;
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob([vcf],{type:"text/vcard"}));
+ a.download="contact.vcf";a.click();
+}
+
+function toggleSocial(){
+ socialExpand.style.display=socialExpand.style.display=="flex"?"none":"flex";
+}
+
+function openShopLink(){
+ if(shopLink) window.open(shopLink,'_blank');
+}
 </script>
 </body>
 </html>
