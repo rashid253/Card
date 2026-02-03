@@ -12,46 +12,52 @@
 body{margin:0;font-family:system-ui;background:#f1f5f9}
 .wrap{max-width:480px;margin:auto;padding:16px}
 h2{margin-top:20px}
+
 input,textarea{
  width:100%;padding:12px;margin:6px 0;
  border-radius:10px;border:1px solid #cbd5f5
 }
+
 button{
  width:100%;padding:16px;
  border:none;border-radius:12px;
  background:#2563eb;color:white;
  font-size:17px;margin-top:20px
 }
+
 .offerBox{
  background:white;padding:12px;
  border-radius:12px;margin-top:10px
 }
 
-/* BUSINESS TICKS */
-.tickBox{
+/* BUSINESS INFO TICK STYLE */
+.infoBox{
  background:white;
  padding:12px;
  border-radius:12px;
- margin-top:10px;
- font-size:14px
+ margin-top:8px
 }
-.tickRow{
+.infoRow{
  display:flex;
- gap:8px;
  align-items:center;
- margin-bottom:6px
+ margin:6px 0;
+ font-size:15px
 }
-.tickRow input{
- width:18px;height:18px
+.infoRow input{
+ width:auto;
+ margin-right:10px
 }
 </style>
 
 <script>
+/* AUTO OPEN LAST CARD IN APP MODE */
 if (
  (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)
 ) {
  const last = localStorage.getItem("lastCardId");
- if (last) window.location.replace("card.html?id=" + last);
+ if (last) {
+  window.location.replace("card.html?id=" + last);
+ }
 }
 </script>
 </head>
@@ -69,16 +75,13 @@ if (
 <h2>Business</h2>
 <input id="businessName" placeholder="Business Title">
 
-<!-- TICK BASED BUSINESS INFO -->
-<div class="tickBox">
- <div class="tickRow"><input type="checkbox" value="Open 24/7"> Open 24/7</div>
- <div class="tickRow"><input type="checkbox" value="Home Delivery Available"> Home Delivery</div>
- <div class="tickRow"><input type="checkbox" value="Cash & Online Payments Accepted"> Cash / Online Payment</div>
- <div class="tickRow"><input type="checkbox" value="Wholesale Available"> Wholesale</div>
- <div class="tickRow"><input type="checkbox" value="Retail Shop"> Retail Shop</div>
+<div class="infoBox">
+ <div class="infoRow"><input type="checkbox" value="Shop Open"><span>Shop Open</span></div>
+ <div class="infoRow"><input type="checkbox" value="Shop Closed"><span>Shop Closed</span></div>
+ <div class="infoRow"><input type="checkbox" value="Home Delivery Available"><span>Home Delivery Available</span></div>
+ <div class="infoRow"><input type="checkbox" value="Cash & Online Payment"><span>Cash & Online Payment</span></div>
+ <div class="infoRow"><input type="checkbox" value="Wholesale & Retail"><span>Wholesale & Retail</span></div>
 </div>
-
-<textarea id="businessInfo" placeholder="Additional business details (optional)"></textarea>
 
 <h2>Social Media</h2>
 <input id="facebook" placeholder="Facebook link">
@@ -108,6 +111,7 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
+// build offer boxes
 for(let i=1;i<=5;i++){
  offersForm.innerHTML+=`
  <div class="offerBox">
@@ -126,8 +130,9 @@ function resizeImage(file){
    const max=1024;
    let w=img.width,h=img.height;
    const r=Math.min(max/w,max/h,1);
-   c.width=w*r; c.height=h*r;
-   c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+   w*=r; h*=r;
+   c.width=w; c.height=h;
+   c.getContext("2d").drawImage(img,0,0,w,h);
    res(c.toDataURL("image/jpeg",0.8));
   }
   img.src=URL.createObjectURL(file);
@@ -136,37 +141,62 @@ function resizeImage(file){
 
 async function generate(){
 
- const name=fullName.value.trim();
- const phone=phoneNumber.value.trim();
- if(!name||!phone){alert("Name & Phone required");return;}
+ const name = fullName.value.trim();
+ const phone = phoneNumber.value.trim();
+ if(name=="" || phone==""){ alert("Name & Phone required"); return; }
 
- /* COLLECT TICKS */
- let ticks=[];
- document.querySelectorAll(".tickBox input:checked").forEach(c=>{
-  ticks.push("✔️ "+c.value);
- });
+ const id = Math.random().toString(36).slice(2,8);
 
- let info = ticks.join("\n");
- if(businessInfo.value.trim())
-  info += "\n\n" + businessInfo.value.trim();
+ /* collect checked business info */
+ let info=[];
+ document.querySelectorAll(".infoBox input:checked")
+  .forEach(i=>info.push("✔ "+i.value));
 
  const data={
-  name,phone,
+  name,
+  phone,
   email:email.value,
   address:address.value,
   businessName:businessName.value,
-  businessInfo:info,
+  businessInfo: info.join("\n"),
+
   facebook:facebook.value,
   instagram:instagram.value,
   youtube:youtube.value,
   website:website.value,
-  shopAppLink:shopAppLink.value,
+
+  shopAppLink: shopAppLink.value,
+  shopAppImage: "",
+
   profileImage:"",
-  shopAppImage:"",
   offers:[]
  };
 
- alert("Ticked info will show on card ✅");
+ if(profileImage.files[0])
+  data.profileImage = await resizeImage(profileImage.files[0]);
+
+ if(shopAppImage.files[0])
+  data.shopAppImage = await resizeImage(shopAppImage.files[0]);
+
+ for(let i=1;i<=5;i++){
+  const title=document.getElementById("offerTitle"+i).value;
+  const desc=document.getElementById("offerDesc"+i).value;
+  const img=document.getElementById("offerImg"+i).files[0];
+
+  if(title && desc){
+   let imgData="";
+   if(img) imgData = await resizeImage(img);
+   data.offers.push({title,desc,image:imgData});
+  }
+ }
+
+ await db.from("cards").insert({
+  id:id,
+  data:JSON.stringify(data)
+ });
+
+ localStorage.setItem("lastCardId", id);
+ location.href="card.html?id="+id;
 }
 </script>
 </body>
