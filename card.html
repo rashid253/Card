@@ -17,9 +17,29 @@ body{
  background:#f1f5f9;color:#0f172a
 }
 
-/* TOP BAR */
-.topbar{display:flex;justify-content:space-around;padding:12px;background:#0f172a}
-.topbar a{color:#fff;font-size:20px}
+/* SHOP / WEBSITE BANNER */
+.banner{
+ display:none;
+ margin:12px;
+ border-radius:12px;
+ overflow:hidden;
+ position:relative;
+}
+.banner img{
+ width:100%;
+ border-radius:12px;
+ object-fit:cover;
+}
+
+/* CTA BADGES */
+.ctaBadges{
+ display:flex;gap:8px;flex-wrap:wrap;margin:8px 12px;
+}
+.ctaBadge{
+ background:#2563eb;color:#fff;
+ font-weight:600;padding:6px 10px;border-radius:8px;
+ font-size:13px;
+}
 
 /* PROFILE */
 .profile{
@@ -61,49 +81,51 @@ body{
 .open{color:#16a34a;font-weight:600}
 .closed{color:#dc2626;font-weight:600}
 
-/* CTA */
-.ctaBar{
- margin:12px;padding:14px;border-radius:14px;
- background:linear-gradient(90deg,#2563eb,#0f172a);
- color:#fff;font-weight:600;display:none;
- align-items:center;gap:12px;cursor:pointer
-}
-.ctaBar img{width:42px;height:42px;border-radius:10px;background:#fff}
-
 /* OFFERS */
-.offers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
+.offers{
+ display:flex;
+ overflow-x:auto;
+ scroll-snap-type:x mandatory;
+ padding-bottom:20px;
+ margin-top:8px;
+}
 .offer{
- min-width:90%;margin:12px;background:#2563eb;
- border-radius:18px;padding:14px;color:#fff;
- display:flex;gap:14px;scroll-snap-align:center
+ min-width:250px;
+ margin:12px;
+ background:#fff;
+ border-radius:18px;
+ overflow:hidden;
+ scroll-snap-align:center;
+ box-shadow:0 6px 18px rgba(0,0,0,.12);
+ flex-shrink:0;
+ display:flex;
+ flex-direction:column;
 }
 .offer img{
- max-width:120px;max-height:100px;
- object-fit:contain;background:#fff;border-radius:10px
+ width:100%;
+ height:150px;
+ object-fit:cover;
+ display:block;
 }
-.offerContent{flex:1}
-.offerContent h3{margin:0 0 6px}
+.offerContent{
+ padding:10px;
+ display:flex;
+ flex-direction:column;
+ flex:1;
+}
+.offerContent h3{margin:0 0 6px;font-size:15px}
+.offerContent p{font-size:14px;opacity:.85;flex:1}
 
 /* OFFER BUTTON */
 .offerBtn{
  margin-top:10px;
- background:#fff;color:#2563eb;
- padding:11px 14px;
+ background:#2563eb;color:#fff;
+ padding:10px;
  border-radius:10px;
  font-weight:700;
  text-align:center;
  cursor:pointer;
- white-space:normal;
- word-break:break-word
-}
-
-/* BADGES */
-.offerBadges span{
- margin-right:4px;
- padding:2px 6px;
- border-radius:4px;
- font-size:12px;
- font-weight:600;
+ font-size:14px;
 }
 
 /* DOTS */
@@ -140,11 +162,13 @@ body{
 
 <body>
 
-<div class="topbar">
- <a id="share"><i class="fa fa-share"></i></a>
- <a id="map"><i class="fa-solid fa-location-dot"></i></a>
- <a id="sms"><i class="fa fa-comment"></i></a>
+<!-- SHOP / WEBSITE BANNER -->
+<div class="banner" id="shopBanner">
+ <img id="shopBannerImg">
 </div>
+
+<!-- CTA BADGES -->
+<div class="ctaBadges" id="ctaBadges"></div>
 
 <div class="profile">
  <img id="photo">
@@ -164,9 +188,8 @@ body{
 </div>
 
 <div class="businessBox" id="businessDetails" style="display:none"></div>
-<div id="shopCTA" class="ctaBar"></div>
 
-<!-- OFFERS SECTION -->
+<!-- OFFERS -->
 <div class="offers" id="offers"></div>
 <div class="dots" id="dots"></div>
 
@@ -193,7 +216,7 @@ const db=supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-let id=new URLSearchParams(location.search).get("id") || localStorage.getItem("lastCardId");
+let id=new URLSearchParams(location.search).get("id")||localStorage.getItem("lastCardId");
 if(!id){document.body.innerHTML="<h2>No card found</h2>";throw"";}
 
 let aboutExpanded=false;
@@ -204,8 +227,9 @@ db.from("cards").select("*").eq("id",id).single().then(r=>{
 });
 
 function loadCard(data){
- sellerPhone = (data.phone||"").replace(/\D/g,"");
+ sellerPhone=(data.phone||"").replace(/\D/g,"");
 
+ // Profile
  photo.src=data.profileImage||"";
  name.textContent=data.name||"";
  business.textContent=data.businessName||"";
@@ -219,15 +243,13 @@ function loadCard(data){
  call.href="tel:"+data.phone;
  wa.href="https://wa.me/"+sellerPhone;
  mail.href="mailto:"+data.email;
- map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
- sms.href="sms:"+data.phone;
 
  fb.href=data.facebook||"#";
  ig.href=data.instagram||"#";
  yt.href=data.youtube||"#";
  web.href=data.website||"#";
 
- /* BUSINESS HOURS */
+ // Business Hours
  if(data.business?.hours){
   businessDetails.style.display="block";
   businessDetails.innerHTML="<h3>Business Hours</h3>";
@@ -243,49 +265,44 @@ function loadCard(data){
   });
  }
 
- /* SHOP CTA */
- if(data.shopAppLink){
-  shopCTA.style.display="flex";
-  shopCTA.onclick=()=>location.href=data.shopAppLink;
-  shopCTA.innerHTML=`
-   ${data.shopAppImage?`<img src="${data.shopAppImage}">`:""}
-   <div>Shop on our official app</div>`;
+ // Shop Banner
+ if(data.website){
+  shopBanner.style.display="block";
+  shopBannerImg.src=data.websiteImage || "https://via.placeholder.com/480x120?text=Shop+Website";
  }
 
- /* OFFERS + BADGES */
- offers.innerHTML=""; dots.innerHTML="";
+ // CTA Badges (from index.html checkboxes)
+ ctaBadges.innerHTML="";
+ if(data.cta?.length){
+  data.cta.forEach(badge=>{
+   const span=document.createElement("span");
+   span.className="ctaBadge";
+   span.textContent=badge;
+   ctaBadges.appendChild(span);
+  });
+ }
+
+ // Offers
+ offers.innerHTML="";dots.innerHTML="";
  data.offers?.forEach((o,i)=>{
-  const msg = `Hello, I’m interested in this offer:
-
-🔥 ${o.title}
-
-Please share complete product details, price & availability.
-
-Card link:
-${location.href}`;
-  const waLink = `https://wa.me/${sellerPhone}?text=${encodeURIComponent(msg)}`;
-
-  const badges = [];
-  if(o.isLimited) badges.push('<span style="background:red;color:#fff;">Limited</span>');
-  if(o.isBlackFriday) badges.push('<span style="background:black;color:white;">50% OFF</span>');
-  if(o.countdown) badges.push(`<span style="background:orange;color:#fff;">Ends in ${o.countdown}</span>`);
+  const waMsg=`Hello, I’m interested in this offer:\n🔥 ${o.title}\nPlease share details.\n${location.href}`;
+  const waLink=`https://wa.me/${sellerPhone}?text=${encodeURIComponent(waMsg)}`;
 
   const d=document.createElement("div");
   d.className="offer";
   d.innerHTML=`
    ${o.image?`<img src="${o.image}">`:""}
    <div class="offerContent">
-    <div class="offerBadges">${badges.join('')}</div>
     <h3>🔥 ${o.title}</h3>
     <p>${o.desc}</p>
     <div class="offerBtn" onclick="window.open('${waLink}','_blank')">
-     Inquire on WhatsApp
+     Get Offer on WhatsApp
     </div>
    </div>`;
   offers.appendChild(d);
 
   const dot=document.createElement("span");
-  if(i==0) dot.classList.add("active");
+  if(i==0)dot.classList.add("active");
   dots.appendChild(dot);
  });
 }
@@ -308,7 +325,7 @@ END:VCARD`;
 }
 
 function toggleSocial(){
- socialExpand.style.display = socialExpand.style.display=="flex"?"none":"flex";
+ socialExpand.style.display=socialExpand.style.display=="flex"?"none":"flex";
 }
 </script>
 </body>
