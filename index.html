@@ -16,7 +16,19 @@ input,textarea{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:1p
 button{width:100%;padding:16px;border:none;border-radius:12px;background:#2563eb;color:white;font-size:17px;margin-top:20px}
 .offerBox{background:white;padding:12px;border-radius:12px;margin-top:10px}
 
-/* ===== BUSINESS HOURS (LHS TICK COLUMN) ===== */
+/* BADGES */
+.badgeRow{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.badgeRow label{
+ background:#e2e8f0;
+ padding:6px 10px;
+ border-radius:8px;
+ font-size:13px;
+ display:flex;
+ gap:6px;
+ align-items:center;
+}
+
+/* BUSINESS HOURS */
 .dayBox{background:#fff;padding:10px;border-radius:10px;margin-bottom:8px;display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:center}
 .dayCheck{display:flex;justify-content:center}
 .dayContent{display:flex;flex-direction:column;gap:6px}
@@ -62,14 +74,9 @@ if ((window.matchMedia('(display-mode: standalone)').matches || window.navigator
 <input id="shopAppLink" placeholder="Play Store app link">
 <input type="file" id="shopAppImage" accept="image/*">
 
-<h2>Top CTA / Badges / Countdown</h2>
-<input id="topCTAText" placeholder="Top CTA sentence (e.g. Limited Offer!)">
-<input id="badge1" placeholder="Badge 1 (e.g. Black Friday)">
-<input id="badge2" placeholder="Badge 2 (e.g. 50% OFF)">
-<input id="countdown" placeholder="Countdown text (e.g. 2h 30m left)">
-
 <h2>Offers</h2>
 <div id="offersForm"></div>
+<button type="button" onclick="addOffer()">➕ Add Offer</button>
 
 <button type="button" onclick="generate()">Generate Card</button>
 </div>
@@ -83,10 +90,10 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-/* BUSINESS DAYS UI */
-const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+/* BUSINESS DAYS */
+const days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 days.forEach(d=>{
- daysContainer.innerHTML += `
+ daysContainer.innerHTML+=`
  <div class="dayBox">
   <div class="dayCheck"><input type="checkbox" id="open_${d}" checked></div>
   <div class="dayContent">
@@ -99,14 +106,26 @@ days.forEach(d=>{
  </div>`;
 });
 
-/* OFFERS FORM */
-for(let i=1;i<=5;i++){
+/* OFFERS */
+let offerCount=0;
+function addOffer(){
+ offerCount++;
  offersForm.innerHTML+=`
  <div class="offerBox">
-  <b>Offer ${i}</b>
-  <input type="file" id="offerImg${i}">
-  <input id="offerTitle${i}" placeholder="Title">
-  <textarea id="offerDesc${i}" placeholder="Description"></textarea>
+  <b>Offer ${offerCount}</b>
+  <input type="file" id="offerImg${offerCount}">
+  <input id="offerTitle${offerCount}" placeholder="Title">
+  <textarea id="offerDesc${offerCount}" placeholder="Description">
+
+  </textarea>
+
+  <div class="badgeRow">
+   <label><input type="checkbox" value="🔥 Hot Deal"> Hot Deal</label>
+   <label><input type="checkbox" value="⭐ Best Seller"> Best Seller</label>
+   <label><input type="checkbox" value="💸 Discount"> Discount</label>
+   <label><input type="checkbox" value="⏳ Limited Time"> Limited Time</label>
+   <label><input type="checkbox" value="🚚 Free Delivery"> Free Delivery</label>
+  </div>
  </div>`;
 }
 
@@ -122,74 +141,54 @@ function resizeImage(file){
    c.width=w*r; c.height=h*r;
    c.getContext("2d").drawImage(img,0,0,c.width,c.height);
    res(c.toDataURL("image/jpeg",0.8));
-  }
+  };
   img.src=URL.createObjectURL(file);
  });
 }
 
-/* GENERATE CARD */
+/* GENERATE */
 async function generate(){
- if(!fullName.value || !phoneNumber.value){alert("Name & Phone required"); return;}
- const id = Math.random().toString(36).slice(2,8);
+ if(!fullName.value || !phoneNumber.value){alert("Name & Phone required");return;}
+ const id=Math.random().toString(36).slice(2,8);
 
- const businessHours = {};
- days.forEach(d=>{
-  businessHours[d] = {
-   open: document.getElementById("open_"+d).checked,
-   from: document.getElementById("from_"+d).value,
-   to: document.getElementById("to_"+d).value
-  };
- });
-
- const data = {
-  name: fullName.value,
-  phone: phoneNumber.value,
-  email: email.value,
-  address: address.value,
-
-  businessName: businessName.value,
-  business: {
-   about: businessAbout.value,
-   hours: businessHours,
-   holidays: holidayEnabled.checked,
-   notes: businessNotes.value
-  },
-
-  facebook: facebook.value,
-  instagram: instagram.value,
-  youtube: youtube.value,
-  website: website.value,
-
-  shopAppLink: shopAppLink.value,
-  shopAppImage: "",
-  profileImage: "",
-
-  /* ✅ TOP CTA / BADGES / COUNTDOWN */
-  topCTAText: topCTAText.value,
-  badges: [badge1.value, badge2.value],
-  countdown: countdown.value,
-
-  offers: []
+ const data={
+  name:fullName.value,
+  phone:phoneNumber.value,
+  email:email.value,
+  address:address.value,
+  businessName:businessName.value,
+  business:{about:businessAbout.value},
+  facebook:facebook.value,
+  instagram:instagram.value,
+  youtube:youtube.value,
+  website:website.value,
+  shopAppLink:shopAppLink.value,
+  shopAppImage:"",
+  profileImage:"",
+  offers:[]
  };
 
- if(profileImage.files[0]) data.profileImage = await resizeImage(profileImage.files[0]);
- if(shopAppImage.files[0]) data.shopAppImage = await resizeImage(shopAppImage.files[0]);
+ if(profileImage.files[0]) data.profileImage=await resizeImage(profileImage.files[0]);
+ if(shopAppImage.files[0]) data.shopAppImage=await resizeImage(shopAppImage.files[0]);
 
- for(let i=1;i<=5;i++){
-  const t=document.getElementById("offerTitle"+i).value;
-  const d=document.getElementById("offerDesc"+i).value;
-  const f=document.getElementById("offerImg"+i).files[0];
+ for(let i=1;i<=offerCount;i++){
+  const t=document.getElementById("offerTitle"+i)?.value;
+  const d=document.getElementById("offerDesc"+i)?.value;
+  const f=document.getElementById("offerImg"+i)?.files[0];
   if(t && d){
+   const badges=[...offersForm.children[i-1].querySelectorAll("input[type=checkbox]:checked")]
+    .map(b=>b.value);
    data.offers.push({
-    title: t,
-    desc: d,
-    image: f ? await resizeImage(f) : ""
+    title:t,
+    desc:d,
+    badges:badges,
+    image:f?await resizeImage(f):""
    });
   }
  }
 
- await db.from("cards").insert({id, data: JSON.stringify(data)});
- localStorage.setItem("lastCardId", id);
+ await db.from("cards").insert({id,data:JSON.stringify(data)});
+ localStorage.setItem("lastCardId",id);
  location.href="card.html?id="+id;
 }
 </script>
