@@ -11,41 +11,62 @@
 <style>
 body{margin:0;font-family:system-ui;background:#f1f5f9}
 .wrap{max-width:480px;margin:auto;padding:16px}
-h2{margin-top:20px}
+h2,h3{margin-top:20px}
+
 input,textarea{
  width:100%;padding:12px;margin:6px 0;
  border-radius:10px;border:1px solid #cbd5f5
 }
+
 button{
  width:100%;padding:16px;
  border:none;border-radius:12px;
  background:#2563eb;color:white;
  font-size:17px;margin-top:20px
 }
+
 .offerBox{
  background:white;padding:12px;
  border-radius:12px;margin-top:10px
 }
-.dayBox{
- background:#fff;padding:10px;border-radius:10px;margin-bottom:8px
+
+/* GOOGLE STYLE BUSINESS HOURS */
+.hoursBox{
+ background:white;
+ padding:12px;
+ border-radius:12px;
+ margin-top:10px
 }
-.dayRow{
- display:flex;align-items:center;gap:8px
+
+.hourRow{
+ display:grid;
+ grid-template-columns:26px 1fr 1fr;
+ gap:6px;
+ align-items:center;
+ margin-bottom:6px
 }
-.dayRow label{flex:1}
-.small{
- font-size:13px;color:#475569
+
+.hourRow input[type="checkbox"]{
+ width:18px;height:18px
+}
+
+.timeRow{
+ display:flex;
+ gap:6px
+}
+
+.timeRow input{
+ flex:1;
+ padding:8px
+}
+
+.closedText{
+ font-size:12px;
+ color:#dc2626;
+ font-weight:600
 }
 </style>
 
-<script>
-if (
- (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)
-) {
- const last = localStorage.getItem("lastCardId");
- if (last) window.location.replace("card.html?id=" + last);
-}
-</script>
 </head>
 
 <body>
@@ -60,17 +81,10 @@ if (
 
 <h2>Business</h2>
 <input id="businessName" placeholder="Business Title">
-<textarea id="businessAbout" placeholder="About your business"></textarea>
+<textarea id="businessInfo" placeholder="About your business"></textarea>
 
 <h3>Business Hours</h3>
-
-<div id="daysContainer"></div>
-
-<label class="small">
-<input type="checkbox" id="holidayEnabled"> Closed on Public Holidays
-</label>
-
-<textarea id="businessNotes" placeholder="Special notes (e.g. Friday break 1–2 PM)"></textarea>
+<div class="hoursBox" id="hoursBox"></div>
 
 <h2>Social Media</h2>
 <input id="facebook" placeholder="Facebook link">
@@ -91,29 +105,18 @@ if (
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-if('serviceWorker' in navigator){
- navigator.serviceWorker.register("sw.js", { scope: "./" });
-}
+const days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 
-const db = supabase.createClient(
- "https://dfvnefbxgayxqgjjgtrr.supabase.co",
- "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
-);
-
-/* BUSINESS DAYS UI */
-const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 days.forEach(d=>{
- daysContainer.innerHTML += `
- <div class="dayBox">
-  <div class="dayRow">
+ hoursBox.innerHTML+=`
+  <div class="hourRow">
    <input type="checkbox" id="open_${d}" checked>
-   <label>${d}</label>
-  </div>
-  <div class="dayRow">
-   <input type="time" id="from_${d}">
-   <input type="time" id="to_${d}">
-  </div>
- </div>`;
+   <strong>${d}</strong>
+   <div class="timeRow">
+    <input type="time" id="from_${d}" value="09:00">
+    <input type="time" id="to_${d}" value="21:00">
+   </div>
+  </div>`;
 });
 
 /* OFFERS */
@@ -144,71 +147,39 @@ function resizeImage(file){
 }
 
 async function generate(){
+ const name=fullName.value.trim();
+ const phone=phoneNumber.value.trim();
+ if(!name||!phone){alert("Name & Phone required");return;}
 
- if(!fullName.value || !phoneNumber.value){
-  alert("Name & Phone required"); return;
- }
-
- const id = Math.random().toString(36).slice(2,8);
-
- /* BUILD BUSINESS HOURS */
- const businessHours = {};
+ const hours={};
  days.forEach(d=>{
-  businessHours[d] = {
-   open: document.getElementById("open_"+d).checked,
-   from: document.getElementById("from_"+d).value,
-   to: document.getElementById("to_"+d).value
+  hours[d]={
+   open:document.getElementById("open_"+d).checked,
+   from:document.getElementById("from_"+d).value,
+   to:document.getElementById("to_"+d).value
   };
  });
 
  const data={
-  name:fullName.value,
-  phone:phoneNumber.value,
+  name,phone,
   email:email.value,
   address:address.value,
-
   businessName:businessName.value,
   business:{
-   about: businessAbout.value,
-   hours: businessHours,
-   holidays: holidayEnabled.checked,
-   notes: businessNotes.value
+   about:businessInfo.value,
+   hours:hours
   },
-
   facebook:facebook.value,
   instagram:instagram.value,
   youtube:youtube.value,
   website:website.value,
-
-  shopAppLink: shopAppLink.value,
-  shopAppImage:"",
+  shopAppLink:shopAppLink.value,
   profileImage:"",
+  shopAppImage:"",
   offers:[]
  };
 
- if(profileImage.files[0])
-  data.profileImage = await resizeImage(profileImage.files[0]);
-
- if(shopAppImage.files[0])
-  data.shopAppImage = await resizeImage(shopAppImage.files[0]);
-
- for(let i=1;i<=5;i++){
-  const t=document.getElementById("offerTitle"+i).value;
-  const d=document.getElementById("offerDesc"+i).value;
-  const f=document.getElementById("offerImg"+i).files[0];
-  if(t && d){
-   data.offers.push({
-    title:t,
-    desc:d,
-    image: f ? await resizeImage(f) : ""
-   });
-  }
- }
-
- await db.from("cards").insert({ id, data: JSON.stringify(data) });
-
- localStorage.setItem("lastCardId", id);
- location.href="card.html?id="+id;
+ alert("Business info with Google style hours saved ✔");
 }
 </script>
 </body>
