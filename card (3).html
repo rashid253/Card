@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>My Digital Card</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f172a">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+/* ===== CHATGPT-LIKE FONT SYSTEM ===== */
+:root{
+ --fs:15.5px;
+ --lh:1.75;
+}
+
+body{
+ margin:0;
+ font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+ font-size:var(--fs);
+ line-height:var(--lh);
+ background:#f1f5f9;
+ color:#0f172a;
+}
+
+/* ===== TOP BAR ===== */
+.topbar{
+ display:flex;
+ justify-content:space-around;
+ padding:12px;
+ background:#0f172a;
+}
+.topbar a{color:#fff;font-size:20px}
+
+/* ===== PROFILE (FIXED LHS ALIGNMENT) ===== */
+.profile{
+ display:flex;
+ gap:16px;
+ padding:16px;
+ background:#e2e8f0;
+ align-items:flex-start; /* Top align image and text */
+}
+.profile img{
+ width:110px;
+ height:110px;
+ aspect-ratio:1/1;
+ border-radius:50%;
+ object-fit:cover;
+ object-position:center;
+ border:3px solid #2563eb;
+ background:#fff;
+}
+.info{
+ flex:1;
+ display:flex;
+ flex-direction:column;
+ justify-content:flex-start;
+ text-align:left;
+ gap:4px; /* small spacing between fields */
+ word-break:break-word; /* wrap long text */
+}
+#name{font-size:17px;font-weight:700;}
+#business{font-weight:600;margin-bottom:4px;}
+#phone,#email,#address{opacity:.85;font-size:14px;}
+
+/* SAVE */
+.saveIcon{
+ position:absolute;
+ right:14px;
+ bottom:14px;
+ font-size:22px;
+ color:#2563eb;
+ cursor:pointer;
+}
+
+/* ===== FACEBOOK STYLE ABOUT ===== */
+.about{
+ background:#fff;
+ padding:14px 16px;
+ cursor:pointer;
+}
+.aboutText{
+ overflow:hidden;
+ display:-webkit-box;
+ -webkit-line-clamp:3;
+ -webkit-box-orient:vertical;
+}
+.about.expanded .aboutText{-webkit-line-clamp:unset}
+.aboutMore{
+ color:#2563eb;
+ font-weight:600;
+ margin-top:6px;
+ display:inline-block;
+}
+
+/* ===== BUSINESS BOX ===== */
+.businessBox{
+ background:#fff;
+ margin:12px;
+ padding:14px;
+ border-radius:14px;
+}
+.businessBox h3{margin:0 0 10px;font-size:16px}
+
+.hoursRow{
+ display:flex;
+ justify-content:space-between;
+ padding:6px 0;
+ border-bottom:1px dashed #e5e7eb;
+}
+.hoursRow:last-child{border-bottom:none}
+.open{color:#16a34a;font-weight:600}
+.closed{color:#dc2626;font-weight:600}
+
+/* ===== SHOP CTA ===== */
+.ctaBar{
+ margin:12px;
+ padding:14px;
+ border-radius:14px;
+ background:linear-gradient(90deg,#2563eb,#0f172a);
+ color:#fff;
+ font-weight:600;
+ display:none;
+ align-items:center;
+ gap:12px;
+ cursor:pointer;
+}
+.ctaBar img{
+ width:42px;height:42px;
+ border-radius:10px;
+ object-fit:cover;
+ background:#fff;
+}
+
+/* ===== OFFERS ===== */
+.offers{
+ display:flex;
+ overflow-x:auto;
+ scroll-snap-type:x mandatory;
+}
+.offer{
+ min-width:90%;
+ margin:12px;
+ background:#2563eb;
+ border-radius:18px;
+ padding:14px;
+ scroll-snap-align:center;
+ color:#fff;
+ display:flex;
+ gap:14px;
+}
+.offer img{
+ max-width:120px;
+ max-height:100px;
+ object-fit:contain;
+ background:#fff;
+ border-radius:10px;
+}
+.offerContent h3{margin:0 0 6px}
+
+/* DOTS */
+.dots{text-align:center;margin-bottom:12px}
+.dots span{
+ display:inline-block;
+ width:8px;height:8px;
+ border-radius:50%;
+ background:#94a3b8;
+ margin:0 4px;
+}
+.dots .active{
+ background:#2563eb;
+ width:18px;
+ border-radius:10px;
+}
+
+/* ===== ACTIONS ===== */
+.actions{
+ display:flex;
+ justify-content:space-around;
+ padding:16px;
+ background:#0f172a;
+}
+.actions a{color:#fff;font-size:22px}
+
+/* ===== FLOATING SOCIAL ===== */
+.socialStack{
+ position:fixed;
+ right:14px;
+ bottom:80px;
+ width:48px;height:48px;
+ border-radius:50%;
+ background:#2563eb;
+ color:#fff;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ box-shadow:0 4px 12px rgba(0,0,0,.3);
+}
+.socialExpand{
+ position:absolute;
+ bottom:58px;
+ right:0;
+ display:none;
+ flex-direction:column;
+ gap:10px;
+}
+.socialExpand a{
+ width:42px;height:42px;
+ border-radius:50%;
+ background:#0f172a;
+ color:#fff;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+ <a id="share"><i class="fa fa-share"></i></a>
+ <a id="map"><i class="fa-solid fa-location-dot"></i></a>
+ <a id="sms"><i class="fa fa-comment"></i></a>
+</div>
+
+<div class="profile">
+ <img id="photo">
+ <div class="info">
+  <div id="name"></div>
+  <div id="business"></div>
+  <div id="phone"></div>
+  <div id="email"></div>
+  <div id="address"></div>
+ </div>
+ <i class="fa fa-floppy-disk saveIcon" onclick="saveCard()"></i>
+</div>
+
+<div class="about" id="aboutBox" onclick="toggleAbout()">
+ <div class="aboutText" id="aboutText"></div>
+ <span class="aboutMore" id="aboutMore">See more</span>
+</div>
+
+<div class="businessBox" id="businessDetails" style="display:none"></div>
+<div id="shopCTA" class="ctaBar"></div>
+<div class="offers" id="offers"></div>
+<div class="dots" id="dots"></div>
+
+<div class="actions">
+ <a id="call"><i class="fa fa-phone"></i></a>
+ <a id="wa"><i class="fab fa-whatsapp"></i></a>
+ <a id="mail"><i class="fa fa-envelope"></i></a>
+</div>
+
+<div class="socialStack" onclick="toggleSocial()">
+ <i class="fab fa-facebook-f"></i>
+ <div class="socialExpand" id="socialExpand">
+  <a id="fb"><i class="fab fa-facebook-f"></i></a>
+  <a id="ig"><i class="fab fa-instagram"></i></a>
+  <a id="yt"><i class="fab fa-youtube"></i></a>
+  <a id="web"><i class="fa fa-globe"></i></a>
+ </div>
+</div>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+const db=supabase.createClient(
+ "https://dfvnefbxgayxqgjjgtrr.supabase.co",
+ "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
+);
+
+let id=new URLSearchParams(location.search).get("id")
+||localStorage.getItem("last_card_id");
+if(!id){document.body.innerHTML="<h2>No card found</h2>";throw"";}
+
+let aboutExpanded=false;
+
+db.from("cards").select("*").eq("id",id).single().then(r=>{
+ if(r.data) loadCard(JSON.parse(r.data.data));
+});
+
+function loadCard(data){
+ photo.src=data.profileImage||"";
+ name.textContent=data.name||"";
+ business.textContent=data.businessName||"";
+ phone.textContent="📞 "+(data.phone||"");
+ email.textContent="✉️ "+(data.email||"");
+ address.textContent="📍 "+(data.address||"");
+
+ aboutText.textContent=data.business?.about||"";
+ if(aboutText.textContent.length<120)aboutMore.style.display="none";
+
+ call.href="tel:"+data.phone;
+ wa.href="https://wa.me/"+data.phone;
+ mail.href="mailto:"+data.email;
+ map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
+ sms.href="sms:"+data.phone;
+
+ if(data.business?.hours){
+  businessDetails.style.display="block";
+  businessDetails.innerHTML="<h3>Business Hours</h3>";
+  Object.keys(data.business.hours).forEach(d=>{
+   const h=data.business.hours[d];
+   businessDetails.innerHTML+=`
+    <div class="hoursRow">
+     <span>${d}</span>
+     <span class="${h.open?'open':'closed'}">
+      ${h.open?`${h.from} – ${h.to}`:"Closed"}
+     </span>
+    </div>`;
+  });
+ }
+
+ if(data.shopAppLink){
+  shopCTA.style.display="flex";
+  shopCTA.onclick=()=>location.href=data.shopAppLink;
+  shopCTA.innerHTML=`
+   ${data.shopAppImage?`<img src="${data.shopAppImage}">`:""}
+   <div>Shop on our official app</div>`;
+ }
+
+ offers.innerHTML="";dots.innerHTML="";
+ data.offers?.forEach((o,i)=>{
+  const d=document.createElement("div");
+  d.className="offer";
+  d.innerHTML=`
+   ${o.image?`<img src="${o.image}">`:""}
+   <div class="offerContent">
+    <h3>🔥 ${o.title}</h3>
+    <p>${o.desc}</p>
+   </div>`;
+  offers.appendChild(d);
+
+  const dot=document.createElement("span");
+  if(i==0)dot.classList.add("active");
+  dots.appendChild(dot);
+ });
+}
+
+function toggleAbout(){
+ aboutExpanded=!aboutExpanded;
+ aboutBox.classList.toggle("expanded",aboutExpanded);
+ aboutMore.textContent=aboutExpanded?"See less":"See more";
+}
+
+function saveCard(){
+ const vcf=`BEGIN:VCARD
+VERSION:3.0
+FN:${name.textContent}
+TEL:${phone.textContent.replace("📞 ","")}
+END:VCARD`;
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob([vcf],{type:"text/vcard"}));
+ a.download="contact.vcf";a.click();
+}
+
+function toggleSocial(){
+ socialExpand.style.display=
+  socialExpand.style.display=="flex"?"none":"flex";
+}
+</script>
+</body>
+</html>
