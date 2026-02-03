@@ -10,79 +10,48 @@
 
 <style>
 :root{--fs:15.5px;--lh:1.75}
-*{box-sizing:border-box}
-body{
- margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
- font-size:var(--fs);line-height:var(--lh);background:#f1f5f9;
- color:#0f172a;padding-bottom:160px;
-}
-
-/* TOP CTA & BADGES */
-.topCTA{
- background:#2563eb;color:#fff;text-align:center;padding:12px;border-radius:12px;margin:12px;
- font-weight:600;font-size:16px;position:relative;
-}
-.badge{
- display:inline-block;background:#dc2626;color:#fff;padding:4px 8px;border-radius:8px;
- font-size:13px;margin:0 4px;font-weight:700;
-}
-.countdown{display:block;font-size:14px;margin-top:6px;color:#fff}
-
-/* PROFILE */
-.profile{display:flex;gap:16px;padding:16px;background:#e2e8f0;align-items:flex-start;position:relative}
-.profile img{width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid #2563eb;background:#fff}
+*{box-sizing:border-box;}
+body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:var(--fs);line-height:var(--lh);background:#f1f5f9;color:#0f172a;padding-bottom:140px;}
+.topbar{display:flex;justify-content:space-around;padding:12px;background:#0f172a;display:none} /* hide top buttons */
+.profile{display:flex;gap:16px;padding:16px;background:#e2e8f0;align-items:flex-start;position:relative;}
+.profile img{width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid #2563eb;background:#fff;}
 .info{flex:1;display:flex;flex-direction:column;gap:4px}
 #name{font-size:17px;font-weight:700}
 #business{font-weight:600}
 #phone,#email,#address{font-size:14px;opacity:.85}
-
-/* ABOUT */
-.about{background:#fff;padding:14px 16px;cursor:pointer;margin:12px 0}
+.saveIcon{position:absolute;right:14px;bottom:14px;font-size:22px;color:#2563eb;cursor:pointer}
+.about{background:#fff;padding:14px 16px;cursor:pointer}
 .aboutText{overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 .about.expanded .aboutText{-webkit-line-clamp:unset}
 .aboutMore{color:#2563eb;font-weight:600;margin-top:6px;display:inline-block}
-
-/* OFFERS */
-.offers{display:flex;flex-direction:column;gap:14px;margin:12px}
-.offer{
- background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.12);cursor:pointer
-}
-.offer img{width:100%;height:180px;object-fit:cover;background:#e5e7eb;display:block}
-.offerContent{padding:12px}
-.offerContent h3{margin:0 0 6px;font-size:16px}
-.offerBtn{margin-top:10px;background:#2563eb;color:#fff;padding:10px;border-radius:10px;text-align:center;font-weight:700;cursor:pointer}
-
-/* MODAL */
-.modalOverlay{
- display:none;position:fixed;top:0;left:0;width:100%;height:100%;
- background:rgba(0,0,0,.6);align-items:center;justify-content:center;
- z-index:9999
-}
-.modal{
- background:#fff;padding:16px;border-radius:12px;max-width:360px;width:90%;
- text-align:center;position:relative
-}
-.modalClose{
- position:absolute;top:8px;right:8px;font-size:18px;cursor:pointer;color:#2563eb
-}
-
-/* ACTIONS */
+.businessBox{background:#fff;margin:12px;padding:14px;border-radius:14px}
+.ctaBar{margin:12px;padding:14px;border-radius:14px;background:linear-gradient(90deg,#2563eb,#0f172a);color:#fff;font-weight:600;display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap;}
+.ctaBadge{background:#dc2626;color:#fff;padding:6px 12px;border-radius:12px;font-weight:700;margin:4px;font-size:14px;}
+.countdown{background:#16a34a;color:#fff;padding:6px 12px;border-radius:12px;font-weight:700;margin:4px;font-size:14px;}
+.offers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;padding:12px}
+.offer{flex:0 0 80%;background:#fff;border-radius:18px;overflow:hidden;scroll-snap-align:center;box-shadow:0 6px 18px rgba(0,0,0,.12);position:relative;}
+.offer img{width:100%;height:180px;object-fit:cover;display:block;background:#e5e7eb;}
+.offerContent{padding:14px;}
+.offerContent h3{margin:0 0 6px;font-size:16px;}
+.offerShort{opacity:.75;font-size:14px;}
+.offerBtn{margin-top:12px;background:#2563eb;color:#fff;padding:12px;border-radius:10px;font-weight:700;text-align:center;cursor:pointer;}
+.modalBg{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:99;}
+.modal{background:#fff;width:90%;max-width:400px;border-radius:16px;overflow:hidden;animation:fadeIn 0.3s;}
+.modalHeader{padding:14px;background:#2563eb;color:#fff;font-weight:700;font-size:16px;}
+.modalContent{padding:14px;max-height:60vh;overflow-y:auto;}
+.modalContent p{margin:6px 0;}
+.modalClose{position:absolute;right:14px;top:14px;color:#fff;font-size:20px;cursor:pointer;}
+@keyframes fadeIn{0%{opacity:0}100%{opacity:1}}
 .actions{display:flex;justify-content:space-around;padding:16px;background:#0f172a;position:fixed;bottom:0;left:0;right:0}
 .actions a{color:#fff;font-size:22px}
+.socialStack{position:fixed;right:14px;bottom:90px;width:48px;height:48px;border-radius:50%;background:#2563eb;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.socialExpand{position:absolute;bottom:58px;right:0;display:none;flex-direction:column;gap:10px}
+.socialExpand a{width:42px;height:42px;border-radius:50%;background:#0f172a;color:#fff;display:flex;align-items:center;justify-content:center}
 </style>
 </head>
 
 <body>
 
-<!-- TOP CTA -->
-<div class="topCTA" id="topCTA">
- <span id="ctaText"></span>
- <span class="badge" id="badge1"></span>
- <span class="badge" id="badge2"></span>
- <span class="countdown" id="countdown"></span>
-</div>
-
-<!-- PROFILE -->
 <div class="profile">
  <img id="photo">
  <div class="info">
@@ -92,14 +61,19 @@ body{
   <div id="email"></div>
   <div id="address"></div>
  </div>
+ <i class="fa fa-floppy-disk saveIcon" onclick="saveCard()"></i>
 </div>
 
-<div class="about" id="aboutBox" onclick="toggleAbout()">
- <div class="aboutText" id="aboutText"></div>
- <span class="aboutMore" id="aboutMore">See more</span>
-</div>
+<div id="ctaContainer" class="ctaBar"></div>
 
 <div class="offers" id="offers"></div>
+
+<div class="modalBg" id="modalBg">
+ <div class="modal">
+  <div class="modalHeader">Offer Details <span class="modalClose" onclick="closeModal()">&times;</span></div>
+  <div class="modalContent" id="modalContent"></div>
+ </div>
+</div>
 
 <div class="actions">
  <a id="call"><i class="fa fa-phone"></i></a>
@@ -107,51 +81,51 @@ body{
  <a id="mail"><i class="fa fa-envelope"></i></a>
 </div>
 
-<!-- OFFER MODAL -->
-<div class="modalOverlay" id="modalOverlay">
- <div class="modal">
-  <span class="modalClose" onclick="closeModal()">×</span>
-  <h3 id="modalTitle"></h3>
-  <p id="modalDesc"></p>
-  <div class="offerBtn" id="modalWA">Contact on WhatsApp</div>
+<div class="socialStack" onclick="toggleSocial()">
+ <i class="fab fa-facebook-f"></i>
+ <div class="socialExpand" id="socialExpand">
+  <a id="fb"><i class="fab fa-facebook-f"></i></a>
+  <a id="ig"><i class="fab fa-instagram"></i></a>
+  <a id="yt"><i class="fab fa-youtube"></i></a>
+  <a id="web"><i class="fa fa-globe"></i></a>
  </div>
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-const db = supabase.createClient(
- "https://dfvnefbxgayxqgjjgtrr.supabase.co",
- "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
-);
-
-let id = new URLSearchParams(location.search).get("id") || localStorage.getItem("lastCardId");
-if(!id){document.body.innerHTML="<h2>No card found</h2>";throw"";}
-
-let sellerPhone="";
-db.from("cards").select("*").eq("id",id).single().then(r=>{
- if(r.data) loadCard(JSON.parse(r.data.data));
-});
-
-/* IMAGE COMPRESS */
+/* 🔥 IMAGE COMPRESS */
 function compressImage(src,cb){
  const img=new Image();
  img.crossOrigin="anonymous";
  img.onload=()=>{
   const c=document.createElement("canvas");
   const max=900;
-  const s=Math.min(1,max/img.width);
-  c.width=img.width*s;c.height=img.height*s;
+  const ratio=Math.min(max/img.width,1);
+  c.width=img.width*ratio;c.height=img.height*ratio;
   c.getContext("2d").drawImage(img,0,0,c.width,c.height);
   cb(c.toDataURL("image/jpeg",0.7));
  };
  img.src=src;
 }
 
-/* LOAD CARD */
-function loadCard(data){
- sellerPhone = (data.phone||"").replace(/\D/g,"");
+/* 🔥 DATABASE */
+const db=supabase.createClient(
+ "https://dfvnefbxgayxqgjjgtrr.supabase.co",
+ "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
+);
 
- if(data.profileImage) compressImage(data.profileImage,i=>photo.src=i);
+let id=new URLSearchParams(location.search).get("id")||localStorage.getItem("lastCardId");
+if(!id){document.body.innerHTML="<h2>No card found</h2>";throw"";}
+
+let sellerPhone="";
+
+db.from("cards").select("*").eq("id",id).single().then(r=>{
+ if(r.data) loadCard(JSON.parse(r.data.data));
+});
+
+function loadCard(data){
+ sellerPhone=(data.phone||"").replace(/\D/g,"");
+ compressImage(data.profileImage||"",i=>photo.src=i);
 
  name.textContent=data.name||"";
  business.textContent=data.businessName||"";
@@ -162,57 +136,67 @@ function loadCard(data){
  call.href="tel:"+data.phone;
  wa.href="https://wa.me/"+sellerPhone;
  mail.href="mailto:"+data.email;
+ fb.href=data.facebook||"#";
+ ig.href=data.instagram||"#";
+ yt.href=data.youtube||"#";
+ web.href=data.website||"#";
 
- aboutText.textContent = data.business?.about||"";
- if(aboutText.textContent.length<120) aboutMore.style.display="none";
-
- /* TOP CTA & BADGES */
- ctaText.textContent = data.topCTAText || "";
- badge1.textContent = data.badges?.[0] || "";
- badge2.textContent = data.badges?.[1] || "";
- countdown.textContent = data.countdown || "";
+ /* CTA BADGES */
+ ctaContainer.innerHTML="";
+ if(data.ctaBadges?.length){
+   data.ctaBadges.forEach(b=>{
+     const span=document.createElement("span");
+     span.className=b.type==="countdown"?"countdown":"ctaBadge";
+     span.textContent=b.text;
+     ctaContainer.appendChild(span);
+   });
+ }
 
  /* OFFERS */
  offers.innerHTML="";
  data.offers?.forEach(o=>{
-  const div=document.createElement("div");
-  div.className="offer";
-  div.innerHTML=`
-   ${o.image?`<img src="${o.image}">`:''}
+  const d=document.createElement("div");
+  d.className="offer";
+  d.innerHTML=`
+   <img>
    <div class="offerContent">
     <h3>${o.title}</h3>
+    <div class="offerShort">${o.desc.slice(0,60)}...</div>
     <div class="offerBtn" onclick="openModal('${o.title}','${o.desc}','${sellerPhone}')">Get Offer</div>
    </div>`;
-  offers.appendChild(div);
+  offers.appendChild(d);
+  if(o.image) compressImage(o.image,i=>d.querySelector("img").src=i);
  });
 }
 
-/* ABOUT TOGGLE */
-function toggleAbout(){
- aboutBox.classList.toggle("expanded");
- aboutMore.textContent=aboutBox.classList.contains("expanded")?"See less":"See more";
-}
-
-/* MODAL FUNCTIONS */
+/* MODAL */
 function openModal(title,desc,phone){
- document.getElementById("modalTitle").textContent = title;
- document.getElementById("modalDesc").textContent = desc;
- document.getElementById("modalWA").onclick = ()=>window.open(`https://wa.me/${phone}?text=${encodeURIComponent(title + " - " + desc)}`,'_blank');
- document.getElementById("modalOverlay").style.display="flex";
+ modalBg.style.display="flex";
+ modalContent.innerHTML=`
+  <p><b>${title}</b></p>
+  <p>${desc}</p>
+  <div class="offerBtn" onclick="window.open('https://wa.me/${phone}?text=${encodeURIComponent('Hello, I am interested in '+title)}','_blank')">
+   Get on WhatsApp
+  </div>
+ `;
 }
-function closeModal(){document.getElementById("modalOverlay").style.display="none";}
+function closeModal(){modalBg.style.display="none";}
 
-/* COUNTDOWN DYNAMIC (if needed) */
-if(countdown.textContent){
- setInterval(()=>{
-   let parts = countdown.textContent.match(/(\d+)/g);
-   if(parts && parts.length>=2){
-     let hours = parseInt(parts[0]), minutes = parseInt(parts[1]);
-     if(minutes>0) minutes--;
-     else if(hours>0){ hours--; minutes=59; } 
-     countdown.textContent = `Ends in ${hours}h ${minutes}m`;
-   }
- },60000);
+/* SOCIAL */
+function toggleSocial(){
+ socialExpand.style.display=socialExpand.style.display=="flex"?"none":"flex";
+}
+
+/* SAVE CARD */
+function saveCard(){
+ const vcf=`BEGIN:VCARD
+VERSION:3.0
+FN:${name.textContent}
+TEL:${phone.textContent.replace("📞 ","")}
+END:VCARD`;
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob([vcf],{type:"text/vcard"}));
+ a.download="contact.vcf";a.click();
 }
 </script>
 </body>
