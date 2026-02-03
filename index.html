@@ -296,8 +296,11 @@ if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standa
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = 'https://dfvnefbxgayxqgjjgtrr.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRmdm5lZmJ4Z2F5eHFnampndHJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgyNzg0MzYsImV4cCI6MjA1Mzg1NDQzNn0.fViNxzI4QUFEEemD4L8eF6aZb5AkhCVCBMDjkhvBvLc';
+// ============ CHANGES REQUIRED HERE ============
+// REPLACE THESE VALUES WITH YOUR SUPABASE CREDENTIALS
+const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+const SUPABASE_KEY = 'YOUR_ANON_PUBLIC_KEY';
+// ==============================================
 
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -572,7 +575,7 @@ async function generateCard() {
 
   console.log("Card data to save:", cardData);
 
-  // Save to Supabase - FIXED INSERT
+  // Save to Supabase
   const { data, error } = await db
     .from('cards')
     .insert([
