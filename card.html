@@ -10,12 +10,10 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-/* ===== CHATGPT-LIKE FONT SYSTEM ===== */
 :root{
  --fs:15.5px;
  --lh:1.75;
 }
-
 body{
  margin:0;
  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
@@ -24,8 +22,6 @@ body{
  background:#f1f5f9;
  color:#0f172a;
 }
-
-/* ===== TOP BAR ===== */
 .topbar{
  display:flex;
  justify-content:space-around;
@@ -34,13 +30,13 @@ body{
 }
 .topbar a{color:#fff;font-size:20px}
 
-/* ===== PROFILE (FIXED LHS ALIGNMENT) ===== */
+/* ===== PROFILE ===== */
 .profile{
  display:flex;
  gap:16px;
  padding:16px;
  background:#e2e8f0;
- align-items:flex-start; /* Top align image and text */
+ align-items:flex-start;
 }
 .profile img{
  width:110px;
@@ -58,14 +54,12 @@ body{
  flex-direction:column;
  justify-content:flex-start;
  text-align:left;
- gap:4px; /* small spacing between fields */
- word-break:break-word; /* wrap long text */
+ gap:4px;
+ word-break:break-word;
 }
 #name{font-size:17px;font-weight:700;}
 #business{font-weight:600;margin-bottom:4px;}
 #phone,#email,#address{opacity:.85;font-size:14px;}
-
-/* SAVE */
 .saveIcon{
  position:absolute;
  right:14px;
@@ -75,7 +69,7 @@ body{
  cursor:pointer;
 }
 
-/* ===== FACEBOOK STYLE ABOUT ===== */
+/* ===== ABOUT ===== */
 .about{
  background:#fff;
  padding:14px 16px;
@@ -103,7 +97,6 @@ body{
  border-radius:14px;
 }
 .businessBox h3{margin:0 0 10px;font-size:16px}
-
 .hoursRow{
  display:flex;
  justify-content:space-between;
@@ -150,6 +143,7 @@ body{
  color:#fff;
  display:flex;
  gap:14px;
+ cursor:pointer; /* clickable for WhatsApp */
 }
 .offer img{
  max-width:120px;
@@ -331,6 +325,12 @@ function loadCard(data){
     <h3>🔥 ${o.title}</h3>
     <p>${o.desc}</p>
    </div>`;
+  // WhatsApp message feature
+  d.onclick = () => {
+    const msg = `🔥 ${o.title}\n${o.desc}\n${o.link||''}`;
+    const waUrl = `https://wa.me/${data.phone}?text=${encodeURIComponent(msg)}`;
+    window.open(waUrl,'_blank');
+  };
   offers.appendChild(d);
 
   const dot=document.createElement("span");
