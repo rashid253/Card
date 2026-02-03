@@ -10,7 +10,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-/* ===== CHATGPT-LIKE FONT SYSTEM ===== */
 :root{
  --fs:15.5px;
  --lh:1.75;
@@ -41,22 +40,39 @@ body{
  gap:16px;
  padding:16px;
  background:#e2e8f0;
- align-items:center;
+ align-items:flex-start;
 }
 .profile img{
  width:110px;
  height:110px;
- aspect-ratio:1/1;
  border-radius:50%;
  object-fit:cover;
- object-position:center;
  border:3px solid #2563eb;
  background:#fff;
 }
-.info{flex:1}
+
+/* FIXED INFO ALIGNMENT */
+.info{
+ flex:1;
+ display:flex;
+ flex-direction:column;
+ gap:4px;
+}
+
 #name{font-size:17px;font-weight:700}
 #business{font-weight:600;margin-bottom:6px}
-#phone,#email,#address{opacity:.85}
+
+/* ROW STYLE */
+.row{
+ display:flex;
+ align-items:flex-start;
+ gap:8px;
+ opacity:.85;
+}
+.icon{
+ width:20px;
+ flex-shrink:0;
+}
 
 /* SAVE */
 .saveIcon{
@@ -68,7 +84,7 @@ body{
  cursor:pointer;
 }
 
-/* ===== FACEBOOK STYLE ABOUT ===== */
+/* ===== ABOUT ===== */
 .about{
  background:#fff;
  padding:14px 16px;
@@ -177,7 +193,7 @@ body{
 }
 .actions a{color:#fff;font-size:22px}
 
-/* ===== FLOATING SOCIAL ===== */
+/* ===== SOCIAL ===== */
 .socialStack{
  position:fixed;
  right:14px;
@@ -224,9 +240,10 @@ body{
  <div class="info">
   <div id="name"></div>
   <div id="business"></div>
-  <div id="phone"></div>
-  <div id="email"></div>
-  <div id="address"></div>
+
+  <div class="row"><span class="icon">📞</span><span id="phone"></span></div>
+  <div class="row"><span class="icon">✉️</span><span id="email"></span></div>
+  <div class="row"><span class="icon">📍</span><span id="address"></span></div>
  </div>
  <i class="fa fa-floppy-disk saveIcon" onclick="saveCard()"></i>
 </div>
@@ -278,9 +295,9 @@ function loadCard(data){
  photo.src=data.profileImage||"";
  name.textContent=data.name||"";
  business.textContent=data.businessName||"";
- phone.textContent="📞 "+(data.phone||"");
- email.textContent="✉️ "+(data.email||"");
- address.textContent="📍 "+(data.address||"");
+ phone.textContent=data.phone||"";
+ email.textContent=data.email||"";
+ address.textContent=data.address||"";
 
  aboutText.textContent=data.business?.about||"";
  if(aboutText.textContent.length<120)aboutMore.style.display="none";
@@ -342,7 +359,7 @@ function saveCard(){
  const vcf=`BEGIN:VCARD
 VERSION:3.0
 FN:${name.textContent}
-TEL:${phone.textContent.replace("📞 ","")}
+TEL:${phone.textContent}
 END:VCARD`;
  const a=document.createElement("a");
  a.href=URL.createObjectURL(new Blob([vcf],{type:"text/vcard"}));
