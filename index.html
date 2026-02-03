@@ -1,251 +1,163 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Create Digital Card</title>
+<title>Digital Card Generator</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2563eb">
+<meta name="theme-color" content="#0f172a">
+
+<link rel="stylesheet"
+ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-body{margin:0;font-family:system-ui;background:#f1f5f9}
-.wrap{max-width:480px;margin:auto;padding:16px}
-h2{margin-top:20px}
+:root{
+ --primary:#2563eb;
+ --dark:#0f172a;
+ --bg:#f1f5f9;
+}
+
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ font-family:system-ui,-apple-system,Segoe UI,Roboto;
+ background:var(--bg);
+ color:var(--dark);
+}
+
+header{
+ background:var(--dark);
+ color:#fff;
+ padding:16px;
+ text-align:center;
+ font-size:18px;
+ font-weight:600;
+}
+
+form{
+ padding:16px;
+ max-width:520px;
+ margin:auto;
+}
+
+label{
+ font-size:14px;
+ font-weight:600;
+ display:block;
+ margin:14px 0 6px;
+}
 
 input,textarea{
- width:100%;padding:12px;margin:6px 0;
- border-radius:10px;border:1px solid #cbd5f5
+ width:100%;
+ padding:12px;
+ border-radius:10px;
+ border:1px solid #cbd5f5;
+ font-size:15px;
 }
+
+textarea{resize:vertical}
 
 button{
- width:100%;padding:16px;
- border:none;border-radius:12px;
- background:#2563eb;color:white;
- font-size:17px;margin-top:20px
+ width:100%;
+ margin-top:20px;
+ padding:14px;
+ border:none;
+ border-radius:14px;
+ background:linear-gradient(90deg,var(--primary),var(--dark));
+ color:#fff;
+ font-size:16px;
+ font-weight:700;
+ cursor:pointer;
 }
 
-.offerBox{
- background:white;padding:12px;
- border-radius:12px;margin-top:10px
-}
+button:active{transform:scale(.98)}
 
-/* ===== BUSINESS HOURS (LHS TICK COLUMN) ===== */
-.dayBox{
- background:#fff;
- padding:10px;
- border-radius:10px;
- margin-bottom:8px;
- display:grid;
- grid-template-columns: 28px 1fr;
- gap:8px;
- align-items:center
-}
-
-.dayCheck{
- display:flex;
- justify-content:center
-}
-
-.dayContent{
- display:flex;
- flex-direction:column;
- gap:6px
-}
-
-.dayRow{
- display:flex;
- align-items:center;
- gap:8px
-}
-
-.dayRow label{
- font-weight:500
-}
-
-.small{
+.note{
+ text-align:center;
  font-size:13px;
- color:#475569
+ color:#475569;
+ margin-top:10px;
 }
 </style>
-
-<script>
-if (
- (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)
-) {
- const last = localStorage.getItem("lastCardId");
- if (last) window.location.replace("card.html?id=" + last);
-}
-</script>
 </head>
 
 <body>
-<div class="wrap">
 
-<h2>Profile</h2>
-<input type="file" id="profileImage" accept="image/*">
-<input id="fullName" placeholder="Full Name">
-<input id="phoneNumber" placeholder="Phone">
-<input id="email" placeholder="Email">
-<input id="address" placeholder="Address">
+<header>
+ Digital Visiting Card Generator
+</header>
 
-<h2>Business</h2>
-<input id="businessName" placeholder="Business Title">
-<textarea id="businessAbout" placeholder="About your business"></textarea>
+<form id="cardForm">
 
-<h3>Business Hours</h3>
-<div id="daysContainer"></div>
+<label>Name</label>
+<input id="name" required placeholder="Your full name">
 
-<label class="small">
- <input type="checkbox" id="holidayEnabled">
- Closed on Public Holidays
-</label>
+<label>Business Name</label>
+<input id="businessName" placeholder="Business / Shop name">
 
-<textarea id="businessNotes"
- placeholder="Special notes (e.g. Friday break 1–2 PM)"></textarea>
+<label>Phone</label>
+<input id="phone" required placeholder="03XXXXXXXXX">
 
-<h2>Social Media</h2>
-<input id="facebook" placeholder="Facebook link">
-<input id="instagram" placeholder="Instagram link">
-<input id="youtube" placeholder="YouTube link">
-<input id="website" placeholder="Website link">
+<label>Email</label>
+<input id="email" placeholder="example@email.com">
 
-<h2>Shop App (Optional)</h2>
-<input id="shopAppLink" placeholder="Play Store app link">
-<input type="file" id="shopAppImage" accept="image/*">
+<label>Address</label>
+<input id="address" placeholder="Shop or office address">
 
-<h2>Offers</h2>
-<div id="offersForm"></div>
+<label>Profile Image URL</label>
+<input id="profileImage" placeholder="Direct image URL">
 
-<button type="button" onclick="generate()">Generate Card</button>
+<label>About Business</label>
+<textarea id="about" rows="3"
+ placeholder="Short business description"></textarea>
 
+<button type="submit">
+ Generate Digital Card
+</button>
+
+<div class="note">
+ Card will open instantly after generation
 </div>
+
+</form>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-if('serviceWorker' in navigator){
- navigator.serviceWorker.register("sw.js", { scope: "./" });
-}
-
+/* ---------- SUPABASE ---------- */
 const db = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-/* BUSINESS DAYS UI — LHS TICK */
-const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-days.forEach(d=>{
- daysContainer.innerHTML += `
- <div class="dayBox">
-  <div class="dayCheck">
-   <input type="checkbox" id="open_${d}" checked>
-  </div>
-
-  <div class="dayContent">
-   <div class="dayRow">
-    <label>${d}</label>
-   </div>
-   <div class="dayRow">
-    <input type="time" id="from_${d}">
-    <input type="time" id="to_${d}">
-   </div>
-  </div>
- </div>`;
-});
-
-/* OFFERS */
-for(let i=1;i<=5;i++){
- offersForm.innerHTML+=`
- <div class="offerBox">
-  <b>Offer ${i}</b>
-  <input type="file" id="offerImg${i}">
-  <input id="offerTitle${i}" placeholder="Title">
-  <textarea id="offerDesc${i}" placeholder="Description"></textarea>
- </div>`;
-}
-
-function resizeImage(file){
- return new Promise(res=>{
-  const img=new Image();
-  img.onload=()=>{
-   const c=document.createElement("canvas");
-   const max=1024;
-   let w=img.width,h=img.height;
-   const r=Math.min(max/w,max/h,1);
-   c.width=w*r; c.height=h*r;
-   c.getContext("2d").drawImage(img,0,0,c.width,c.height);
-   res(c.toDataURL("image/jpeg",0.8));
-  }
-  img.src=URL.createObjectURL(file);
- });
-}
-
-async function generate(){
-
- if(!fullName.value || !phoneNumber.value){
-  alert("Name & Phone required"); return;
- }
-
- const id = Math.random().toString(36).slice(2,8);
-
- const businessHours = {};
- days.forEach(d=>{
-  businessHours[d] = {
-   open: document.getElementById("open_"+d).checked,
-   from: document.getElementById("from_"+d).value,
-   to: document.getElementById("to_"+d).value
-  };
- });
+/* ---------- FORM SUBMIT ---------- */
+document.getElementById("cardForm")
+.addEventListener("submit",async e=>{
+ e.preventDefault();
 
  const data={
-  name:fullName.value,
-  phone:phoneNumber.value,
+  name:name.value,
+  businessName:businessName.value,
+  phone:phone.value,
   email:email.value,
   address:address.value,
-
-  businessName:businessName.value,
-  business:{
-   about: businessAbout.value,
-   hours: businessHours,
-   holidays: holidayEnabled.checked,
-   notes: businessNotes.value
-  },
-
-  facebook:facebook.value,
-  instagram:instagram.value,
-  youtube:youtube.value,
-  website:website.value,
-
-  shopAppLink: shopAppLink.value,
-  shopAppImage:"",
-  profileImage:"",
-  offers:[]
+  profileImage:profileImage.value,
+  businessInfo:about.value
  };
 
- if(profileImage.files[0])
-  data.profileImage = await resizeImage(profileImage.files[0]);
+ const res=await db.from("cards").insert({
+  data:JSON.stringify(data)
+ }).select().single();
 
- if(shopAppImage.files[0])
-  data.shopAppImage = await resizeImage(shopAppImage.files[0]);
-
- for(let i=1;i<=5;i++){
-  const t=document.getElementById("offerTitle"+i).value;
-  const d=document.getElementById("offerDesc"+i).value;
-  const f=document.getElementById("offerImg"+i).files[0];
-  if(t && d){
-   data.offers.push({
-    title:t,
-    desc:d,
-    image: f ? await resizeImage(f) : ""
-   });
-  }
+ if(res.data){
+  localStorage.setItem("last_card_id",res.data.id);
+  location.href="card.html?id="+res.data.id;
+ }else{
+  alert("Error creating card");
  }
-
- await db.from("cards").insert({ id, data: JSON.stringify(data) });
-
- localStorage.setItem("lastCardId", id);
- location.href="card.html?id="+id;
-}
+});
 </script>
+
 </body>
 </html>
