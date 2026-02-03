@@ -23,11 +23,12 @@ body{
 
 /* PROFILE */
 .profile{
- display:flex;gap:16px;padding:16px;background:#e2e8f0;align-items:flex-start;position:relative
+ display:flex;gap:16px;padding:16px;background:#e2e8f0;
+ align-items:flex-start;position:relative
 }
 .profile img{
- width:110px;height:110px;border-radius:50%;object-fit:cover;
- border:3px solid #2563eb;background:#fff
+ width:110px;height:110px;border-radius:50%;
+ object-fit:cover;border:3px solid #2563eb;background:#fff
 }
 .info{flex:1;display:flex;flex-direction:column;gap:4px}
 #name{font-size:17px;font-weight:700}
@@ -36,13 +37,15 @@ body{
 
 /* SAVE */
 .saveIcon{
- position:absolute;right:14px;bottom:14px;font-size:22px;color:#2563eb;cursor:pointer
+ position:absolute;right:14px;bottom:14px;
+ font-size:22px;color:#2563eb;cursor:pointer
 }
 
 /* ABOUT */
 .about{background:#fff;padding:14px 16px;cursor:pointer}
 .aboutText{
- overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical
+ overflow:hidden;display:-webkit-box;
+ -webkit-line-clamp:3;-webkit-box-orient:vertical
 }
 .about.expanded .aboutText{-webkit-line-clamp:unset}
 .aboutMore{color:#2563eb;font-weight:600;margin-top:6px;display:inline-block}
@@ -51,7 +54,8 @@ body{
 .businessBox{background:#fff;margin:12px;padding:14px;border-radius:14px}
 .businessBox h3{margin:0 0 10px;font-size:16px}
 .hoursRow{
- display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #e5e7eb
+ display:flex;justify-content:space-between;
+ padding:6px 0;border-bottom:1px dashed #e5e7eb
 }
 .hoursRow:last-child{border-bottom:none}
 .open{color:#16a34a;font-weight:600}
@@ -61,19 +65,21 @@ body{
 .ctaBar{
  margin:12px;padding:14px;border-radius:14px;
  background:linear-gradient(90deg,#2563eb,#0f172a);
- color:#fff;font-weight:600;display:none;align-items:center;gap:12px;cursor:pointer
+ color:#fff;font-weight:600;display:none;
+ align-items:center;gap:12px;cursor:pointer
 }
 .ctaBar img{width:42px;height:42px;border-radius:10px;background:#fff}
 
 /* OFFERS */
 .offers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
 .offer{
- min-width:90%;margin:12px;background:#2563eb;border-radius:18px;
- padding:14px;color:#fff;display:flex;gap:14px;scroll-snap-align:center
+ min-width:90%;margin:12px;background:#2563eb;
+ border-radius:18px;padding:14px;color:#fff;
+ display:flex;gap:14px;scroll-snap-align:center
 }
 .offer img{
- max-width:120px;max-height:100px;object-fit:contain;
- background:#fff;border-radius:10px
+ max-width:120px;max-height:100px;
+ object-fit:contain;background:#fff;border-radius:10px
 }
 .offerContent{flex:1}
 .offerContent h3{margin:0 0 6px}
@@ -82,20 +88,20 @@ body{
 .offerBtn{
  margin-top:10px;
  background:#fff;color:#2563eb;
- padding:10px 14px;
+ padding:11px 14px;
  border-radius:10px;
  font-weight:700;
  text-align:center;
  cursor:pointer;
  white-space:normal;
- word-break:break-word;
+ word-break:break-word
 }
 
 /* DOTS */
 .dots{text-align:center;margin-bottom:12px}
 .dots span{
- display:inline-block;width:8px;height:8px;border-radius:50%;
- background:#94a3b8;margin:0 4px
+ display:inline-block;width:8px;height:8px;
+ border-radius:50%;background:#94a3b8;margin:0 4px
 }
 .dots .active{background:#2563eb;width:18px;border-radius:10px}
 
@@ -105,17 +111,20 @@ body{
 
 /* SOCIAL */
 .socialStack{
- position:fixed;right:14px;bottom:80px;width:48px;height:48px;
- border-radius:50%;background:#2563eb;color:#fff;
+ position:fixed;right:14px;bottom:80px;
+ width:48px;height:48px;border-radius:50%;
+ background:#2563eb;color:#fff;
  display:flex;align-items:center;justify-content:center;
  box-shadow:0 4px 12px rgba(0,0,0,.3)
 }
 .socialExpand{
- position:absolute;bottom:58px;right:0;display:none;flex-direction:column;gap:10px
+ position:absolute;bottom:58px;right:0;
+ display:none;flex-direction:column;gap:10px
 }
 .socialExpand a{
- width:42px;height:42px;border-radius:50%;background:#0f172a;
- color:#fff;display:flex;align-items:center;justify-content:center
+ width:42px;height:42px;border-radius:50%;
+ background:#0f172a;color:#fff;
+ display:flex;align-items:center;justify-content:center
 }
 </style>
 </head>
@@ -174,16 +183,20 @@ const db=supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-let id=new URLSearchParams(location.search).get("id") || localStorage.getItem("lastCardId");
+let id=new URLSearchParams(location.search).get("id")
+ || localStorage.getItem("lastCardId");
 if(!id){document.body.innerHTML="<h2>No card found</h2>";throw"";}
 
 let aboutExpanded=false;
+let sellerPhone="";
 
 db.from("cards").select("*").eq("id",id).single().then(r=>{
  if(r.data) loadCard(JSON.parse(r.data.data));
 });
 
 function loadCard(data){
+ sellerPhone = (data.phone||"").replace(/\D/g,"");
+
  photo.src=data.profileImage||"";
  name.textContent=data.name||"";
  business.textContent=data.businessName||"";
@@ -195,7 +208,7 @@ function loadCard(data){
  if(aboutText.textContent.length<120)aboutMore.style.display="none";
 
  call.href="tel:"+data.phone;
- wa.href="https://wa.me/"+data.phone;
+ wa.href="https://wa.me/"+sellerPhone;
  mail.href="mailto:"+data.email;
  map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
  sms.href="sms:"+data.phone;
@@ -230,11 +243,20 @@ function loadCard(data){
    <div>Shop on our official app</div>`;
  }
 
- /* OFFERS WITH WHATSAPP BUTTON */
+ /* OFFERS + DIRECT SELLER WHATSAPP */
  offers.innerHTML="";dots.innerHTML="";
  data.offers?.forEach((o,i)=>{
-  const msg = `🔥 ${o.title}\n\n${o.desc}\n\n👉 ${location.href}`;
-  const waLink = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+  const msg =
+`Hello, I’m interested in this offer:
+
+🔥 ${o.title}
+
+Please share complete product details, price & availability.
+
+Card link:
+${location.href}`;
+
+  const waLink = `https://wa.me/${sellerPhone}?text=${encodeURIComponent(msg)}`;
 
   const d=document.createElement("div");
   d.className="offer";
@@ -244,7 +266,7 @@ function loadCard(data){
     <h3>🔥 ${o.title}</h3>
     <p>${o.desc}</p>
     <div class="offerBtn" onclick="window.open('${waLink}','_blank')">
-     Get Offer / Grab Offer
+     Inquire on WhatsApp
     </div>
    </div>`;
   offers.appendChild(d);
@@ -273,7 +295,8 @@ END:VCARD`;
 }
 
 function toggleSocial(){
- socialExpand.style.display = socialExpand.style.display=="flex"?"none":"flex";
+ socialExpand.style.display =
+  socialExpand.style.display=="flex"?"none":"flex";
 }
 </script>
 </body>
