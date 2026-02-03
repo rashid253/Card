@@ -34,38 +34,63 @@ body{
 }
 .topbar a{color:#fff;font-size:20px}
 
-/* ===== PROFILE ===== */
+/* ===== PROFILE (UPDATED STYLE) ===== */
 .profile{
  position:relative;
  display:flex;
- gap:16px;
- padding:16px;
- background:#e2e8f0;
+ flex-direction:column;
  align-items:center;
+ padding:20px 16px;
+ background:#fff;
+ margin:12px;
+ border-radius:20px;
+ box-shadow:0 4px 16px rgba(0,0,0,0.1);
+ text-align:center;
 }
 .profile img{
- width:110px;
- height:110px;
+ width:120px;
+ height:120px;
  aspect-ratio:1/1;
  border-radius:50%;
  object-fit:cover;
  object-position:center;
- border:3px solid #2563eb;
+ border:4px solid #2563eb;
  background:#fff;
+ margin-bottom:14px;
 }
-.info{flex:1}
-#name{font-size:17px;font-weight:700}
-#business{font-weight:600;margin-bottom:6px}
-#phone,#email,#address{opacity:.85}
+.info{
+ display:flex;
+ flex-direction:column;
+ gap:6px;
+}
+#name{
+ font-size:20px;
+ font-weight:700;
+ color:#111827;
+}
+#business{
+ font-size:16px;
+ font-weight:600;
+ color:#2563eb;
+}
+#phone,#email,#address{
+ font-size:14px;
+ opacity:.85;
+ word-break:break-word;
+}
 
 /* SAVE */
 .saveIcon{
  position:absolute;
- right:14px;
- bottom:14px;
- font-size:22px;
+ right:16px;
+ bottom:16px;
+ font-size:24px;
  color:#2563eb;
  cursor:pointer;
+ transition:transform .2s;
+}
+.saveIcon:hover{
+ transform:scale(1.2);
 }
 
 /* ===== FACEBOOK STYLE ABOUT ===== */
