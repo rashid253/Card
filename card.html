@@ -10,18 +10,21 @@
 
 <style>
 body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
+.topbar{display:flex;justify-content:space-around;padding:12px;background:#0f172a}
+.topbar a{color:#fff;font-size:20px}
 .profile{display:flex;gap:16px;padding:16px;background:#e2e8f0;position:relative}
 .profile img{width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid #2563eb;background:#fff}
 .info{flex:1;display:flex;flex-direction:column;gap:4px}
 #name{font-size:17px;font-weight:700}
 #business{font-weight:600}
-#phone,#email,#address{font-size:14px;opacity:.85}
+#phone,#email,#address,#websiteText{font-size:14px;opacity:.85}
+.saveIcon{position:absolute;right:14px;bottom:14px;font-size:22px;color:#2563eb;cursor:pointer}
 .about{background:#fff;padding:14px 16px;cursor:pointer}
 .aboutText{overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 .about.expanded .aboutText{-webkit-line-clamp:unset}
 .aboutMore{color:#2563eb;font-weight:600;margin-top:6px;display:inline-block}
 .offers{display:flex;gap:12px;padding:12px;overflow-x:auto}
-.offer{min-width:160px;height:200px;border-radius:16px;background:#fff;position:relative;cursor:pointer}
+.offer{min-width:160px;height:200px;border-radius:16px;background:#fff;position:relative;cursor:pointer;overflow:hidden}
 .offer img{width:100%;height:100%;object-fit:contain}
 .offerBadges{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:6px}
 .offerBadges span{background:#ef4444;color:#fff;font-size:12px;font-weight:700;padding:4px 8px;border-radius:8px}
@@ -29,10 +32,43 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 #offerPanel img{width:100%;max-height:280px;object-fit:contain}
 .panelContent{padding:16px}
 .panelCTA{margin-top:16px;background:#16a34a;color:#fff;padding:16px;text-align:center;border-radius:12px;font-weight:700;cursor:pointer}
+.actions{display:flex;justify-content:space-around;padding:16px;background:#0f172a}
+.actions a{color:#fff;font-size:22px}
+
+/* Business Hours Styles */
+.hoursContainer{background:#fff;padding:16px;margin-top:8px;}
+.hoursContainer h3{margin:0 0 12px 0;font-size:16px;color:#0f172a;}
+.dayRow{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f1f1;}
+.dayRow:last-child{border-bottom:none;}
+.dayName{font-weight:500;}
+.dayTime{color:#666;}
+.closed{color:#ef4444;}
+
+/* Website Section */
+.websiteContainer{background:#fff;padding:16px;margin-top:8px;}
+.websiteContainer h3{margin:0 0 12px 0;font-size:16px;color:#0f172a;}
+.websiteLink{display:flex;align-items:center;gap:10px;padding:12px;background:#f8fafc;border-radius:10px;text-decoration:none;color:#2563eb;font-weight:600;margin-top:8px;}
+.websiteLink i{font-size:18px;}
+
+/* Holidays Section */
+.holidaysContainer{background:#fff;padding:16px;margin-top:8px;}
+.holidaysContainer h3{margin:0 0 12px 0;font-size:16px;color:#0f172a;}
+.holidayItem{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#f8fafc;border-radius:8px;margin-bottom:8px;}
+.holidayName{font-weight:500;color:#0f172a;}
+.holidayDate{color:#ef4444;font-size:14px;}
+
+/* Special Text for Website */
+.websiteSpecial{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;padding:14px;border-radius:12px;margin:12px;text-align:center;font-weight:700;font-size:15px;}
+.websiteSpecial a{color:white;text-decoration:none;}
 </style>
 </head>
 
 <body>
+
+<div class="topbar">
+ <a id="map"><i class="fa-solid fa-location-dot"></i></a>
+ <a id="sms"><i class="fa fa-comment"></i></a>
+</div>
 
 <div class="profile">
  <img id="photo">
@@ -42,7 +78,9 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
   <div id="phone"></div>
   <div id="email"></div>
   <div id="address"></div>
+  <div id="websiteText"></div>
  </div>
+ <i class="fa fa-floppy-disk saveIcon" onclick="saveCard()"></i>
 </div>
 
 <div class="about" id="aboutBox" onclick="toggleAbout()">
@@ -50,7 +88,40 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
  <span class="aboutMore" id="aboutMore">See more</span>
 </div>
 
+<!-- Website Section -->
+<div class="websiteContainer" id="websiteContainer" style="display:none;">
+ <h3>🌐 Visit Our Website</h3>
+ <a class="websiteLink" id="websiteLink" target="_blank" rel="noopener">
+  <i class="fas fa-external-link-alt"></i>
+  <span id="websiteUrl"></span>
+ </a>
+</div>
+
+<!-- Business Hours Section -->
+<div class="hoursContainer" id="hoursContainer" style="display:none;">
+ <h3>🕐 Business Hours</h3>
+ <div id="businessHours"></div>
+</div>
+
+<!-- Holidays Section -->
+<div class="holidaysContainer" id="holidaysContainer" style="display:none;">
+ <h3>📅 Special Holidays</h3>
+ <div id="holidaysList"></div>
+</div>
+
+<!-- Special Website Banner -->
+<div class="websiteSpecial" id="websiteBanner" style="display:none;">
+ <a id="websiteBannerLink" target="_blank" rel="noopener">
+  🛒 Shop Now on Our Online Store! Get Exclusive Offers! 🌟
+ </a>
+</div>
+
 <div class="offers" id="offers"></div>
+
+<div class="actions">
+ <a id="call"><i class="fa fa-phone"></i></a>
+ <a id="mail"><i class="fa fa-envelope"></i></a>
+</div>
 
 <div id="offerPanel">
  <img id="panelImg">
@@ -64,56 +135,182 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
 document.addEventListener("DOMContentLoaded", async ()=>{
+
 const $=id=>document.getElementById(id);
 
 const photo=$("photo"), nameEl=$("name"), businessEl=$("business"),
-phoneEl=$("phone"), emailEl=$("email"), addressEl=$("address"),
+phoneEl=$("phone"), emailEl=$("email"), addressEl=$("address"), websiteText=$("websiteText"),
 aboutText=$("aboutText"), aboutMore=$("aboutMore"), aboutBox=$("aboutBox"),
-offers=$("offers"), panelImg=$("panelImg"), panelTitle=$("panelTitle"),
-panelDesc=$("panelDesc"), panelCTA=$("panelCTA"), offerPanel=$("offerPanel");
+offers=$("offers"), call=$("call"), mail=$("mail"), map=$("map"), sms=$("sms"),
+panelImg=$("panelImg"), panelTitle=$("panelTitle"), panelDesc=$("panelDesc"),
+panelCTA=$("panelCTA"), offerPanel=$("offerPanel"),
+hoursContainer=$("hoursContainer"), businessHours=$("businessHours"),
+holidaysContainer=$("holidaysContainer"), holidaysList=$("holidaysList"),
+websiteContainer=$("websiteContainer"), websiteLink=$("websiteLink"), websiteUrl=$("websiteUrl"),
+websiteBanner=$("websiteBanner"), websiteBannerLink=$("websiteBannerLink");
 
 const supa = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-const id = new URLSearchParams(location.search).get("id") || localStorage.getItem("lastCardId");
-if(!id){document.body.innerHTML="<h2>No card found</h2>";return;}
+const id=new URLSearchParams(location.search).get("id") || localStorage.getItem("lastCardId");
+if(!id){document.body.innerHTML="<h2 style='padding:20px'>No card found</h2>";return;}
 
 const {data,error}=await supa.from("cards").select("*").eq("id",id).single();
-if(error || !data){document.body.innerHTML="<h2>Card not found</h2>";return;}
+if(error || !data){document.body.innerHTML="<h2 style='padding:20px'>Card not found</h2>";return;}
 
-const card = JSON.parse(data.data);
+const card=JSON.parse(data.data);
 
-photo.src = card.profileImage || "";
-nameEl.textContent = card.name || "";
-businessEl.textContent = card.businessName || "";
-phoneEl.textContent = "📞 " + (card.phone||"");
-emailEl.textContent = "✉️ " + (card.email||"");
-addressEl.textContent = "📍 " + (card.address||"");
-aboutText.textContent = card.business?.about || "";
+// Populate basic info
+photo.src=card.profileImage||"";
+nameEl.textContent=card.name||"";
+businessEl.textContent=card.businessName||"";
+phoneEl.textContent="📞 "+(card.phone||"");
+emailEl.textContent="✉️ "+(card.email||"");
+addressEl.textContent="📍 "+(card.address||"");
+aboutText.textContent=card.business?.about||card.about||"";
 
-// OFFERS
+// Website info
+if(card.website && card.website.trim()) {
+ websiteText.textContent="🌐 " + card.website;
+ websiteContainer.style.display="block";
+ websiteUrl.textContent = card.website;
+ websiteLink.href = card.website;
+ 
+ // Show special banner
+ websiteBanner.style.display="block";
+ websiteBannerLink.href = card.website;
+}
+
+call.href="tel:"+card.phone;
+mail.href="mailto:"+card.email;
+map.href="https://maps.google.com/?q="+encodeURIComponent(card.address);
+sms.href="sms:"+card.phone;
+
+// Populate business hours if they exist
+if(card.businessHours && Array.isArray(card.businessHours) && card.businessHours.length > 0){
+ hoursContainer.style.display = "block";
+ const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+ 
+ card.businessHours.forEach((day, index) => {
+   if(day && day.open !== undefined) {
+     const dayDiv = document.createElement("div");
+     dayDiv.className = "dayRow";
+     
+     if(!day.open || day.status === 'closed') {
+       dayDiv.innerHTML = `
+         <span class="dayName">${days[index]}</span>
+         <span class="dayTime closed">Closed</span>
+       `;
+     } else {
+       dayDiv.innerHTML = `
+         <span class="dayName">${days[index]}</span>
+         <span class="dayTime">${day.start} - ${day.end}</span>
+       `;
+     }
+     
+     businessHours.appendChild(dayDiv);
+   }
+ });
+}
+
+// Populate holidays if they exist
+if(card.holidays && Array.isArray(card.holidays) && card.holidays.length > 0){
+ holidaysContainer.style.display = "block";
+ 
+ card.holidays.forEach(holiday => {
+   if(holiday.name && holiday.date) {
+     const holidayDiv = document.createElement("div");
+     holidayDiv.className = "holidayItem";
+     
+     // Format date
+     const date = new Date(holiday.date);
+     const formattedDate = date.toLocaleDateString('en-US', {
+       month: 'short',
+       day: 'numeric',
+       year: 'numeric'
+     });
+     
+     holidayDiv.innerHTML = `
+       <span class="holidayName">${holiday.name}</span>
+       <span class="holidayDate">${formattedDate}</span>
+     `;
+     
+     holidaysList.appendChild(holidayDiv);
+   }
+ });
+}
+
+// Populate offers
 offers.innerHTML="";
 (card.offers||[]).forEach(o=>{
- const d = document.createElement("div");
+ if(!o.title && !o.image) return;
+ 
+ const d=document.createElement("div");
  d.className="offer";
- d.innerHTML=`<img src="${o.image}">
+ d.innerHTML=`<img src="${o.image||''}" onerror="this.style.display='none'">
  <div class="offerBadges">${(o.badges||[]).map(b=>`<span>${b}</span>`).join("")}</div>`;
+ 
+ if(o.title) {
+   const titleOverlay = document.createElement("div");
+   titleOverlay.style.cssText = "position:absolute;bottom:10px;left:10px;right:10px;background:rgba(0,0,0,0.7);color:white;padding:6px;border-radius:8px;font-size:12px;text-align:center;";
+   titleOverlay.textContent = o.title;
+   d.appendChild(titleOverlay);
+ }
+ 
  d.onclick=()=>{
-   panelImg.src=o.image;
-   panelTitle.textContent=o.title;
-   panelDesc.textContent=o.desc;
-   panelCTA.onclick=()=>location.href=`https://wa.me/${card.phone.replace(/\D/g,"")}`;
-   offerPanel.style.display="block";
+  panelImg.src=o.image||'';
+  panelTitle.textContent=o.title||'';
+  panelDesc.textContent=o.desc||'';
+  panelCTA.onclick=()=>location.href=`https://wa.me/${card.phone.replace(/\D/g,"")}?text=Hi! I'm interested in your offer: ${encodeURIComponent(o.title||'')}`;
+  offerPanel.style.display="block";
  };
  offers.appendChild(d);
 });
 
-// ABOUT TOGGLE
+// If no offers, hide the offers section
+if((card.offers||[]).length === 0) {
+ offers.style.display = "none";
+}
+
 window.toggleAbout=()=>{
  aboutBox.classList.toggle("expanded");
  aboutMore.textContent=aboutBox.classList.contains("expanded")?"See less":"See more";
+};
+
+window.saveCard=()=>{
+ // Create vCard data
+ const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:${card.name}
+ORG:${card.businessName}
+TEL:${card.phone}
+EMAIL:${card.email}
+ADR:${card.address}
+URL:${card.website||''}
+NOTE:${card.business?.about||''}
+END:VCARD`;
+
+ // Create blob and download
+ const blob = new Blob([vcard], { type: 'text/vcard' });
+ const url = URL.createObjectURL(blob);
+ const a = document.createElement('a');
+ a.href = url;
+ a.download = `${card.name.replace(/\s+/g, '_')}_contact.vcf`;
+ document.body.appendChild(a);
+ a.click();
+ document.body.removeChild(a);
+ URL.revokeObjectURL(url);
+ 
+ alert("Contact saved as vCard file!");
+};
+
+// Close offer panel when clicking outside
+offerPanel.onclick = (e) => {
+ if(e.target === offerPanel) {
+  offerPanel.style.display = "none";
+ }
 };
 });
 </script>
