@@ -206,18 +206,35 @@ button{
 .priceInput input{
  flex:1;
 }
+
+#loading{
+ position:fixed;
+ top:0;
+ left:0;
+ right:0;
+ bottom:0;
+ background:rgba(255,255,255,0.9);
+ display:none;
+ justify-content:center;
+ align-items:center;
+ z-index:1000;
+ font-size:18px;
+ color:#2563eb;
+}
 </style>
 
 <script>
 // Redirect if PWA and has saved card
 if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standalone)){
  const last=localStorage.getItem("lastCardId");
- if(last) location.replace("card.html?id="+last);
+ if(last) window.location.replace("card.html?id="+last);
 }
 </script>
 </head>
 
 <body>
+<div id="loading">Creating your digital card...</div>
+
 <div class="wrap">
 
 <h2>👤 Profile</h2>
@@ -245,11 +262,7 @@ if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standa
   <button type="button" class="addHolidayBtn" onclick="addHoliday()">+ Add</button>
  </div>
  <div id="holidaysContainer">
-  <div class="holidayItem">
-   <input type="text" class="holidayName" placeholder="E.g., Eid ul-Fitr">
-   <input type="date" class="holidayDate">
-   <button type="button" class="removeHoliday" onclick="removeHoliday(this)">×</button>
-  </div>
+  <!-- Holidays will be added here -->
  </div>
 </div>
 
@@ -278,15 +291,15 @@ if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standa
 <div id="offersForm"></div>
 <button type="button" onclick="addOffer()" style="background:#8b5cf6;margin-top:12px">➕ Add Offer</button>
 
-<button type="button" onclick="generate()" style="background:#2563eb;margin-top:24px">✨ Generate Digital Card</button>
+<button type="button" onclick="generateCard()" style="background:#2563eb;margin-top:24px">✨ Generate Digital Card</button>
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-const db = supabase.createClient(
- "https://dfvnefbxgayxqgjjgtrr.supabase.co",
- "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
-);
+const SUPABASE_URL = 'https://dfvnefbxgayxqgjjgtrr.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRmdm5lZmJ4Z2F5eHFnampndHJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgyNzg0MzYsImV4cCI6MjA1Mzg1NDQzNn0.fViNxzI4QUFEEemD4L8eF6aZb5AkhCVCBMDjkhvBvLc';
+
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // Initialize business hours
 const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
@@ -385,40 +398,59 @@ function addOffer(){
  document.getElementById('offersForm').appendChild(box);
 }
 
+// Add one offer by default
+addOffer();
+
 // Image compression
-function resizeImage(file){
- return new Promise(res => {
+function compressImage(file) {
+ return new Promise((resolve, reject) => {
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.readAsDataURL(file);
+  reader.onload = function(event) {
    const img = new Image();
+   img.src = event.target.result;
    img.onload = function() {
-    const canvas = document.createElement("canvas");
-    const max = 800;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Set maximum dimensions
+    const MAX_WIDTH = 800;
+    const MAX_HEIGHT = 800;
+    
     let width = img.width;
     let height = img.height;
     
-    if (width > height && width > max) {
-      height = Math.round((height * max) / width);
-      width = max;
-    } else if (height > max) {
-      width = Math.round((width * max) / height);
-      height = max;
+    // Calculate new dimensions
+    if (width > height) {
+      if (width > MAX_WIDTH) {
+        height *= MAX_WIDTH / width;
+        width = MAX_WIDTH;
+      }
+    } else {
+      if (height > MAX_HEIGHT) {
+        width *= MAX_HEIGHT / height;
+        height = MAX_HEIGHT;
+      }
     }
     
     canvas.width = width;
     canvas.height = height;
-    const ctx = canvas.getContext("2d");
+    
+    // Draw and compress image
     ctx.drawImage(img, 0, 0, width, height);
-    res(canvas.toDataURL("image/jpeg", 0.8));
+    
+    // Convert to data URL with compression
+    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+    resolve(compressedDataUrl);
    };
-   img.src = e.target.result;
+   img.onerror = reject;
   };
-  reader.readAsDataURL(file);
+  reader.onerror = reject;
  });
 }
 
 // Generate card
-async function generate(){
+async function generateCard() {
  const fullName = document.getElementById('fullName').value.trim();
  const phoneNumber = document.getElementById('phoneNumber').value.trim();
  
@@ -427,130 +459,150 @@ async function generate(){
   return;
  }
 
- const id = crypto.randomUUID();
+ // Show loading
+ document.getElementById('loading').style.display = 'flex';
 
- // Collect business hours
- const businessHoursArray = [];
- const dayBoxes = document.querySelectorAll(".dayBox");
- dayBoxes.forEach(box => {
-  const open = box.querySelector(".dayOpen").checked;
-  const status = box.querySelector(".dayStatus").value;
-  const start = box.querySelector(".dayStart").value;
-  const end = box.querySelector(".dayEnd").value;
-  
-  businessHoursArray.push({
-   open: open && status === 'open',
-   status: status,
-   start: (open && status === 'open') ? start : "",
-   end: (open && status === 'open') ? end : ""
-  });
- });
+ try {
+  const id = crypto.randomUUID();
 
- // Collect holidays
- const holidaysArray = [];
- const holidayItems = document.querySelectorAll(".holidayItem");
- holidayItems.forEach(item => {
-  const name = item.querySelector(".holidayName").value;
-  const date = item.querySelector(".holidayDate").value;
-  if(name && name.trim()) {
-   holidaysArray.push({
-    name: name.trim(),
-    date: date || ""
-   });
-  }
- });
-
- // Collect payment method
- const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
- let jazzcashData = null;
- 
- if(paymentMethod === 'jazzcash') {
-  const jazzcashNumber = document.getElementById('jazzcashNumber').value;
-  const jazzcashQrFile = document.getElementById('jazzcashQr').files[0];
-  
-  jazzcashData = {
-   number: jazzcashNumber || '',
-   qr: ''
-  };
-  
-  if(jazzcashQrFile) {
-   jazzcashData.qr = await resizeImage(jazzcashQrFile);
-  }
- }
-
- // Collect offers
- const offersArray = [];
- const offerBoxes = document.querySelectorAll(".offerBox");
- 
- for(let i = 0; i < offerBoxes.length; i++){
-  const box = offerBoxes[i];
-  const title = box.querySelector(".offerTitle").value;
-  const desc = box.querySelector(".offerDesc").value;
-  const price = box.querySelector(".offerPrice").value;
-  const originalPrice = box.querySelector(".offerOriginalPrice").value;
-  const file = box.querySelector(".offerImg").files[0];
-  
-  if(title || desc || file){
-   const badges = Array.from(box.querySelectorAll("input[type=checkbox]:checked"))
-    .map(cb => cb.value);
+  // Collect business hours
+  const businessHoursArray = [];
+  const dayBoxes = document.querySelectorAll(".dayBox");
+  dayBoxes.forEach(box => {
+   const open = box.querySelector(".dayOpen").checked;
+   const status = box.querySelector(".dayStatus").value;
+   const start = box.querySelector(".dayStart").value;
+   const end = box.querySelector(".dayEnd").value;
    
-   const offerData = {
-    title: title || "",
-    desc: desc || "",
-    price: price || "",
-    originalPrice: originalPrice || "",
-    badges: badges,
-    image: "",
-    cartEnabled: true
+   businessHoursArray.push({
+    open: open && status === 'open',
+    status: status,
+    start: (open && status === 'open') ? start : "",
+    end: (open && status === 'open') ? end : ""
+   });
+  });
+
+  // Collect holidays
+  const holidaysArray = [];
+  const holidayItems = document.querySelectorAll(".holidayItem");
+  holidayItems.forEach(item => {
+   const name = item.querySelector(".holidayName").value;
+   const date = item.querySelector(".holidayDate").value;
+   if(name && name.trim()) {
+    holidaysArray.push({
+     name: name.trim(),
+     date: date || ""
+    });
+   }
+  });
+
+  // Collect payment method
+  const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+  let jazzcashData = null;
+  
+  if(paymentMethod === 'jazzcash') {
+   const jazzcashNumber = document.getElementById('jazzcashNumber').value;
+   const jazzcashQrFile = document.getElementById('jazzcashQr').files[0];
+   
+   jazzcashData = {
+    number: jazzcashNumber || '',
+    qr: ''
    };
    
-   if(file){
-    offerData.image = await resizeImage(file);
+   if(jazzcashQrFile) {
+    jazzcashData.qr = await compressImage(jazzcashQrFile);
    }
-   
-   offersArray.push(offerData);
   }
+
+  // Collect offers
+  const offersArray = [];
+  const offerBoxes = document.querySelectorAll(".offerBox");
+  
+  for(let i = 0; i < offerBoxes.length; i++){
+   const box = offerBoxes[i];
+   const title = box.querySelector(".offerTitle").value;
+   const desc = box.querySelector(".offerDesc").value;
+   const price = box.querySelector(".offerPrice").value;
+   const originalPrice = box.querySelector(".offerOriginalPrice").value;
+   const file = box.querySelector(".offerImg").files[0];
+   
+   if(title || desc || file || price){
+    const badges = Array.from(box.querySelectorAll("input[type=checkbox]:checked"))
+     .map(cb => cb.value);
+    
+    const offerData = {
+     title: title || "",
+     desc: desc || "",
+     price: price || "",
+     originalPrice: originalPrice || "",
+     badges: badges,
+     image: "",
+     cartEnabled: true
+    };
+    
+    if(file){
+     offerData.image = await compressImage(file);
+    }
+    
+    offersArray.push(offerData);
+   }
+  }
+
+  // Prepare data
+  const cardData = {
+   name: fullName,
+   phone: phoneNumber,
+   email: document.getElementById('email').value.trim(),
+   address: document.getElementById('address').value.trim(),
+   website: document.getElementById('website').value.trim(),
+   businessName: document.getElementById('businessName').value.trim(),
+   businessAbout: document.getElementById('businessAbout').value.trim(),
+   businessHours: businessHoursArray,
+   holidays: holidaysArray,
+   paymentMethod: paymentMethod,
+   jazzcash: jazzcashData,
+   offers: offersArray
+  };
+
+  // Add profile image if exists
+  const profileImageFile = document.getElementById('profileImage').files[0];
+  if(profileImageFile){
+   cardData.profileImage = await compressImage(profileImageFile);
+  }
+
+  console.log("Card data to save:", cardData);
+
+  // Save to Supabase - FIXED INSERT
+  const { data, error } = await db
+    .from('cards')
+    .insert([
+      {
+        id: id,
+        data: cardData,
+        created_at: new Date().toISOString()
+      }
+    ])
+    .select()
+    .single();
+
+  if(error){
+    console.error("Supabase insert error:", error);
+    alert("Error creating card: " + error.message);
+    document.getElementById('loading').style.display = 'none';
+    return;
+  }
+
+  console.log("Card saved successfully:", data);
+
+  // Store ID and redirect
+  localStorage.setItem("lastCardId", id);
+  window.location.href = "card.html?id=" + id;
+
+ } catch (error) {
+  console.error("Generate card error:", error);
+  alert("Error: " + error.message);
+  document.getElementById('loading').style.display = 'none';
  }
-
- // Prepare data - SIMPLIFIED STRUCTURE
- const cardData = {
-  name: fullName,
-  phone: phoneNumber,
-  email: document.getElementById('email').value.trim(),
-  address: document.getElementById('address').value.trim(),
-  website: document.getElementById('website').value.trim(),
-  businessName: document.getElementById('businessName').value.trim(),
-  businessAbout: document.getElementById('businessAbout').value.trim(),
-  businessHours: businessHoursArray,
-  holidays: holidaysArray,
-  paymentMethod: paymentMethod,
-  jazzcash: jazzcashData,
-  offers: offersArray
- };
-
- // Add profile image if exists
- const profileImageFile = document.getElementById('profileImage').files[0];
- if(profileImageFile){
-  cardData.profileImage = await resizeImage(profileImageFile);
- }
-
- console.log("Saving card data:", cardData);
-
- // Save to Supabase
- const { data: inserted, error } = await db.from("cards").insert({
-   id: id,
-   data: JSON.stringify(cardData)
- }).select().single();
-
- if(error){
-   console.error("Supabase error:", error);
-   alert("Failed to save card: " + error.message);
-   return;
- }
-
- // Store ID and redirect
- localStorage.setItem("lastCardId", id);
- window.location.href = "card.html?id=" + id;
 }
 </script>
 </body>
