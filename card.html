@@ -142,8 +142,8 @@ body{
  scroll-snap-align:center;
  color:#fff;
  display:flex;
- gap:14px;
- cursor:pointer; /* clickable for WhatsApp */
+ flex-direction:column;
+ gap:8px;
 }
 .offer img{
  max-width:120px;
@@ -152,7 +152,33 @@ body{
  background:#fff;
  border-radius:10px;
 }
-.offerContent h3{margin:0 0 6px}
+.offerContent h3{margin:0 0 6px;font-size:16px;}
+.offerContent p{margin:0;font-size:14px;line-height:1.4;}
+
+/* GET OFFER BUTTON MODERN */
+.offerButton{
+ margin-top:8px;
+ align-self:flex-start;
+ background:#25D366;
+ color:#fff;
+ padding:8px 14px;
+ border-radius:12px;
+ font-weight:600;
+ cursor:pointer;
+ font-size:14px;
+ text-decoration:none;
+ display:flex;
+ align-items:center;
+ gap:6px;
+ transition:0.2s;
+}
+.offerButton i{
+ font-size:16px;
+}
+.offerButton:hover{
+ background:#1ebe57;
+ transform:scale(1.05);
+}
 
 /* DOTS */
 .dots{text-align:center;margin-bottom:12px}
@@ -324,13 +350,17 @@ function loadCard(data){
    <div class="offerContent">
     <h3>🔥 ${o.title}</h3>
     <p>${o.desc}</p>
+    <a class="offerButton"><i class="fab fa-whatsapp"></i> Get Offer</a>
    </div>`;
-  // WhatsApp message feature
-  d.onclick = () => {
+
+  const btn = d.querySelector(".offerButton");
+  btn.onclick = (e) => {
+    e.stopPropagation();
     const msg = `🔥 ${o.title}\n${o.desc}\n${o.link||''}`;
     const waUrl = `https://wa.me/${data.phone}?text=${encodeURIComponent(msg)}`;
     window.open(waUrl,'_blank');
   };
+
   offers.appendChild(d);
 
   const dot=document.createElement("span");
