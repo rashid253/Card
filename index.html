@@ -37,7 +37,6 @@ button{
  margin-top:12px
 }
 
-/* BADGES – SIMPLE 2 COLUMNS */
 .badgeGrid{
  display:grid;
  grid-template-columns:1fr 1fr;
@@ -51,7 +50,6 @@ button{
  align-items:center;
 }
 
-/* BUSINESS HOURS */
 .dayBox{
  background:#fff;
  padding:10px;
@@ -165,15 +163,16 @@ function resizeImage(file){
  });
 }
 
-/* ✅ GENERATE CARD */
+/* ✅ GENERATE CARD WITH SAFE UNIQUE ID */
 async function generate(){
  if(!fullName.value||!phoneNumber.value){
   alert("Name & Phone required"); return;
  }
 
- const id=Math.random().toString(36).slice(2,8);
- const offers=[];
+ // Use crypto.randomUUID() to avoid duplicate primary key
+ const id = crypto.randomUUID();
 
+ const offersArray=[];
  const boxes=[...document.querySelectorAll(".offerBox")];
 
  for(let i=0;i<boxes.length;i++){
@@ -185,7 +184,7 @@ async function generate(){
   if(t && d){
    const badges=[...box.querySelectorAll("input[type=checkbox]:checked")].map(b=>b.value);
 
-   offers.push({
+   offersArray.push({
     title:t,
     desc:d,
     badges:badges,
@@ -201,25 +200,25 @@ async function generate(){
   address:address.value,
   businessName:businessName.value,
   business:{about:businessAbout.value},
-  offers:offers
+  offers:offersArray
  };
 
  if(profileImage.files[0])
-  data.profileImage=await resizeImage(profileImage.files[0]);
+  data.profileImage = await resizeImage(profileImage.files[0]);
 
- // ✅ INSERT with error handling
- const { error } = await db.from("cards").insert({
+ // INSERT WITH ERROR HANDLING
+ const { data: inserted, error } = await db.from("cards").insert({
    id: id,
    data: JSON.stringify(data)
- });
+ }).select().single();
 
  if(error){
    alert("Supabase insert failed: " + error.message);
    return;
  }
 
- localStorage.setItem("lastCardId",id);
- location.href="card.html?id="+id;
+ localStorage.setItem("lastCardId", inserted.id);
+ location.href="card.html?id=" + inserted.id;
 }
 </script>
 </body>
