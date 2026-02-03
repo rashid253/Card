@@ -24,14 +24,20 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 .about.expanded .aboutText{-webkit-line-clamp:unset}
 .aboutMore{color:#2563eb;font-weight:600;margin-top:6px;display:inline-block}
 .offers{display:flex;gap:12px;padding:12px;overflow-x:auto}
-.offer{min-width:160px;height:200px;border-radius:16px;background:#fff;position:relative;cursor:pointer;overflow:hidden}
+.offer{min-width:160px;height:200px;border-radius:16px;background:#fff;position:relative;cursor:pointer;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
 .offer img{width:100%;height:100%;object-fit:contain}
 .offerBadges{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:6px}
 .offerBadges span{background:#ef4444;color:#fff;font-size:12px;font-weight:700;padding:4px 8px;border-radius:8px}
+.offerActions{position:absolute;bottom:10px;right:10px;display:flex;gap:6px}
+.offerActionBtn{padding:6px 10px;background:#2563eb;color:white;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer}
+.offerActionBtn.shop{background:#10b981}
 #offerPanel{position:fixed;inset:0;background:#fff;z-index:999;display:none}
 #offerPanel img{width:100%;max-height:280px;object-fit:contain}
 .panelContent{padding:16px}
-.panelCTA{margin-top:16px;background:#16a34a;color:#fff;padding:16px;text-align:center;border-radius:12px;font-weight:700;cursor:pointer}
+.panelActions{display:flex;gap:12px;margin-top:16px}
+.panelCTA{padding:14px;text-align:center;border-radius:12px;font-weight:700;cursor:pointer;flex:1}
+.panelCTA.whatsapp{background:#16a34a;color:#fff}
+.panelCTA.cart{background:#2563eb;color:#fff}
 .actions{display:flex;justify-content:space-around;padding:16px;background:#0f172a}
 .actions a{color:#fff;font-size:22px}
 
@@ -60,6 +66,41 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 /* Special Text for Website */
 .websiteSpecial{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;padding:14px;border-radius:12px;margin:12px;text-align:center;font-weight:700;font-size:15px;}
 .websiteSpecial a{color:white;text-decoration:none;}
+
+/* WhatsApp Note */
+.whatsappNote{background:#fff;padding:14px;margin:12px;border-radius:12px;border-left:4px solid #25d366;font-size:14px;color:#0f172a;}
+.whatsappNote strong{color:#25d366;}
+
+/* Cart Styles */
+.cartPanel{position:fixed;inset:0;background:#fff;z-index:1000;display:none;flex-direction:column;}
+.cartHeader{display:flex;justify-content:space-between;align-items:center;padding:16px;background:#0f172a;color:white;}
+.cartHeader h2{margin:0;font-size:18px;}
+.closeCart{background:none;border:none;color:white;font-size:24px;cursor:pointer;}
+.cartItems{padding:16px;flex:1;overflow-y:auto;}
+.cartItem{display:flex;gap:12px;padding:12px;border-bottom:1px solid #e2e8f0;align-items:center;}
+.cartItem img{width:60px;height:60px;object-fit:cover;border-radius:8px;}
+.cartItemInfo{flex:1;}
+.cartItemTitle{font-weight:600;margin-bottom:4px;}
+.cartItemPrice{color:#2563eb;font-weight:600;}
+.cartItemActions{display:flex;gap:8px;align-items:center;}
+.cartItemQty{display:flex;align-items:center;gap:6px;}
+.cartItemQty button{width:28px;height:28px;border-radius:6px;border:1px solid #cbd5e1;background:white;cursor:pointer;}
+.cartRemove{color:#ef4444;background:none;border:none;cursor:pointer;}
+.cartFooter{padding:16px;background:#f8fafc;border-top:1px solid #e2e8f0;}
+.cartTotal{display:flex;justify-content:space-between;font-weight:600;font-size:18px;margin-bottom:16px;}
+.cartCheckout{background:#2563eb;color:white;border:none;padding:16px;width:100%;border-radius:12px;font-weight:600;cursor:pointer;}
+
+/* Payment Modal */
+.paymentModal{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1001;display:none;justify-content:center;align-items:center;}
+.paymentContent{background:white;padding:20px;border-radius:16px;max-width:400px;width:90%;}
+.paymentHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.paymentHeader h3{margin:0;}
+.closePayment{background:none;border:none;font-size:24px;cursor:pointer;}
+.jazzcashQr{text-align:center;margin:16px 0;}
+.jazzcashQr img{max-width:200px;max-height:200px;border-radius:8px;}
+.jazzcashNumber{text-align:center;padding:16px;background:#f8fafc;border-radius:8px;margin:16px 0;}
+.jazzcashNumber code{font-size:18px;color:#2563eb;font-weight:600;}
+.paymentNote{font-size:12px;color:#666;margin-top:8px;}
 </style>
 </head>
 
@@ -67,7 +108,8 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 
 <div class="topbar">
  <a id="map"><i class="fa-solid fa-location-dot"></i></a>
- <a id="sms"><i class="fa fa-comment"></i></a>
+ <a id="share" onclick="shareCard()"><i class="fa-solid fa-share-nodes"></i></a>
+ <a id="cart" onclick="openCart()"><i class="fa-solid fa-cart-shopping"></i></a>
 </div>
 
 <div class="profile">
@@ -118,17 +160,59 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 
 <div class="offers" id="offers"></div>
 
+<!-- WhatsApp Note -->
+<div class="whatsappNote" id="whatsappNote">
+ <strong>💬 Quick WhatsApp Message:</strong><br>
+ Tap WhatsApp icon below to send a message directly. Please mention your inquiry clearly.
+</div>
+
 <div class="actions">
  <a id="call"><i class="fa fa-phone"></i></a>
+ <a id="whatsappAction"><i class="fab fa-whatsapp"></i></a>
  <a id="mail"><i class="fa fa-envelope"></i></a>
 </div>
 
+<!-- Cart Panel -->
+<div class="cartPanel" id="cartPanel">
+ <div class="cartHeader">
+  <h2>🛒 Your Cart</h2>
+  <button class="closeCart" onclick="closeCart()">×</button>
+ </div>
+ <div class="cartItems" id="cartItems">
+  <!-- Cart items will be added here -->
+ </div>
+ <div class="cartFooter">
+  <div class="cartTotal">
+   <span>Total:</span>
+   <span id="cartTotalAmount">Rs 0</span>
+  </div>
+  <button class="cartCheckout" onclick="checkout()">Proceed to Checkout</button>
+ </div>
+</div>
+
+<!-- Payment Modal -->
+<div class="paymentModal" id="paymentModal">
+ <div class="paymentContent">
+  <div class="paymentHeader">
+   <h3>💳 Payment Method</h3>
+   <button class="closePayment" onclick="closePayment()">×</button>
+  </div>
+  <div id="paymentOptions">
+   <!-- Payment options will be loaded here -->
+  </div>
+ </div>
+</div>
+
+<!-- Offer Details Panel -->
 <div id="offerPanel">
  <img id="panelImg">
  <div class="panelContent">
   <h2 id="panelTitle"></h2>
   <p id="panelDesc"></p>
-  <div class="panelCTA" id="panelCTA">WhatsApp</div>
+  <div class="panelActions">
+   <div class="panelCTA whatsapp" id="panelWhatsApp">WhatsApp</div>
+   <div class="panelCTA cart" id="panelCart">Add to Cart</div>
+  </div>
  </div>
 </div>
 
@@ -141,26 +225,35 @@ const $=id=>document.getElementById(id);
 const photo=$("photo"), nameEl=$("name"), businessEl=$("business"),
 phoneEl=$("phone"), emailEl=$("email"), addressEl=$("address"), websiteText=$("websiteText"),
 aboutText=$("aboutText"), aboutMore=$("aboutMore"), aboutBox=$("aboutBox"),
-offers=$("offers"), call=$("call"), mail=$("mail"), map=$("map"), sms=$("sms"),
+offers=$("offers"), call=$("call"), mail=$("mail"), map=$("map"), share=$("share"),
+cartBtn=$("cart"), whatsappAction=$("whatsappAction"),
 panelImg=$("panelImg"), panelTitle=$("panelTitle"), panelDesc=$("panelDesc"),
-panelCTA=$("panelCTA"), offerPanel=$("offerPanel"),
+panelWhatsApp=$("panelWhatsApp"), panelCart=$("panelCart"), offerPanel=$("offerPanel"),
 hoursContainer=$("hoursContainer"), businessHours=$("businessHours"),
 holidaysContainer=$("holidaysContainer"), holidaysList=$("holidaysList"),
 websiteContainer=$("websiteContainer"), websiteLink=$("websiteLink"), websiteUrl=$("websiteUrl"),
-websiteBanner=$("websiteBanner"), websiteBannerLink=$("websiteBannerLink");
+websiteBanner=$("websiteBanner"), websiteBannerLink=$("websiteBannerLink"),
+whatsappNote=$("whatsappNote"),
+cartPanel=$("cartPanel"), cartItems=$("cartItems"), cartTotalAmount=$("cartTotalAmount"),
+paymentModal=$("paymentModal"), paymentOptions=$("paymentOptions");
+
+let currentCard = null;
+let cart = JSON.parse(localStorage.getItem('cart_' + id)) || [];
+let currentOffer = null;
 
 const supa = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-const id=new URLSearchParams(location.search).get("id") || localStorage.getItem("lastCardId");
-if(!id){document.body.innerHTML="<h2 style='padding:20px'>No card found</h2>";return;}
+const idParam=new URLSearchParams(location.search).get("id") || localStorage.getItem("lastCardId");
+if(!idParam){document.body.innerHTML="<h2 style='padding:20px'>No card found</h2>";return;}
 
-const {data,error}=await supa.from("cards").select("*").eq("id",id).single();
+const {data,error}=await supa.from("cards").select("*").eq("id",idParam).single();
 if(error || !data){document.body.innerHTML="<h2 style='padding:20px'>Card not found</h2>";return;}
 
-const card=JSON.parse(data.data);
+currentCard = JSON.parse(data.data);
+const card = currentCard;
 
 // Populate basic info
 photo.src=card.profileImage||"";
@@ -186,7 +279,7 @@ if(card.website && card.website.trim()) {
 call.href="tel:"+card.phone;
 mail.href="mailto:"+card.email;
 map.href="https://maps.google.com/?q="+encodeURIComponent(card.address);
-sms.href="sms:"+card.phone;
+whatsappAction.href=`https://wa.me/${card.phone.replace(/\D/g,"")}`;
 
 // Populate business hours if they exist
 if(card.businessHours && Array.isArray(card.businessHours) && card.businessHours.length > 0){
@@ -244,43 +337,55 @@ if(card.holidays && Array.isArray(card.holidays) && card.holidays.length > 0){
 
 // Populate offers
 offers.innerHTML="";
-(card.offers||[]).forEach(o=>{
+(card.offers||[]).forEach((o, index)=>{
  if(!o.title && !o.image) return;
  
  const d=document.createElement("div");
  d.className="offer";
  d.innerHTML=`<img src="${o.image||''}" onerror="this.style.display='none'">
- <div class="offerBadges">${(o.badges||[]).map(b=>`<span>${b}</span>`).join("")}</div>`;
+ <div class="offerBadges">${(o.badges||[]).map(b=>`<span>${b}</span>`).join("")}</div>
+ <div class="offerActions">
+  <div class="offerActionBtn shop" onclick="event.stopPropagation();openOffer(${index})">Shop Now</div>
+  <div class="offerActionBtn" onclick="event.stopPropagation();addToCart(${index})">Add to Cart</div>
+ </div>`;
  
  if(o.title) {
    const titleOverlay = document.createElement("div");
-   titleOverlay.style.cssText = "position:absolute;bottom:10px;left:10px;right:10px;background:rgba(0,0,0,0.7);color:white;padding:6px;border-radius:8px;font-size:12px;text-align:center;";
+   titleOverlay.style.cssText = "position:absolute;bottom:40px;left:10px;right:10px;background:rgba(0,0,0,0.7);color:white;padding:6px;border-radius:8px;font-size:12px;text-align:center;";
    titleOverlay.textContent = o.title;
    d.appendChild(titleOverlay);
  }
  
- d.onclick=()=>{
-  panelImg.src=o.image||'';
-  panelTitle.textContent=o.title||'';
-  panelDesc.textContent=o.desc||'';
-  panelCTA.onclick=()=>location.href=`https://wa.me/${card.phone.replace(/\D/g,"")}?text=Hi! I'm interested in your offer: ${encodeURIComponent(o.title||'')}`;
-  offerPanel.style.display="block";
- };
+ d.onclick=()=>openOffer(index);
  offers.appendChild(d);
 });
 
 // If no offers, hide the offers section
 if((card.offers||[]).length === 0) {
  offers.style.display = "none";
+ whatsappNote.style.display = "none";
 }
 
+// Functions
 window.toggleAbout=()=>{
  aboutBox.classList.toggle("expanded");
  aboutMore.textContent=aboutBox.classList.contains("expanded")?"See less":"See more";
 };
 
+window.shareCard=()=>{
+ if(navigator.share){
+  navigator.share({
+   title: card.businessName || card.name,
+   text: `Check out ${card.name}'s digital card`,
+   url: window.location.href
+  });
+ }else{
+  navigator.clipboard.writeText(window.location.href);
+  alert("Link copied to clipboard!");
+ }
+};
+
 window.saveCard=()=>{
- // Create vCard data
  const vcard = `BEGIN:VCARD
 VERSION:3.0
 FN:${card.name}
@@ -292,7 +397,6 @@ URL:${card.website||''}
 NOTE:${card.business?.about||''}
 END:VCARD`;
 
- // Create blob and download
  const blob = new Blob([vcard], { type: 'text/vcard' });
  const url = URL.createObjectURL(blob);
  const a = document.createElement('a');
@@ -306,12 +410,182 @@ END:VCARD`;
  alert("Contact saved as vCard file!");
 };
 
-// Close offer panel when clicking outside
+window.openOffer = (index) => {
+ const o = card.offers[index];
+ currentOffer = o;
+ 
+ panelImg.src = o.image||'';
+ panelTitle.textContent = o.title||'';
+ panelDesc.textContent = o.desc||'';
+ 
+ panelWhatsApp.onclick = () => {
+  location.href = `https://wa.me/${card.phone.replace(/\D/g,"")}?text=Hi! I'm interested in your offer: ${encodeURIComponent(o.title||'')}`;
+ };
+ 
+ panelCart.onclick = () => {
+  addToCart(index);
+  offerPanel.style.display = "none";
+ };
+ 
+ offerPanel.style.display = "block";
+};
+
+window.addToCart = (index) => {
+ const o = card.offers[index];
+ const cartItem = {
+  id: Date.now() + index,
+  title: o.title,
+  image: o.image,
+  price: 0,
+  quantity: 1,
+  offerIndex: index
+ };
+ 
+ cart.push(cartItem);
+ localStorage.setItem('cart_' + idParam, JSON.stringify(cart));
+ updateCartDisplay();
+ alert("Added to cart!");
+};
+
+window.openCart = () => {
+ updateCartDisplay();
+ cartPanel.style.display = "flex";
+};
+
+window.closeCart = () => {
+ cartPanel.style.display = "none";
+};
+
+window.updateCartDisplay = () => {
+ cartItems.innerHTML = "";
+ let total = 0;
+ 
+ cart.forEach((item, idx) => {
+  const itemDiv = document.createElement("div");
+  itemDiv.className = "cartItem";
+  itemDiv.innerHTML = `
+   <img src="${item.image || ''}" onerror="this.style.visibility='hidden'">
+   <div class="cartItemInfo">
+    <div class="cartItemTitle">${item.title}</div>
+    <div class="cartItemPrice">Price: Rs ${item.price}</div>
+   </div>
+   <div class="cartItemActions">
+    <div class="cartItemQty">
+     <button onclick="updateQuantity(${idx}, ${item.quantity - 1})">-</button>
+     <span>${item.quantity}</span>
+     <button onclick="updateQuantity(${idx}, ${item.quantity + 1})">+</button>
+    </div>
+    <button class="cartRemove" onclick="removeFromCart(${idx})">
+     <i class="fas fa-trash"></i>
+    </button>
+   </div>
+  `;
+  cartItems.appendChild(itemDiv);
+  total += item.price * item.quantity;
+ });
+ 
+ cartTotalAmount.textContent = `Rs ${total}`;
+};
+
+window.updateQuantity = (index, newQty) => {
+ if(newQty < 1) {
+  removeFromCart(index);
+  return;
+ }
+ cart[index].quantity = newQty;
+ localStorage.setItem('cart_' + idParam, JSON.stringify(cart));
+ updateCartDisplay();
+};
+
+window.removeFromCart = (index) => {
+ cart.splice(index, 1);
+ localStorage.setItem('cart_' + idParam, JSON.stringify(cart));
+ updateCartDisplay();
+};
+
+window.checkout = () => {
+ closeCart();
+ 
+ paymentOptions.innerHTML = `
+  <div style="text-align:center;margin-bottom:16px;">
+   <h4>Select Payment Method</h4>
+  </div>
+ `;
+ 
+ if(card.paymentMethod === 'whatsapp') {
+  paymentOptions.innerHTML += `
+   <button onclick="checkoutWhatsApp()" style="width:100%;padding:16px;background:#25d366;color:white;border:none;border-radius:12px;font-weight:600;cursor:pointer;margin-bottom:12px;">
+    <i class="fab fa-whatsapp"></i> Order via WhatsApp
+   </button>
+   <div class="paymentNote">You'll be redirected to WhatsApp to confirm your order</div>
+  `;
+ }
+ 
+ if(card.paymentMethod === 'jazzcash') {
+  paymentOptions.innerHTML += `
+   <button onclick="checkoutJazzCash()" style="width:100%;padding:16px;background:#e6007e;color:white;border:none;border-radius:12px;font-weight:600;cursor:pointer;margin-bottom:12px;">
+    <i class="fas fa-mobile-alt"></i> Pay via JazzCash
+   </button>
+  `;
+   
+   if(card.jazzcash && card.jazzcash.qr) {
+    paymentOptions.innerHTML += `
+     <div class="jazzcashQr">
+      <h4>Scan QR Code</h4>
+      <img src="${card.jazzcash.qr}">
+     </div>
+    `;
+   }
+   
+   if(card.jazzcash && card.jazzcash.number) {
+    paymentOptions.innerHTML += `
+     <div class="jazzcashNumber">
+      <h4>Send to Account</h4>
+      <code>${card.jazzcash.number}</code>
+      <div class="paymentNote">Send payment to this JazzCash account number</div>
+     </div>
+    `;
+   }
+ }
+ 
+ paymentModal.style.display = "flex";
+};
+
+window.closePayment = () => {
+ paymentModal.style.display = "none";
+};
+
+window.checkoutWhatsApp = () => {
+ const itemsText = cart.map(item => `• ${item.title} x${item.quantity}`).join('\n');
+ const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+ const message = `Hello! I would like to place an order:\n\n${itemsText}\n\nTotal: Rs ${total}\n\nName: \nAddress: \nPhone:`;
+ 
+ location.href = `https://wa.me/${card.phone.replace(/\D/g,"")}?text=${encodeURIComponent(message)}`;
+};
+
+window.checkoutJazzCash = () => {
+ const itemsText = cart.map(item => `• ${item.title} x${item.quantity}`).join('\n');
+ const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+ const message = `Hello! I have made JazzCash payment for:\n\n${itemsText}\n\nTotal: Rs ${total}\nTransaction ID: \nName: \nAddress: \nPhone:`;
+ 
+ location.href = `https://wa.me/${card.phone.replace(/\D/g,"")}?text=${encodeURIComponent(message)}`;
+};
+
+// Close panels when clicking outside
 offerPanel.onclick = (e) => {
  if(e.target === offerPanel) {
   offerPanel.style.display = "none";
  }
 };
+
+paymentModal.onclick = (e) => {
+ if(e.target === paymentModal) {
+  closePayment();
+ }
+};
+
+// Initialize cart display
+updateCartDisplay();
 });
 </script>
 </body>
