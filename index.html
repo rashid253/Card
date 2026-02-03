@@ -11,8 +11,8 @@
 <style>
 body{margin:0;font-family:system-ui;background:#f1f5f9}
 .wrap{max-width:480px;margin:auto;padding:16px}
-h2,h3{margin-top:20px}
-input,textarea,select{
+h2{margin-top:20px}
+input,textarea{
  width:100%;padding:12px;margin:6px 0;
  border-radius:10px;border:1px solid #cbd5f5
 }
@@ -26,26 +26,17 @@ button{
  background:white;padding:12px;
  border-radius:12px;margin-top:10px
 }
-.row{
- display:flex;gap:10px;flex-wrap:wrap
-}
-.chk{
- display:flex;align-items:center;gap:6px;
- background:white;padding:8px 10px;
- border-radius:10px;margin:4px 0
-}
-.timeRow{
- display:flex;gap:10px
-}
-.timeRow input{flex:1}
 </style>
 
 <script>
+/* AUTO OPEN LAST CARD IN APP MODE */
 if (
  (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)
 ) {
  const last = localStorage.getItem("lastCardId");
- if (last) window.location.replace("card.html?id=" + last);
+ if (last) {
+  window.location.replace("card.html?id=" + last);
+ }
 }
 </script>
 </head>
@@ -62,52 +53,7 @@ if (
 
 <h2>Business</h2>
 <input id="businessName" placeholder="Business Title">
-<textarea id="aboutBusiness" placeholder="Short description about business"></textarea>
-
-<h3>Business Hours</h3>
-
-<b>Working Days</b>
-<div class="row">
-<label class="chk"><input type="checkbox" class="day" value="Mon">Mon</label>
-<label class="chk"><input type="checkbox" class="day" value="Tue">Tue</label>
-<label class="chk"><input type="checkbox" class="day" value="Wed">Wed</label>
-<label class="chk"><input type="checkbox" class="day" value="Thu">Thu</label>
-<label class="chk"><input type="checkbox" class="day" value="Fri">Fri</label>
-<label class="chk"><input type="checkbox" class="day" value="Sat">Sat</label>
-<label class="chk"><input type="checkbox" class="day" value="Sun">Sun</label>
-</div>
-
-<label class="chk">
- <input type="checkbox" id="is24"> Open 24 Hours
-</label>
-
-<div class="timeRow">
- <input type="time" id="openTime">
- <input type="time" id="closeTime">
-</div>
-
-<label class="chk">
- <input type="checkbox" id="holidayEnabled"> Has Holidays
-</label>
-<input id="holidays" placeholder="Holiday details (e.g. Sunday, Eid)">
-
-<h3>Services</h3>
-<div class="row">
-<label class="chk"><input type="checkbox" class="service" value="Repair">Repair</label>
-<label class="chk"><input type="checkbox" class="service" value="Delivery">Delivery</label>
-<label class="chk"><input type="checkbox" class="service" value="Wholesale">Wholesale</label>
-<label class="chk"><input type="checkbox" class="service" value="Retail">Retail</label>
-</div>
-
-<h3>Payment Methods</h3>
-<div class="row">
-<label class="chk"><input type="checkbox" class="pay" value="Cash">Cash</label>
-<label class="chk"><input type="checkbox" class="pay" value="Bank">Bank</label>
-<label class="chk"><input type="checkbox" class="pay" value="JazzCash">JazzCash</label>
-<label class="chk"><input type="checkbox" class="pay" value="EasyPaisa">EasyPaisa</label>
-</div>
-
-<input id="established" type="number" placeholder="Established Year">
+<textarea id="businessInfo" placeholder="About your business"></textarea>
 
 <h2>Social Media</h2>
 <input id="facebook" placeholder="Facebook link">
@@ -122,14 +68,14 @@ if (
 <h2>Offers</h2>
 <div id="offersForm"></div>
 
-<button onclick="generate()">Generate Card</button>
+<button type="button" onclick="generate()">Generate Card</button>
 
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
 if('serviceWorker' in navigator){
- navigator.serviceWorker.register("sw.js",{scope:"./"});
+ navigator.serviceWorker.register("sw.js", { scope: "./" });
 }
 
 const db = supabase.createClient(
@@ -137,6 +83,7 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
+// build offer boxes
 for(let i=1;i<=5;i++){
  offersForm.innerHTML+=`
  <div class="offerBox">
@@ -152,67 +99,71 @@ function resizeImage(file){
   const img=new Image();
   img.onload=()=>{
    const c=document.createElement("canvas");
-   const r=Math.min(1024/img.width,1024/img.height,1);
-   c.width=img.width*r;
-   c.height=img.height*r;
-   c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+   const max=1024;
+   let w=img.width,h=img.height;
+   const r=Math.min(max/w,max/h,1);
+   w*=r; h*=r;
+   c.width=w; c.height=h;
+   c.getContext("2d").drawImage(img,0,0,w,h);
    res(c.toDataURL("image/jpeg",0.8));
-  };
+  }
   img.src=URL.createObjectURL(file);
  });
 }
 
 async function generate(){
 
- const days=[...document.querySelectorAll(".day:checked")].map(d=>d.value);
- const services=[...document.querySelectorAll(".service:checked")].map(s=>s.value);
- const payment=[...document.querySelectorAll(".pay:checked")].map(p=>p.value);
+ const name = fullName.value.trim();
+ const phone = phoneNumber.value.trim();
+ if(name=="" || phone==""){ alert("Name & Phone required"); return; }
 
- const businessInfoFull={
-  about:aboutBusiness.value,
-  days,
-  is24:is24.checked,
-  open:openTime.value,
-  close:closeTime.value,
-  holidays:holidayEnabled.checked ? holidays.value : "",
-  services,
-  payment,
-  established:established.value
- };
-
- const id=Math.random().toString(36).slice(2,8);
+ const id = Math.random().toString(36).slice(2,8);
 
  const data={
-  name:fullName.value,
-  phone:phoneNumber.value,
+  name,
+  phone,
   email:email.value,
   address:address.value,
   businessName:businessName.value,
-  businessInfoFull,
+  businessInfo:businessInfo.value,
   facebook:facebook.value,
   instagram:instagram.value,
   youtube:youtube.value,
   website:website.value,
-  shopAppLink:shopAppLink.value,
+
+  shopAppLink: shopAppLink.value,
+  shopAppImage: "",
+
   profileImage:"",
-  shopAppImage:"",
   offers:[]
  };
 
- if(profileImage.files[0]) data.profileImage=await resizeImage(profileImage.files[0]);
- if(shopAppImage.files[0]) data.shopAppImage=await resizeImage(shopAppImage.files[0]);
+ if(profileImage.files[0])
+  data.profileImage = await resizeImage(profileImage.files[0]);
+
+ if(shopAppImage.files[0])
+  data.shopAppImage = await resizeImage(shopAppImage.files[0]);
 
  for(let i=1;i<=5;i++){
-  const t=document.getElementById("offerTitle"+i).value;
-  const d=document.getElementById("offerDesc"+i).value;
-  const f=document.getElementById("offerImg"+i).files[0];
-  if(t&&d){
-   data.offers.push({title:t,desc:d,image:f?await resizeImage(f):""});
+  const title=document.getElementById("offerTitle"+i).value;
+  const desc=document.getElementById("offerDesc"+i).value;
+  const img=document.getElementById("offerImg"+i).files[0];
+
+  if(title && desc){
+   let imgData="";
+   if(img) imgData = await resizeImage(img);
+   data.offers.push({title,desc,image:imgData});
   }
  }
 
- await db.from("cards").insert({id,data:JSON.stringify(data)});
- localStorage.setItem("lastCardId",id);
+ await db.from("cards").insert({
+  id:id,
+  data:JSON.stringify(data)
+ });
+
+ /* SAVE LAST CARD */
+ localStorage.setItem("lastCardId", id);
+
  location.href="card.html?id="+id;
 }
 </script>
