@@ -99,19 +99,39 @@ button{
  font-size:14px;
 }
 .holidayItem{
- display:flex;
+ display:grid;
+ grid-template-columns:1fr 1fr auto;
+ gap:8px;
  align-items:center;
- gap:10px;
- margin:6px 0;
- padding:8px;
+ margin:8px 0;
+ padding:10px;
  background:#f8fafc;
  border-radius:8px;
 }
 .holidayItem input[type="text"]{
- flex:1;
  padding:8px;
  border:1px solid #e2e8f0;
  border-radius:6px;
+ width:100%;
+}
+.holidayItem input[type="date"]{
+ padding:8px;
+ border:1px solid #e2e8f0;
+ border-radius:6px;
+ width:100%;
+}
+.removeHoliday{
+ background:#ef4444;
+ color:white;
+ border:none;
+ border-radius:6px;
+ padding:8px 12px;
+ cursor:pointer;
+ width:36px;
+ height:36px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
 }
 
 .websiteBox{
@@ -126,6 +146,56 @@ button{
  margin-bottom:6px;
  font-weight:600;
  color:#0f172a;
+}
+
+.paymentBox{
+ background:#fff;
+ padding:12px;
+ border-radius:10px;
+ margin:12px 0;
+ border:1px solid #e2e8f0;
+}
+.paymentBox label{
+ display:block;
+ margin-bottom:6px;
+ font-weight:600;
+ color:#0f172a;
+}
+.paymentGrid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:12px;
+ margin-top:10px;
+}
+.paymentOption{
+ display:flex;
+ align-items:center;
+ gap:8px;
+ padding:10px;
+ background:#f8fafc;
+ border-radius:8px;
+ cursor:pointer;
+}
+.paymentOption input[type="radio"]{
+ width:18px;
+ height:18px;
+}
+
+.jazzcashSection{
+ background:#f8fafc;
+ padding:12px;
+ border-radius:8px;
+ margin-top:12px;
+}
+.jazzcashSection label{
+ display:block;
+ margin-bottom:6px;
+ font-weight:500;
+}
+.jazzcashNote{
+ font-size:12px;
+ color:#666;
+ margin-top:6px;
 }
 </style>
 
@@ -169,13 +239,34 @@ if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standa
   <div class="holidayItem">
    <input type="text" class="holidayName" placeholder="E.g., Eid ul-Fitr" value="Eid ul-Fitr">
    <input type="date" class="holidayDate">
-   <button type="button" class="removeHoliday" onclick="removeHoliday(this)" style="background:#ef4444;color:white;border:none;border-radius:6px;padding:6px 10px;cursor:pointer">×</button>
+   <button type="button" class="removeHoliday" onclick="removeHoliday(this)">×</button>
   </div>
   <div class="holidayItem">
    <input type="text" class="holidayName" placeholder="E.g., Quaid Day" value="Quaid Day">
    <input type="date" class="holidayDate">
-   <button type="button" class="removeHoliday" onclick="removeHoliday(this)" style="background:#ef4444;color:white;border:none;border-radius:6px;padding:6px 10px;cursor:pointer">×</button>
+   <button type="button" class="removeHoliday" onclick="removeHoliday(this)">×</button>
   </div>
+ </div>
+</div>
+
+<div class="paymentBox">
+ <label>💳 Payment Methods</label>
+ <div class="paymentGrid">
+  <label class="paymentOption">
+   <input type="radio" name="payment" value="whatsapp" checked>
+   <span>WhatsApp Order</span>
+  </label>
+  <label class="paymentOption">
+   <input type="radio" name="payment" value="jazzcash">
+   <span>JazzCash</span>
+  </label>
+ </div>
+ 
+ <div class="jazzcashSection" id="jazzcashSection" style="display:none;">
+  <label>📱 JazzCash QR Code / Account Number</label>
+  <input type="file" id="jazzcashQr" accept="image/*">
+  <input type="text" id="jazzcashNumber" placeholder="JazzCash Account Number">
+  <div class="jazzcashNote">Upload QR code image or enter account number</div>
  </div>
 </div>
 
@@ -235,6 +326,14 @@ days.forEach(d => {
  });
 });
 
+// Payment method toggle
+document.querySelectorAll('input[name="payment"]').forEach(radio => {
+ radio.addEventListener('change', function() {
+  document.getElementById('jazzcashSection').style.display = 
+   this.value === 'jazzcash' ? 'block' : 'none';
+ });
+});
+
 // Holiday management
 function addHoliday() {
  const container = document.getElementById('holidaysContainer');
@@ -243,7 +342,7 @@ function addHoliday() {
  holidayItem.innerHTML = `
   <input type="text" class="holidayName" placeholder="E.g., Eid ul-Fitr">
   <input type="date" class="holidayDate">
-  <button type="button" class="removeHoliday" onclick="removeHoliday(this)" style="background:#ef4444;color:white;border:none;border-radius:6px;padding:6px 10px;cursor:pointer">×</button>
+  <button type="button" class="removeHoliday" onclick="removeHoliday(this)">×</button>
  `;
  container.appendChild(holidayItem);
 }
@@ -334,6 +433,24 @@ async function generate(){
   }
  });
 
+ // Collect payment method
+ const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+ let jazzcashData = null;
+ 
+ if(paymentMethod === 'jazzcash') {
+  const jazzcashNumber = document.getElementById('jazzcashNumber').value;
+  const jazzcashQrFile = document.getElementById('jazzcashQr').files[0];
+  
+  jazzcashData = {
+   number: jazzcashNumber || '',
+   qr: ''
+  };
+  
+  if(jazzcashQrFile) {
+   jazzcashData.qr = await resizeImage(jazzcashQrFile);
+  }
+ }
+
  // Collect offers
  const offersArray = [];
  const offerBoxes = document.querySelectorAll(".offerBox");
@@ -352,7 +469,9 @@ async function generate(){
     title: title || "",
     desc: desc || "",
     badges: badges,
-    image: ""
+    image: "",
+    price: "",
+    cartEnabled: true
    };
    
    if(file){
@@ -376,6 +495,8 @@ async function generate(){
   },
   businessHours: businessHoursArray,
   holidays: holidaysArray,
+  paymentMethod: paymentMethod,
+  jazzcash: jazzcashData,
   offers: offersArray
  };
 
