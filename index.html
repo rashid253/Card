@@ -12,24 +12,55 @@ body{margin:0;font-family:system-ui;background:#f1f5f9}
 .wrap{max-width:480px;margin:auto;padding:16px}
 h2{margin-top:20px}
 
-input,textarea{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:1px solid #cbd5f5}
-button{width:100%;padding:16px;border:none;border-radius:12px;background:#2563eb;color:white;font-size:17px;margin-top:20px}
-.offerBox{background:white;padding:12px;border-radius:12px;margin-top:10px}
+input,textarea{
+ width:100%;
+ padding:12px;
+ margin:6px 0;
+ border-radius:10px;
+ border:1px solid #cbd5f5
+}
+button{
+ width:100%;
+ padding:16px;
+ border:none;
+ border-radius:12px;
+ background:#2563eb;
+ color:white;
+ font-size:17px;
+ margin-top:20px
+}
+.offerBox{
+ background:white;
+ padding:12px;
+ border-radius:12px;
+ margin-top:12px
+}
 
-/* BADGES */
-.badgeRow{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
-.badgeRow label{
- background:#e2e8f0;
- padding:6px 10px;
- border-radius:8px;
- font-size:13px;
+/* BADGES – 2 COLUMN SIMPLE TEXT */
+.badgeGrid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:8px;
+ margin-top:10px;
+ font-size:14px;
+}
+.badgeGrid label{
  display:flex;
- gap:6px;
+ gap:8px;
  align-items:center;
 }
 
 /* BUSINESS HOURS */
-.dayBox{background:#fff;padding:10px;border-radius:10px;margin-bottom:8px;display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:center}
+.dayBox{
+ background:#fff;
+ padding:10px;
+ border-radius:10px;
+ margin-bottom:8px;
+ display:grid;
+ grid-template-columns:28px 1fr;
+ gap:8px;
+ align-items:center
+}
 .dayCheck{display:flex;justify-content:center}
 .dayContent{display:flex;flex-direction:column;gap:6px}
 .dayRow{display:flex;align-items:center;gap:8px}
@@ -38,9 +69,9 @@ button{width:100%;padding:16px;border:none;border-radius:12px;background:#2563eb
 </style>
 
 <script>
-if ((window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)){
- const last = localStorage.getItem("lastCardId");
- if (last) window.location.replace("card.html?id=" + last);
+if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standalone)){
+ const last=localStorage.getItem("lastCardId");
+ if(last) location.replace("card.html?id="+last);
 }
 </script>
 </head>
@@ -49,7 +80,7 @@ if ((window.matchMedia('(display-mode: standalone)').matches || window.navigator
 <div class="wrap">
 
 <h2>Profile</h2>
-<input type="file" id="profileImage" accept="image/*">
+<input type="file" id="profileImage">
 <input id="fullName" placeholder="Full Name">
 <input id="phoneNumber" placeholder="Phone">
 <input id="email" placeholder="Email">
@@ -61,46 +92,32 @@ if ((window.matchMedia('(display-mode: standalone)').matches || window.navigator
 
 <h3>Business Hours</h3>
 <div id="daysContainer"></div>
-<label class="small"><input type="checkbox" id="holidayEnabled"> Closed on Public Holidays</label>
-<textarea id="businessNotes" placeholder="Special notes (e.g. Friday break 1–2 PM)"></textarea>
-
-<h2>Social Media</h2>
-<input id="facebook" placeholder="Facebook link">
-<input id="instagram" placeholder="Instagram link">
-<input id="youtube" placeholder="YouTube link">
-<input id="website" placeholder="Website link">
-
-<h2>Shop App (Optional)</h2>
-<input id="shopAppLink" placeholder="Play Store app link">
-<input type="file" id="shopAppImage" accept="image/*">
 
 <h2>Offers</h2>
 <div id="offersForm"></div>
-<button type="button" onclick="addOffer()">➕ Add Offer</button>
+<button onclick="addOffer()">➕ Add Offer</button>
 
-<button type="button" onclick="generate()">Generate Card</button>
+<button onclick="generate()">Generate Card</button>
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-if('serviceWorker' in navigator) navigator.serviceWorker.register("sw.js",{scope:"./"});
-
-const db = supabase.createClient(
+const db=supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
 /* BUSINESS DAYS */
-const days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-days.forEach(d=>{
+["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+.forEach(d=>{
  daysContainer.innerHTML+=`
  <div class="dayBox">
-  <div class="dayCheck"><input type="checkbox" id="open_${d}" checked></div>
+  <div class="dayCheck"><input type="checkbox" checked></div>
   <div class="dayContent">
    <div class="dayRow"><label>${d}</label></div>
    <div class="dayRow">
-    <input type="time" id="from_${d}">
-    <input type="time" id="to_${d}">
+    <input type="time">
+    <input type="time">
    </div>
   </div>
  </div>`;
@@ -110,37 +127,40 @@ days.forEach(d=>{
 let offerCount=0;
 function addOffer(){
  offerCount++;
- offersForm.innerHTML+=`
- <div class="offerBox">
+ const box=document.createElement("div");
+ box.className="offerBox";
+ box.dataset.index=offerCount;
+
+ box.innerHTML=`
   <b>Offer ${offerCount}</b>
-  <input type="file" id="offerImg${offerCount}">
-  <input id="offerTitle${offerCount}" placeholder="Title">
-  <textarea id="offerDesc${offerCount}" placeholder="Description">
+  <input type="file" class="offerImg">
+  <input class="offerTitle" placeholder="Title">
+  <textarea class="offerDesc" placeholder="Description"></textarea>
 
-  </textarea>
-
-  <div class="badgeRow">
+  <div class="badgeGrid">
    <label><input type="checkbox" value="🔥 Hot Deal"> Hot Deal</label>
    <label><input type="checkbox" value="⭐ Best Seller"> Best Seller</label>
    <label><input type="checkbox" value="💸 Discount"> Discount</label>
    <label><input type="checkbox" value="⏳ Limited Time"> Limited Time</label>
    <label><input type="checkbox" value="🚚 Free Delivery"> Free Delivery</label>
+   <label><input type="checkbox" value="🏷 Special Price"> Special Price</label>
   </div>
- </div>`;
+ `;
+ offersForm.appendChild(box);
 }
 
-/* IMAGE RESIZE */
+/* IMAGE COMPRESS */
 function resizeImage(file){
  return new Promise(res=>{
   const img=new Image();
   img.onload=()=>{
    const c=document.createElement("canvas");
    const max=1024;
-   let w=img.width,h=img.height;
-   const r=Math.min(max/w,max/h,1);
-   c.width=w*r; c.height=h*r;
+   const r=Math.min(max/img.width,max/img.height,1);
+   c.width=img.width*r;
+   c.height=img.height*r;
    c.getContext("2d").drawImage(img,0,0,c.width,c.height);
-   res(c.toDataURL("image/jpeg",0.8));
+   res(c.toDataURL("image/jpeg",0.85));
   };
   img.src=URL.createObjectURL(file);
  });
@@ -148,8 +168,28 @@ function resizeImage(file){
 
 /* GENERATE */
 async function generate(){
- if(!fullName.value || !phoneNumber.value){alert("Name & Phone required");return;}
+ if(!fullName.value||!phoneNumber.value){
+  alert("Name & Phone required");return;
+ }
+
  const id=Math.random().toString(36).slice(2,8);
+ const offers=[];
+
+ document.querySelectorAll(".offerBox").forEach(async box=>{
+  const t=box.querySelector(".offerTitle").value;
+  const d=box.querySelector(".offerDesc").value;
+  const f=box.querySelector(".offerImg").files[0];
+  if(t&&d){
+   const badges=[...box.querySelectorAll("input[type=checkbox]:checked")]
+    .map(b=>b.value);
+   offers.push({
+    title:t,
+    desc:d,
+    badges:badges,
+    image:f?await resizeImage(f):""
+   });
+  }
+ });
 
  const data={
   name:fullName.value,
@@ -158,34 +198,11 @@ async function generate(){
   address:address.value,
   businessName:businessName.value,
   business:{about:businessAbout.value},
-  facebook:facebook.value,
-  instagram:instagram.value,
-  youtube:youtube.value,
-  website:website.value,
-  shopAppLink:shopAppLink.value,
-  shopAppImage:"",
-  profileImage:"",
-  offers:[]
+  offers:offers
  };
 
- if(profileImage.files[0]) data.profileImage=await resizeImage(profileImage.files[0]);
- if(shopAppImage.files[0]) data.shopAppImage=await resizeImage(shopAppImage.files[0]);
-
- for(let i=1;i<=offerCount;i++){
-  const t=document.getElementById("offerTitle"+i)?.value;
-  const d=document.getElementById("offerDesc"+i)?.value;
-  const f=document.getElementById("offerImg"+i)?.files[0];
-  if(t && d){
-   const badges=[...offersForm.children[i-1].querySelectorAll("input[type=checkbox]:checked")]
-    .map(b=>b.value);
-   data.offers.push({
-    title:t,
-    desc:d,
-    badges:badges,
-    image:f?await resizeImage(f):""
-   });
-  }
- }
+ if(profileImage.files[0])
+  data.profileImage=await resizeImage(profileImage.files[0]);
 
  await db.from("cards").insert({id,data:JSON.stringify(data)});
  localStorage.setItem("lastCardId",id);
