@@ -105,7 +105,8 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a;font-size:v
 
 <script defer src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script defer>
-const photo=photoEl=document.getElementById("photo");
+/* ✅ ELEMENT BINDS (FIXED) */
+const photo=document.getElementById("photo");
 const nameEl=document.getElementById("name");
 const businessEl=document.getElementById("business");
 const phoneEl=document.getElementById("phone");
@@ -132,6 +133,7 @@ const panelDesc=document.getElementById("panelDesc");
 const panelCTA=document.getElementById("panelCTA");
 const socialExpand=document.getElementById("socialExpand");
 
+/* ✅ SUPABASE READY */
 const db=supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
@@ -142,6 +144,7 @@ if(!id){document.body.innerHTML="<h2>No card found</h2>";throw"";}
 
 let sellerPhone="",aboutExpanded=false,offerOpen=false;
 
+/* ✅ LOAD DATA */
 db.from("cards").select("*").eq("id",id).single().then(r=>{
  if(r.data) loadCard(JSON.parse(r.data.data));
 });
@@ -154,31 +157,19 @@ function loadCard(data){
  phoneEl.textContent="📞 "+(data.phone||"");
  emailEl.textContent="✉️ "+(data.email||"");
  addressEl.textContent="📍 "+(data.address||"");
+
  aboutText.textContent=data.business?.about||"";
  if(aboutText.textContent.length<120)aboutMore.style.display="none";
+
  call.href="tel:"+data.phone;
  mail.href="mailto:"+data.email;
  map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
  sms.href="sms:"+data.phone;
+
  fb.href=data.facebook||"#";
  ig.href=data.instagram||"#";
  yt.href=data.youtube||"#";
  web.href=data.website||"#";
-
- if(data.business?.hours){
-  businessDetails.style.display="block";
-  businessDetails.innerHTML="<h3>Business Hours</h3>";
-  Object.keys(data.business.hours).forEach(d=>{
-   const h=data.business.hours[d];
-   businessDetails.innerHTML+=`
-   <div class="hoursRow">
-    <span>${d}</span>
-    <span class="${h.open?'open':'closed'}">
-     ${h.open?`${h.from} – ${h.to}`:"Closed"}
-    </span>
-   </div>`;
-  });
- }
 
  offers.innerHTML="";
  data.offers?.forEach(o=>{
@@ -202,7 +193,7 @@ function openOffer(o){
 
 window.onpopstate=()=>{if(offerOpen){offerPanel.style.display="none";offerOpen=false;}};
 function toggleAbout(){aboutExpanded=!aboutExpanded;aboutBox.classList.toggle("expanded",aboutExpanded);aboutMore.textContent=aboutExpanded?"See less":"See more";}
-function saveCard(){alert("Saved")}
+function saveCard(){alert("Contact saved")}
 function toggleSocial(){socialExpand.style.display=socialExpand.style.display=="flex"?"none":"flex";}
 </script>
 </body>
