@@ -61,13 +61,21 @@ body{
 .open{color:#16a34a;font-weight:600}
 .closed{color:#dc2626;font-weight:600}
 
+/* CTA */
+.ctaBar{
+ margin:12px;padding:14px;border-radius:14px;
+ background:linear-gradient(90deg,#2563eb,#0f172a);
+ color:#fff;font-weight:600;display:none;
+ align-items:center;gap:12px;cursor:pointer
+}
+.ctaBar img{width:42px;height:42px;border-radius:10px;background:#fff}
+
 /* OFFERS */
 .offers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
 .offer{
  min-width:90%;margin:12px;background:#2563eb;
  border-radius:18px;padding:14px;color:#fff;
- display:flex;gap:14px;scroll-snap-align:center;
- position:relative
+ display:flex;gap:14px;scroll-snap-align:center
 }
 .offer img{
  max-width:120px;max-height:100px;
@@ -76,34 +84,23 @@ body{
 .offerContent{flex:1}
 .offerContent h3{margin:0 0 6px}
 
-/* LIMITED TIME BADGE */
-.limitedBadge{
- display:inline-block;
- background:#facc15;
- color:#000;
- font-size:12px;
- font-weight:700;
- padding:4px 8px;
- border-radius:999px;
- margin-bottom:6px
-}
-
-/* OFFER BUTTON */
+/* OFFER BUTTON (UPDATED) */
 .offerBtn{
- display:inline-block;
  margin-top:10px;
  background:#fff;
  color:#2563eb;
- padding:10px 16px;
+ padding:10px 18px;
  border-radius:999px;
  font-weight:700;
- cursor:pointer;
+ display:inline-block;
  width:auto;
- transition:.2s ease;
+ cursor:pointer;
+ transition:all .25s ease;
 }
 .offerBtn:hover{
  background:#2563eb;
  color:#fff;
+ transform:scale(1.05);
 }
 
 /* DOTS */
@@ -117,6 +114,24 @@ body{
 /* ACTIONS */
 .actions{display:flex;justify-content:space-around;padding:16px;background:#0f172a}
 .actions a{color:#fff;font-size:22px}
+
+/* SOCIAL */
+.socialStack{
+ position:fixed;right:14px;bottom:80px;
+ width:48px;height:48px;border-radius:50%;
+ background:#2563eb;color:#fff;
+ display:flex;align-items:center;justify-content:center;
+ box-shadow:0 4px 12px rgba(0,0,0,.3)
+}
+.socialExpand{
+ position:absolute;bottom:58px;right:0;
+ display:none;flex-direction:column;gap:10px
+}
+.socialExpand a{
+ width:42px;height:42px;border-radius:50%;
+ background:#0f172a;color:#fff;
+ display:flex;align-items:center;justify-content:center
+}
 </style>
 </head>
 
@@ -145,8 +160,27 @@ body{
  <span class="aboutMore" id="aboutMore">See more</span>
 </div>
 
+<div class="businessBox" id="businessDetails" style="display:none"></div>
+<div id="shopCTA" class="ctaBar"></div>
+
 <div class="offers" id="offers"></div>
 <div class="dots" id="dots"></div>
+
+<div class="actions">
+ <a id="call"><i class="fa fa-phone"></i></a>
+ <a id="wa"><i class="fab fa-whatsapp"></i></a>
+ <a id="mail"><i class="fa fa-envelope"></i></a>
+</div>
+
+<div class="socialStack" onclick="toggleSocial()">
+ <i class="fab fa-facebook-f"></i>
+ <div class="socialExpand" id="socialExpand">
+  <a id="fb"><i class="fab fa-facebook-f"></i></a>
+  <a id="ig"><i class="fab fa-instagram"></i></a>
+  <a id="yt"><i class="fab fa-youtube"></i></a>
+  <a id="web"><i class="fa fa-globe"></i></a>
+ </div>
+</div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
@@ -159,15 +193,12 @@ let id=new URLSearchParams(location.search).get("id")
  || localStorage.getItem("lastCardId");
 if(!id){document.body.innerHTML="<h2>No card found</h2>";throw"";}
 
+let aboutExpanded=false;
 let sellerPhone="";
 
 db.from("cards").select("*").eq("id",id).single().then(r=>{
  if(r.data) loadCard(JSON.parse(r.data.data));
 });
-
-function isLimited(text){
- return /(limited|today|only|last|24|hrs|hours|time)/i.test(text);
-}
 
 function loadCard(data){
  sellerPhone=(data.phone||"").replace(/\D/g,"");
@@ -179,20 +210,23 @@ function loadCard(data){
  email.textContent="✉️ "+(data.email||"");
  address.textContent="📍 "+(data.address||"");
 
+ aboutText.textContent=data.business?.about||"";
+ if(aboutText.textContent.length<120)aboutMore.style.display="none";
+
+ call.href="tel:"+data.phone;
+ wa.href="https://wa.me/"+sellerPhone;
+ mail.href="mailto:"+data.email;
+ map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
+ sms.href="sms:"+data.phone;
+
+ fb.href=data.facebook||"#";
+ ig.href=data.instagram||"#";
+ yt.href=data.youtube||"#";
+ web.href=data.website||"#";
+
  offers.innerHTML="";dots.innerHTML="";
  data.offers?.forEach((o,i)=>{
-  const limited = isLimited(o.title+" "+o.desc);
-
-  const msg=
-`Hello, I’m interested in this offer:
-
-🔥 ${o.title}
-
-Please share complete product details, price & availability.
-
-Card link:
-${location.href}`;
-
+  const msg=`Hello, I’m interested in this offer:\n\n🔥 ${o.title}\n\nPlease share details.\n\n${location.href}`;
   const waLink=`https://wa.me/${sellerPhone}?text=${encodeURIComponent(msg)}`;
 
   const d=document.createElement("div");
@@ -200,7 +234,6 @@ ${location.href}`;
   d.innerHTML=`
    ${o.image?`<img src="${o.image}">`:""}
    <div class="offerContent">
-    ${limited?`<div class="limitedBadge">⏰ Limited Time Offer</div>`:""}
     <h3>🔥 ${o.title}</h3>
     <p>${o.desc}</p>
     <div class="offerBtn" onclick="window.open('${waLink}','_blank')">
@@ -210,15 +243,15 @@ ${location.href}`;
   offers.appendChild(d);
 
   const dot=document.createElement("span");
-  if(i===0)dot.classList.add("active");
+  if(i==0)dot.classList.add("active");
   dots.appendChild(dot);
  });
 }
 
 function toggleAbout(){
- aboutBox.classList.toggle("expanded");
- aboutMore.textContent=
-  aboutBox.classList.contains("expanded")?"See less":"See more";
+ aboutExpanded=!aboutExpanded;
+ aboutBox.classList.toggle("expanded",aboutExpanded);
+ aboutMore.textContent=aboutExpanded?"See less":"See more";
 }
 
 function saveCard(){
@@ -230,6 +263,11 @@ END:VCARD`;
  const a=document.createElement("a");
  a.href=URL.createObjectURL(new Blob([vcf],{type:"text/vcard"}));
  a.download="contact.vcf";a.click();
+}
+
+function toggleSocial(){
+ socialExpand.style.display=
+  socialExpand.style.display=="flex"?"none":"flex";
 }
 </script>
 </body>
