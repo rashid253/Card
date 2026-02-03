@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Create Digital Card</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2563eb">
 
@@ -13,66 +12,21 @@ body{margin:0;font-family:system-ui;background:#f1f5f9}
 .wrap{max-width:480px;margin:auto;padding:16px}
 h2{margin-top:20px}
 
-input,textarea{
- width:100%;padding:12px;margin:6px 0;
- border-radius:10px;border:1px solid #cbd5f5
-}
-
-button{
- width:100%;padding:16px;
- border:none;border-radius:12px;
- background:#2563eb;color:white;
- font-size:17px;margin-top:20px
-}
-
-.offerBox{
- background:white;padding:12px;
- border-radius:12px;margin-top:10px
-}
+input,textarea{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:1px solid #cbd5f5}
+button{width:100%;padding:16px;border:none;border-radius:12px;background:#2563eb;color:white;font-size:17px;margin-top:20px}
+.offerBox{background:white;padding:12px;border-radius:12px;margin-top:10px}
 
 /* ===== BUSINESS HOURS (LHS TICK COLUMN) ===== */
-.dayBox{
- background:#fff;
- padding:10px;
- border-radius:10px;
- margin-bottom:8px;
- display:grid;
- grid-template-columns: 28px 1fr;
- gap:8px;
- align-items:center
-}
-
-.dayCheck{
- display:flex;
- justify-content:center
-}
-
-.dayContent{
- display:flex;
- flex-direction:column;
- gap:6px
-}
-
-.dayRow{
- display:flex;
- align-items:center;
- gap:8px
-}
-
-.dayRow label{
- font-weight:500
-}
-
-.small{
- font-size:13px;
- color:#475569
-}
+.dayBox{background:#fff;padding:10px;border-radius:10px;margin-bottom:8px;display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:center}
+.dayCheck{display:flex;justify-content:center}
+.dayContent{display:flex;flex-direction:column;gap:6px}
+.dayRow{display:flex;align-items:center;gap:8px}
+.dayRow label{font-weight:500}
+.small{font-size:13px;color:#475569}
 </style>
 
 <script>
-if (
- (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)
-) {
+if ((window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)){
  const last = localStorage.getItem("lastCardId");
  if (last) window.location.replace("card.html?id=" + last);
 }
@@ -95,14 +49,8 @@ if (
 
 <h3>Business Hours</h3>
 <div id="daysContainer"></div>
-
-<label class="small">
- <input type="checkbox" id="holidayEnabled">
- Closed on Public Holidays
-</label>
-
-<textarea id="businessNotes"
- placeholder="Special notes (e.g. Friday break 1–2 PM)"></textarea>
+<label class="small"><input type="checkbox" id="holidayEnabled"> Closed on Public Holidays</label>
+<textarea id="businessNotes" placeholder="Special notes (e.g. Friday break 1–2 PM)"></textarea>
 
 <h2>Social Media</h2>
 <input id="facebook" placeholder="Facebook link">
@@ -114,37 +62,35 @@ if (
 <input id="shopAppLink" placeholder="Play Store app link">
 <input type="file" id="shopAppImage" accept="image/*">
 
+<h2>Top CTA / Badges / Countdown</h2>
+<input id="topCTAText" placeholder="Top CTA sentence (e.g. Limited Offer!)">
+<input id="badge1" placeholder="Badge 1 (e.g. Black Friday)">
+<input id="badge2" placeholder="Badge 2 (e.g. 50% OFF)">
+<input id="countdown" placeholder="Countdown text (e.g. 2h 30m left)">
+
 <h2>Offers</h2>
 <div id="offersForm"></div>
 
 <button type="button" onclick="generate()">Generate Card</button>
-
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-if('serviceWorker' in navigator){
- navigator.serviceWorker.register("sw.js", { scope: "./" });
-}
+if('serviceWorker' in navigator) navigator.serviceWorker.register("sw.js",{scope:"./"});
 
 const db = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-/* BUSINESS DAYS UI — LHS TICK */
+/* BUSINESS DAYS UI */
 const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 days.forEach(d=>{
  daysContainer.innerHTML += `
  <div class="dayBox">
-  <div class="dayCheck">
-   <input type="checkbox" id="open_${d}" checked>
-  </div>
-
+  <div class="dayCheck"><input type="checkbox" id="open_${d}" checked></div>
   <div class="dayContent">
-   <div class="dayRow">
-    <label>${d}</label>
-   </div>
+   <div class="dayRow"><label>${d}</label></div>
    <div class="dayRow">
     <input type="time" id="from_${d}">
     <input type="time" id="to_${d}">
@@ -153,7 +99,7 @@ days.forEach(d=>{
  </div>`;
 });
 
-/* OFFERS */
+/* OFFERS FORM */
 for(let i=1;i<=5;i++){
  offersForm.innerHTML+=`
  <div class="offerBox">
@@ -164,6 +110,7 @@ for(let i=1;i<=5;i++){
  </div>`;
 }
 
+/* IMAGE RESIZE */
 function resizeImage(file){
  return new Promise(res=>{
   const img=new Image();
@@ -180,12 +127,9 @@ function resizeImage(file){
  });
 }
 
+/* GENERATE CARD */
 async function generate(){
-
- if(!fullName.value || !phoneNumber.value){
-  alert("Name & Phone required"); return;
- }
-
+ if(!fullName.value || !phoneNumber.value){alert("Name & Phone required"); return;}
  const id = Math.random().toString(36).slice(2,8);
 
  const businessHours = {};
@@ -197,36 +141,39 @@ async function generate(){
   };
  });
 
- const data={
-  name:fullName.value,
-  phone:phoneNumber.value,
-  email:email.value,
-  address:address.value,
+ const data = {
+  name: fullName.value,
+  phone: phoneNumber.value,
+  email: email.value,
+  address: address.value,
 
-  businessName:businessName.value,
-  business:{
+  businessName: businessName.value,
+  business: {
    about: businessAbout.value,
    hours: businessHours,
    holidays: holidayEnabled.checked,
    notes: businessNotes.value
   },
 
-  facebook:facebook.value,
-  instagram:instagram.value,
-  youtube:youtube.value,
-  website:website.value,
+  facebook: facebook.value,
+  instagram: instagram.value,
+  youtube: youtube.value,
+  website: website.value,
 
   shopAppLink: shopAppLink.value,
-  shopAppImage:"",
-  profileImage:"",
-  offers:[]
+  shopAppImage: "",
+  profileImage: "",
+
+  /* ✅ TOP CTA / BADGES / COUNTDOWN */
+  topCTAText: topCTAText.value,
+  badges: [badge1.value, badge2.value],
+  countdown: countdown.value,
+
+  offers: []
  };
 
- if(profileImage.files[0])
-  data.profileImage = await resizeImage(profileImage.files[0]);
-
- if(shopAppImage.files[0])
-  data.shopAppImage = await resizeImage(shopAppImage.files[0]);
+ if(profileImage.files[0]) data.profileImage = await resizeImage(profileImage.files[0]);
+ if(shopAppImage.files[0]) data.shopAppImage = await resizeImage(shopAppImage.files[0]);
 
  for(let i=1;i<=5;i++){
   const t=document.getElementById("offerTitle"+i).value;
@@ -234,15 +181,14 @@ async function generate(){
   const f=document.getElementById("offerImg"+i).files[0];
   if(t && d){
    data.offers.push({
-    title:t,
-    desc:d,
+    title: t,
+    desc: d,
     image: f ? await resizeImage(f) : ""
    });
   }
  }
 
- await db.from("cards").insert({ id, data: JSON.stringify(data) });
-
+ await db.from("cards").insert({id, data: JSON.stringify(data)});
  localStorage.setItem("lastCardId", id);
  location.href="card.html?id="+id;
 }
