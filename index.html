@@ -102,7 +102,7 @@ if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standa
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-const db=supabase.createClient(
+const db = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
@@ -165,7 +165,7 @@ function resizeImage(file){
  });
 }
 
-/* ✅ GENERATE – FIXED, ORDER SAFE */
+/* ✅ GENERATE CARD */
 async function generate(){
  if(!fullName.value||!phoneNumber.value){
   alert("Name & Phone required"); return;
@@ -183,8 +183,7 @@ async function generate(){
   const f=box.querySelector(".offerImg").files[0];
 
   if(t && d){
-   const badges=[...box.querySelectorAll("input[type=checkbox]:checked")]
-    .map(b=>b.value);
+   const badges=[...box.querySelectorAll("input[type=checkbox]:checked")].map(b=>b.value);
 
    offers.push({
     title:t,
@@ -208,7 +207,17 @@ async function generate(){
  if(profileImage.files[0])
   data.profileImage=await resizeImage(profileImage.files[0]);
 
- await db.from("cards").insert({id,data:JSON.stringify(data)});
+ // ✅ INSERT with error handling
+ const { error } = await db.from("cards").insert({
+   id: id,
+   data: JSON.stringify(data)
+ });
+
+ if(error){
+   alert("Supabase insert failed: " + error.message);
+   return;
+ }
+
  localStorage.setItem("lastCardId",id);
  location.href="card.html?id="+id;
 }
