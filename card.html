@@ -18,139 +18,95 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 
 .profile{position:relative;display:flex;gap:16px;padding:16px;background:#e2e8f0}
 .profile img{
- width:110px;height:110px;
- border-radius:50%;
- object-fit:cover;
- aspect-ratio:1/1;
- border:3px solid #2563eb;
- background:white
+ width:110px;height:110px;border-radius:50%;
+ object-fit:cover;border:3px solid #2563eb;background:white
 }
 .info{font-size:14px}
 #name{font-weight:700;font-size:18px;margin-top:6px}
 #business{font-size:16px;font-weight:600;margin-bottom:6px}
 
 .saveIcon{
- position:absolute;
- right:14px;
- bottom:14px;
- font-size:22px;
- color:#2563eb;
- cursor:pointer;
+ position:absolute;right:14px;bottom:14px;
+ font-size:22px;color:#2563eb;cursor:pointer
 }
 
 .about{padding:12px;background:white;font-size:14px}
 
-/* SHOP CTA */
-.ctaBar{
+.businessBox{
+ background:white;
  margin:12px;
  padding:12px;
  border-radius:12px;
+ font-size:14px
+}
+.businessBox h3{margin:0 0 8px 0}
+
+.hoursRow{
+ display:flex;
+ justify-content:space-between;
+ font-size:13px;
+ padding:4px 0;
+ border-bottom:1px dashed #e5e7eb
+}
+.hoursRow:last-child{border-bottom:none}
+.closed{color:#dc2626;font-weight:600}
+.open{color:#16a34a;font-weight:600}
+
+/* SHOP CTA */
+.ctaBar{
+ margin:12px;padding:12px;border-radius:12px;
  background:linear-gradient(90deg,#2563eb,#0f172a);
- color:white;
- font-size:14px;
- font-weight:600;
- display:none;
- align-items:center;
- gap:10px;
- box-shadow:0 4px 10px rgba(0,0,0,.25);
- cursor:pointer
+ color:white;font-size:14px;font-weight:600;
+ display:none;align-items:center;gap:10px;
+ box-shadow:0 4px 10px rgba(0,0,0,.25);cursor:pointer
 }
 .ctaBar img{
- width:40px;height:40px;
- border-radius:8px;
- object-fit:cover;
- background:white
+ width:40px;height:40px;border-radius:8px;
+ object-fit:cover;background:white
 }
 
 .offers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
 .offer{
- min-width:90%;
- margin:12px;
- background:#2563eb;
- border-radius:16px;
- padding:12px;
- scroll-snap-align:center;
- color:white;
- display:flex;
- gap:12px;
- align-items:center
+ min-width:90%;margin:12px;background:#2563eb;
+ border-radius:16px;padding:12px;scroll-snap-align:center;
+ color:white;display:flex;gap:12px;align-items:center
 }
 .offer img{
- max-width:120px;
- max-height:100px;
- object-fit:contain;
- border-radius:8px;
- background:white
+ max-width:120px;max-height:100px;
+ object-fit:contain;border-radius:8px;background:white
 }
 .offerContent{flex:1}
-.offer button{
- width:auto;
- padding:6px 14px;
- border-radius:20px;
- border:1px solid white;
- background:transparent;
- color:white;
- font-size:13px;
- margin-top:8px;
- box-shadow:0 2px 6px rgba(0,0,0,.25)
-}
 
 .dots{text-align:center;margin-bottom:10px}
 .dots span{
- display:inline-block;
- width:8px;height:8px;
- border-radius:50%;
- background:#94a3b8;
- margin:0 4px
+ display:inline-block;width:8px;height:8px;
+ border-radius:50%;background:#94a3b8;margin:0 4px
 }
-.dots .active{
- background:#2563eb;
- width:18px;
- border-radius:10px
-}
+.dots .active{background:#2563eb;width:18px;border-radius:10px}
 
 .actions{
- display:flex;
- justify-content:space-around;
- padding:14px;
- background:#0f172a
+ display:flex;justify-content:space-around;
+ padding:14px;background:#0f172a
 }
 .actions a{color:white;font-size:22px}
 
 /* Floating Social */
 .socialStack{
- position:fixed;
- right:14px;
- bottom:80px;
- width:46px;
- height:46px;
- border-radius:50%;
- background:#2563eb;
- color:white;
- display:flex;
- align-items:center;
- justify-content:center;
- font-size:20px;
- z-index:10;
+ position:fixed;right:14px;bottom:80px;
+ width:46px;height:46px;border-radius:50%;
+ background:#2563eb;color:white;
+ display:flex;align-items:center;justify-content:center;
+ font-size:20px;z-index:10;
  box-shadow:0 4px 12px rgba(0,0,0,.3)
 }
 .socialExpand{
- position:absolute;
- bottom:56px;
- right:0;
- display:none;
- flex-direction:column;
- gap:10px
+ position:absolute;bottom:56px;right:0;
+ display:none;flex-direction:column;gap:10px
 }
 .socialExpand a{
- width:40px;
- height:40px;
- border-radius:50%;
- background:#0f172a;
- color:white;
- display:flex;
- align-items:center;
- justify-content:center;
+ width:40px;height:40px;border-radius:50%;
+ background:#0f172a;color:white;
+ display:flex;align-items:center;justify-content:center;
  font-size:18px
 }
 </style>
@@ -178,6 +134,8 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 
 <div class="about" id="about"></div>
 
+<div class="businessBox" id="businessDetails" style="display:none"></div>
+
 <div id="shopCTA" class="ctaBar"></div>
 
 <div class="offers" id="offers"></div>
@@ -201,67 +159,68 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-if('serviceWorker' in navigator){
- navigator.serviceWorker.register("sw.js", { scope: "./" });
-}
-
 const db = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-let id = new URLSearchParams(location.search).get("id");
-if(id){ localStorage.setItem("last_card_id", id); }
-else{ id = localStorage.getItem("last_card_id"); }
-if(!id){ document.body.innerHTML="<h2>No card found</h2>"; throw "No id"; }
-
-let cardData=null;
-
-const cached = localStorage.getItem("card_"+id);
-if(cached) loadCard(JSON.parse(cached));
+let id=new URLSearchParams(location.search).get("id")
+ || localStorage.getItem("last_card_id");
+if(!id){document.body.innerHTML="<h2>No card found</h2>";throw"";}
 
 db.from("cards").select("*").eq("id",id).single().then(r=>{
- if(r.data){
-  const data = JSON.parse(r.data.data);
-  localStorage.setItem("card_"+id, JSON.stringify(data));
-  loadCard(data);
- }
+ if(r.data) loadCard(JSON.parse(r.data.data));
 });
 
 function loadCard(data){
- cardData=data;
  photo.src=data.profileImage||"";
  name.textContent=data.name||"";
  business.textContent=data.businessName||"";
  phone.textContent="📞 "+(data.phone||"");
  email.textContent="✉️ "+(data.email||"");
  address.textContent="📍 "+(data.address||"");
- about.textContent=data.businessInfo||"";
+
+ about.textContent=data.business?.about || data.businessInfo || "";
 
  call.href="tel:"+data.phone;
- wa.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(
-  "Hello, I found your digital card and would like to know more about your services."
- );
+ wa.href="https://wa.me/"+data.phone;
  mail.href="mailto:"+data.email;
  map.href="https://maps.google.com/?q="+encodeURIComponent(data.address);
  sms.href="sms:"+data.phone;
 
- if(data.facebook) fb.href=data.facebook;
- if(data.instagram) ig.href=data.instagram;
- if(data.youtube) yt.href=data.youtube;
- if(data.website) web.href=data.website;
+ /* BUSINESS HOURS */
+ if(data.business?.hours){
+  businessDetails.style.display="block";
+  businessDetails.innerHTML="<h3>Business Hours</h3>";
+
+  Object.keys(data.business.hours).forEach(day=>{
+   const h=data.business.hours[day];
+   businessDetails.innerHTML+=`
+    <div class="hoursRow">
+     <span>${day}</span>
+     <span class="${h.open?'open':'closed'}">
+      ${h.open ? `${h.from} – ${h.to}` : 'Closed'}
+     </span>
+    </div>`;
+  });
+
+  if(data.business.holidays)
+   businessDetails.innerHTML+=`<p class="closed">Closed on public holidays</p>`;
+
+  if(data.business.notes)
+   businessDetails.innerHTML+=`<p>ℹ️ ${data.business.notes}</p>`;
+ }
 
  if(data.shopAppLink){
   shopCTA.style.display="flex";
   shopCTA.onclick=()=>location.href=data.shopAppLink;
-  shopCTA.innerHTML = `
+  shopCTA.innerHTML=`
    ${data.shopAppImage?`<img src="${data.shopAppImage}">`:""}
-   <div>Shop on our official app</div>
-  `;
+   <div>Shop on our official app</div>`;
  }
 
  offers.innerHTML=""; dots.innerHTML="";
- data.offers.forEach((o,i)=>{
+ data.offers?.forEach((o,i)=>{
   const d=document.createElement("div");
   d.className="offer";
   d.innerHTML=`
@@ -269,56 +228,31 @@ function loadCard(data){
    <div class="offerContent">
     <h3>🔥 ${o.title}</h3>
     <p>${o.desc}</p>
-    <button>Get Offer</button>
    </div>`;
-
-  d.onclick=()=>{
-   const msg = `Hello, I am interested in your offer:\n\n${o.title}\n${o.desc}`;
-   location.href="https://wa.me/"+data.phone+"?text="+encodeURIComponent(msg);
-  };
-
+  d.onclick=()=>location.href="https://wa.me/"+data.phone;
   offers.appendChild(d);
 
   const dot=document.createElement("span");
   if(i==0) dot.classList.add("active");
   dots.appendChild(dot);
  });
-
- offers.addEventListener("scroll",()=>{
-  const index = Math.round(offers.scrollLeft / offers.offsetWidth);
-  document.querySelectorAll(".dots span").forEach((d,i)=>{
-   d.classList.toggle("active", i===index);
-  });
- });
 }
-
-share.onclick=async()=>{
- const s={title:cardData.name,text:"My digital card",url:location.href};
- if(navigator.share){ await navigator.share(s); }
- else{ navigator.clipboard.writeText(location.href); alert("Link copied"); }
-};
 
 function saveCard(){
  const vcf=`BEGIN:VCARD
 VERSION:3.0
-FN:${cardData.name}
-TEL:${cardData.phone}
-EMAIL:${cardData.email}
+FN:${name.textContent}
+TEL:${phone.textContent.replace("📞 ","")}
 END:VCARD`;
- const blob=new Blob([vcf],{type:"text/vcard"});
  const a=document.createElement("a");
- a.href=URL.createObjectURL(blob);
- a.download=cardData.name+".vcf";
- a.click();
+ a.href=URL.createObjectURL(new Blob([vcf],{type:"text/vcard"}));
+ a.download="contact.vcf";a.click();
 }
 
 function toggleSocial(){
- const s=document.getElementById("socialExpand");
- s.style.display = s.style.display=="flex" ? "none" : "flex";
+ socialExpand.style.display=
+  socialExpand.style.display=="flex"?"none":"flex";
 }
-
-history.pushState({}, "");
-window.addEventListener("popstate",()=>{window.close();});
 </script>
 </body>
 </html>
