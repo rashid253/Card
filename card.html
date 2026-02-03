@@ -34,14 +34,13 @@ body{
 }
 .topbar a{color:#fff;font-size:20px}
 
-/* ===== PROFILE (LHS TEXT ALIGN FIXED) ===== */
+/* ===== PROFILE (FIXED LHS ALIGNMENT) ===== */
 .profile{
- position:relative;
  display:flex;
  gap:16px;
  padding:16px;
  background:#e2e8f0;
- align-items:center;
+ align-items:flex-start; /* Top align image and text */
 }
 .profile img{
  width:110px;
@@ -57,20 +56,14 @@ body{
  flex:1;
  display:flex;
  flex-direction:column;
- justify-content:center;
- text-align:left; /* fixed LHS alignment */
+ justify-content:flex-start;
+ text-align:left;
+ gap:4px; /* small spacing between fields */
+ word-break:break-word; /* wrap long text */
 }
-#name{
- font-size:17px;
- font-weight:700;
-}
-#business{
- font-weight:600;
- margin-bottom:6px;
-}
-#phone,#email,#address{
- opacity:.85;
-}
+#name{font-size:17px;font-weight:700;}
+#business{font-weight:600;margin-bottom:4px;}
+#phone,#email,#address{opacity:.85;font-size:14px;}
 
 /* SAVE */
 .saveIcon{
