@@ -197,6 +197,15 @@ button{
  color:#666;
  margin-top:6px;
 }
+
+.priceInput{
+ display:flex;
+ gap:8px;
+ margin-top:10px;
+}
+.priceInput input{
+ flex:1;
+}
 </style>
 
 <script>
@@ -213,8 +222,8 @@ if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standa
 
 <h2>👤 Profile</h2>
 <input type="file" id="profileImage" accept="image/*">
-<input id="fullName" placeholder="Full Name">
-<input id="phoneNumber" placeholder="Phone" type="tel">
+<input id="fullName" placeholder="Full Name *" required>
+<input id="phoneNumber" placeholder="Phone *" type="tel" required>
 <input id="email" placeholder="Email" type="email">
 <input id="address" placeholder="Address">
 
@@ -237,12 +246,7 @@ if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standa
  </div>
  <div id="holidaysContainer">
   <div class="holidayItem">
-   <input type="text" class="holidayName" placeholder="E.g., Eid ul-Fitr" value="Eid ul-Fitr">
-   <input type="date" class="holidayDate">
-   <button type="button" class="removeHoliday" onclick="removeHoliday(this)">×</button>
-  </div>
-  <div class="holidayItem">
-   <input type="text" class="holidayName" placeholder="E.g., Quaid Day" value="Quaid Day">
+   <input type="text" class="holidayName" placeholder="E.g., Eid ul-Fitr">
    <input type="date" class="holidayDate">
    <button type="button" class="removeHoliday" onclick="removeHoliday(this)">×</button>
   </div>
@@ -308,7 +312,7 @@ days.forEach(d => {
    </div>
   </div>
  `;
- daysContainer.appendChild(dayBox);
+ document.getElementById('daysContainer').appendChild(dayBox);
  
  // Add event listener for status change
  const statusSelect = dayBox.querySelector('.dayStatus');
@@ -327,10 +331,12 @@ days.forEach(d => {
 });
 
 // Payment method toggle
-document.querySelectorAll('input[name="payment"]').forEach(radio => {
- radio.addEventListener('change', function() {
-  document.getElementById('jazzcashSection').style.display = 
-   this.value === 'jazzcash' ? 'block' : 'none';
+document.addEventListener('DOMContentLoaded', function() {
+ document.querySelectorAll('input[name="payment"]').forEach(radio => {
+  radio.addEventListener('change', function() {
+   document.getElementById('jazzcashSection').style.display = 
+    this.value === 'jazzcash' ? 'block' : 'none';
+  });
  });
 });
 
@@ -361,7 +367,11 @@ function addOffer(){
   <h3 style="margin-top:0">🎁 Offer ${offerCount}</h3>
   <input type="file" class="offerImg" accept="image/*">
   <input class="offerTitle" placeholder="Title (e.g., 20% Off)">
-  <textarea class="offerDesc" placeholder="Description (e.g., Valid until Dec 31)" rows="3"></textarea>
+  <textarea class="offerDesc" placeholder="Description" rows="3"></textarea>
+  <div class="priceInput">
+   <input type="text" class="offerPrice" placeholder="Price (e.g., Rs 999)" style="flex:2">
+   <input type="text" class="offerOriginalPrice" placeholder="Original Price (e.g., Rs 1499)" style="flex:2">
+  </div>
   
   <div class="badgeGrid">
    <label><input type="checkbox" value="🔥 Hot Deal"> Hot Deal</label>
@@ -372,30 +382,47 @@ function addOffer(){
    <label><input type="checkbox" value="🏷 Special Price"> Special Price</label>
   </div>
  `;
- offersForm.appendChild(box);
+ document.getElementById('offersForm').appendChild(box);
 }
 
 // Image compression
 function resizeImage(file){
  return new Promise(res => {
-  const img = new Image();
-  img.onload = () => {
-   const canvas = document.createElement("canvas");
-   const max = 1024;
-   const ratio = Math.min(max/img.width, max/img.height, 1);
-   canvas.width = img.width * ratio;
-   canvas.height = img.height * ratio;
-   const ctx = canvas.getContext("2d");
-   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-   res(canvas.toDataURL("image/jpeg", 0.85));
+  const reader = new FileReader();
+  reader.onload = function(e) {
+   const img = new Image();
+   img.onload = function() {
+    const canvas = document.createElement("canvas");
+    const max = 800;
+    let width = img.width;
+    let height = img.height;
+    
+    if (width > height && width > max) {
+      height = Math.round((height * max) / width);
+      width = max;
+    } else if (height > max) {
+      width = Math.round((width * max) / height);
+      height = max;
+    }
+    
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, width, height);
+    res(canvas.toDataURL("image/jpeg", 0.8));
+   };
+   img.src = e.target.result;
   };
-  img.src = URL.createObjectURL(file);
+  reader.readAsDataURL(file);
  });
 }
 
 // Generate card
 async function generate(){
- if(!fullName.value || !phoneNumber.value){
+ const fullName = document.getElementById('fullName').value.trim();
+ const phoneNumber = document.getElementById('phoneNumber').value.trim();
+ 
+ if(!fullName || !phoneNumber){
   alert("Name & Phone number are required");
   return;
  }
@@ -414,8 +441,8 @@ async function generate(){
   businessHoursArray.push({
    open: open && status === 'open',
    status: status,
-   start: (open && status === 'open') ? start : null,
-   end: (open && status === 'open') ? end : null
+   start: (open && status === 'open') ? start : "",
+   end: (open && status === 'open') ? end : ""
   });
  });
 
@@ -425,10 +452,10 @@ async function generate(){
  holidayItems.forEach(item => {
   const name = item.querySelector(".holidayName").value;
   const date = item.querySelector(".holidayDate").value;
-  if(name.trim() && date) {
+  if(name && name.trim()) {
    holidaysArray.push({
     name: name.trim(),
-    date: date
+    date: date || ""
    });
   }
  });
@@ -459,6 +486,8 @@ async function generate(){
   const box = offerBoxes[i];
   const title = box.querySelector(".offerTitle").value;
   const desc = box.querySelector(".offerDesc").value;
+  const price = box.querySelector(".offerPrice").value;
+  const originalPrice = box.querySelector(".offerOriginalPrice").value;
   const file = box.querySelector(".offerImg").files[0];
   
   if(title || desc || file){
@@ -468,9 +497,10 @@ async function generate(){
    const offerData = {
     title: title || "",
     desc: desc || "",
+    price: price || "",
+    originalPrice: originalPrice || "",
     badges: badges,
     image: "",
-    price: "",
     cartEnabled: true
    };
    
@@ -482,17 +512,15 @@ async function generate(){
   }
  }
 
- // Prepare data
+ // Prepare data - SIMPLIFIED STRUCTURE
  const cardData = {
-  name: fullName.value.trim(),
-  phone: phoneNumber.value.trim(),
-  email: email.value.trim(),
-  address: address.value.trim(),
-  website: website.value.trim(),
-  businessName: businessName.value.trim(),
-  business: {
-   about: businessAbout.value.trim()
-  },
+  name: fullName,
+  phone: phoneNumber,
+  email: document.getElementById('email').value.trim(),
+  address: document.getElementById('address').value.trim(),
+  website: document.getElementById('website').value.trim(),
+  businessName: document.getElementById('businessName').value.trim(),
+  businessAbout: document.getElementById('businessAbout').value.trim(),
   businessHours: businessHoursArray,
   holidays: holidaysArray,
   paymentMethod: paymentMethod,
@@ -501,9 +529,12 @@ async function generate(){
  };
 
  // Add profile image if exists
- if(profileImage.files[0]){
-  cardData.profileImage = await resizeImage(profileImage.files[0]);
+ const profileImageFile = document.getElementById('profileImage').files[0];
+ if(profileImageFile){
+  cardData.profileImage = await resizeImage(profileImageFile);
  }
+
+ console.log("Saving card data:", cardData);
 
  // Save to Supabase
  const { data: inserted, error } = await db.from("cards").insert({
@@ -518,8 +549,8 @@ async function generate(){
  }
 
  // Store ID and redirect
- localStorage.setItem("lastCardId", inserted.id);
- location.href = "card.html?id=" + inserted.id;
+ localStorage.setItem("lastCardId", id);
+ window.location.href = "card.html?id=" + id;
 }
 </script>
 </body>
