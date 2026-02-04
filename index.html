@@ -1,949 +1,218 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Create Digital Card</title>
+<title>Digital Card</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2563eb">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
+:root{
+ --primary:#020617;
+ --accent:#22c55e;
+ --bg:#f8fafc;
+ --card:#ffffff;
+ --muted:#64748b;
+}
+
+*{box-sizing:border-box}
+
 body{
  margin:0;
- font-family:system-ui,-apple-system,sans-serif;
- background:#f1f5f9;
- min-height:100vh;
+ background:var(--bg);
+ font-family:system-ui,-apple-system;
+ color:#0f172a;
 }
-.wrap{
- max-width:480px;
+
+.top{
+ background:linear-gradient(135deg,#020617,#0f172a);
+ padding:26px 16px 60px;
+ color:white;
+ text-align:center;
+}
+
+.avatar{
+ width:90px;
+ height:90px;
+ border-radius:50%;
+ background:#22c55e;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:38px;
+ font-weight:700;
  margin:auto;
- padding:20px;
-}
-h2{
- color:#0f172a;
- margin-top:24px;
- margin-bottom:12px;
- padding-bottom:8px;
- border-bottom:2px solid #e2e8f0;
-}
-h3{
- color:#0f172a;
- margin-top:20px;
- margin-bottom:10px;
 }
 
-input,textarea,select{
- width:100%;
- padding:12px 16px;
- margin:8px 0;
- border-radius:12px;
- border:2px solid #cbd5e1;
- box-sizing:border-box;
+.name{
+ margin:12px 0 4px;
+ font-size:22px;
+ font-weight:700;
+}
+
+.tag{
+ font-size:14px;
+ opacity:.85;
+}
+
+.wrapper{
+ max-width:560px;
+ margin:auto;
+ padding:0 14px 90px;
+}
+
+.card{
+ background:var(--card);
+ border-radius:18px;
+ padding:16px;
+ box-shadow:0 12px 28px rgba(0,0,0,.08);
+ margin-top:-40px;
+}
+
+.row{
+ display:flex;
+ align-items:center;
+ gap:10px;
+ padding:10px 0;
+ border-bottom:1px solid #e5e7eb;
  font-size:15px;
- font-family:inherit;
- transition:border-color 0.3s;
 }
-input:focus,textarea:focus,select:focus{
- outline:none;
- border-color:#2563eb;
-}
-button{
- width:100%;
+
+.row:last-child{border:none}
+.row i{color:var(--accent)}
+
+.section{
+ background:var(--card);
+ border-radius:18px;
  padding:16px;
- border:none;
- border-radius:12px;
- background:#2563eb;
- color:white;
- font-size:17px;
- margin-top:20px;
- cursor:pointer;
- font-weight:600;
- transition:background 0.3s,transform 0.2s;
-}
-button:hover{
- background:#1d4ed8;
- transform:translateY(-2px);
-}
-button:active{
- transform:translateY(0);
+ box-shadow:0 8px 24px rgba(0,0,0,.06);
+ margin-top:14px;
 }
 
-.offerBox{
- background:#fff;
- padding:16px;
- border-radius:12px;
- margin-top:16px;
- border:2px solid #e2e8f0;
-}
-.offerBox h3{
- margin-top:0;
- color:#2563eb;
-}
-
-.badgeGrid{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:10px;
- margin-top:12px;
- font-size:14px;
-}
-.badgeGrid label{
- display:flex;
- gap:8px;
- align-items:center;
- padding:8px;
- background:#f8fafc;
- border-radius:8px;
- cursor:pointer;
- transition:background 0.3s;
-}
-.badgeGrid label:hover{
- background:#e2e8f0;
-}
-
-.dayBox{
- background:#fff;
- padding:14px;
- border-radius:12px;
- margin-bottom:10px;
- border:2px solid #e2e8f0;
- display:grid;
- grid-template-columns:28px 1fr;
- gap:12px;
- align-items:center;
-}
-.dayCheck{
- display:flex;
- justify-content:center;
-}
-.dayContent{
- display:flex;
- flex-direction:column;
- gap:8px;
-}
-.dayRow{
- display:flex;
- align-items:center;
- gap:12px;
-}
-.dayRow label{
- font-weight:600;
- min-width:100px;
- color:#0f172a;
-}
-
-.holidayBox{
- background:#fff;
- padding:16px;
- border-radius:12px;
- margin:16px 0;
- border:2px solid #e2e8f0;
-}
-.holidayHeader{
- display:flex;
- justify-content:space-between;
- align-items:center;
- margin-bottom:12px;
-}
-.holidayHeader label{
- font-weight:600;
+.section h3{
+ margin:0 0 10px;
  font-size:16px;
- color:#0f172a;
 }
-.addHolidayBtn{
- background:#10b981;
- color:white;
- border:none;
- padding:10px 16px;
- border-radius:10px;
- cursor:pointer;
- font-size:14px;
+
+.more{
+ color:var(--accent);
  font-weight:600;
- transition:background 0.3s;
-}
-.addHolidayBtn:hover{
- background:#0ea271;
-}
-.holidayItem{
- display:grid;
- grid-template-columns:1fr 1fr auto;
- gap:10px;
- align-items:center;
- margin:10px 0;
- padding:12px;
- background:#f8fafc;
- border-radius:10px;
- border:1px solid #e2e8f0;
-}
-.holidayItem input[type="text"]{
- padding:10px;
- border:1px solid #e2e8f0;
- border-radius:8px;
- width:100%;
-}
-.holidayItem input[type="date"]{
- padding:10px;
- border:1px solid #e2e8f0;
- border-radius:8px;
- width:100%;
-}
-.removeHoliday{
- background:#ef4444;
- color:white;
- border:none;
- border-radius:8px;
- padding:10px 14px;
- cursor:pointer;
- min-width:36px;
- height:36px;
- display:flex;
- align-items:center;
- justify-content:center;
- font-weight:bold;
- transition:background 0.3s;
-}
-.removeHoliday:hover{
- background:#dc2626;
-}
-
-.websiteBox{
- background:#fff;
- padding:16px;
- border-radius:12px;
- margin:16px 0;
- border:2px solid #e2e8f0;
-}
-.websiteBox label{
- display:block;
- margin-bottom:8px;
- font-weight:600;
- color:#0f172a;
-}
-
-.paymentBox{
- background:#fff;
- padding:16px;
- border-radius:12px;
- margin:16px 0;
- border:2px solid #e2e8f0;
-}
-.paymentBox label{
- display:block;
- margin-bottom:8px;
- font-weight:600;
- color:#0f172a;
-}
-.paymentGrid{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:12px;
- margin-top:12px;
-}
-.paymentOption{
- display:flex;
- align-items:center;
- gap:10px;
- padding:12px;
- background:#f8fafc;
- border-radius:10px;
- cursor:pointer;
- border:2px solid #e2e8f0;
- transition:border-color 0.3s,background 0.3s;
-}
-.paymentOption:hover{
- background:#e2e8f0;
-}
-.paymentOption input[type="radio"]:checked + span{
- color:#2563eb;
- font-weight:600;
-}
-
-.jazzcashSection{
- background:#f8fafc;
- padding:16px;
- border-radius:10px;
- margin-top:16px;
- border:1px solid #e2e8f0;
-}
-.jazzcashSection label{
- display:block;
- margin-bottom:8px;
- font-weight:500;
- color:#0f172a;
-}
-.jazzcashNote{
- font-size:13px;
- color:#64748b;
- margin-top:8px;
- font-style:italic;
-}
-
-.priceInput{
- display:flex;
- gap:10px;
- margin-top:12px;
-}
-.priceInput input{
- flex:1;
-}
-
-.fileInput{
- position:relative;
- margin:10px 0;
-}
-.fileInput input[type="file"]{
- width:100%;
- padding:12px;
- border:2px dashed #cbd5e1;
- border-radius:12px;
- background:#f8fafc;
  cursor:pointer;
 }
-.fileInput input[type="file"]:hover{
- border-color:#2563eb;
-}
 
-#loading{
+.actions{
  position:fixed;
- top:0;
+ bottom:0;
  left:0;
  right:0;
- bottom:0;
- background:rgba(255,255,255,0.95);
- display:none;
- justify-content:center;
- align-items:center;
- z-index:1000;
- font-size:18px;
- color:#2563eb;
- flex-direction:column;
- gap:20px;
-}
-.spinner{
- width:40px;
- height:40px;
- border:4px solid #e2e8f0;
- border-top-color:#2563eb;
- border-radius:50%;
- animation:spin 1s linear infinite;
-}
-@keyframes spin{
- to{transform:rotate(360deg)}
+ background:white;
+ border-top:1px solid #e5e7eb;
+ display:flex;
 }
 
-.header{
+.actions a{
+ flex:1;
+ padding:12px;
  text-align:center;
- padding:20px 0;
-}
-.header h1{
- color:#2563eb;
- margin:0;
- font-size:28px;
-}
-.header p{
- color:#64748b;
- margin:5px 0 20px 0;
+ text-decoration:none;
+ color:#0f172a;
+ font-size:13px;
 }
 
-.required::after{
- content:" *";
- color:#ef4444;
-}
-
-/* Toast Notification */
-.toast{
- position:fixed;
- top:20px;
- right:20px;
- background:#10b981;
- color:white;
- padding:12px 20px;
- border-radius:8px;
- z-index:2000;
- animation:fadeInOut 3s;
- box-shadow:0 4px 12px rgba(0,0,0,0.15);
- display:none;
-}
-@keyframes fadeInOut {
- 0% { opacity:0; transform:translateY(-20px); }
- 15% { opacity:1; transform:translateY(0); }
- 85% { opacity:1; transform:translateY(0); }
- 100% { opacity:0; transform:translateY(-20px); }
-}
-
-.error-toast{
- background:#ef4444 !important;
+.actions i{
+ display:block;
+ font-size:20px;
+ margin-bottom:4px;
 }
 </style>
 </head>
 
 <body>
-<div id="loading">
- <div class="spinner"></div>
- <div>Creating your digital card...</div>
+
+<div class="top">
+ <div class="avatar" id="avatar"></div>
+ <div class="name" id="name"></div>
+ <div class="tag">Digital Business Card</div>
 </div>
 
-<!-- Toast Notification -->
-<div id="toast" class="toast"></div>
+<div class="wrapper">
 
-<div class="wrap">
- <div class="header">
-  <h1><i class="fas fa-id-card"></i> Digital Card Creator</h1>
-  <p>Create your professional digital business card</p>
- </div>
-
- <h2><i class="fas fa-user"></i> Profile Information</h2>
- <div class="fileInput">
-  <input type="file" id="profileImage" accept="image/*" title="Upload profile picture">
- </div>
- <input id="fullName" placeholder="Full Name *" class="required" required>
- <input id="phoneNumber" placeholder="Phone Number *" type="tel" class="required" required>
- <input id="email" placeholder="Email Address" type="email">
- <input id="address" placeholder="Business Address">
-
- <h2><i class="fas fa-briefcase"></i> Business Information</h2>
- <input id="businessName" placeholder="Business Title">
- <textarea id="businessAbout" placeholder="About your business..." rows="4"></textarea>
-
- <div class="websiteBox">
-  <label><i class="fas fa-globe"></i> Website / E-commerce Link</label>
-  <input type="url" id="website" placeholder="https://yourwebsite.com">
- </div>
-
- <h3><i class="fas fa-clock"></i> Business Hours</h3>
- <div id="daysContainer"></div>
-
- <div class="holidayBox">
-  <div class="holidayHeader">
-   <label><i class="fas fa-calendar-times"></i> Special Holidays / Closed Days</label>
-   <button type="button" class="addHolidayBtn">+ Add Holiday</button>
-  </div>
-  <div id="holidaysContainer">
-   <!-- Holidays will be added here -->
-  </div>
- </div>
-
- <div class="paymentBox">
-  <label><i class="fas fa-credit-card"></i> Payment Methods</label>
-  <div class="paymentGrid">
-   <label class="paymentOption">
-    <input type="radio" name="payment" value="whatsapp" checked>
-    <span><i class="fab fa-whatsapp"></i> WhatsApp Order</span>
-   </label>
-   <label class="paymentOption">
-    <input type="radio" name="payment" value="jazzcash">
-    <span><i class="fas fa-wallet"></i> JazzCash</span>
-   </label>
-  </div>
-  
-  <div class="jazzcashSection" id="jazzcashSection" style="display:none;">
-   <label><i class="fas fa-qrcode"></i> JazzCash QR Code</label>
-   <div class="fileInput">
-    <input type="file" id="jazzcashQr" accept="image/*">
-   </div>
-   <label style="margin-top:16px;"><i class="fas fa-phone"></i> Account Number</label>
-   <input type="text" id="jazzcashNumber" placeholder="03XX-XXXXXXX">
-   <div class="jazzcashNote">Upload QR code image or enter your JazzCash account number</div>
-  </div>
- </div>
-
- <h2><i class="fas fa-gift"></i> Special Offers</h2>
- <div id="offersForm"></div>
- <button type="button" id="addOfferBtn" style="background:#8b5cf6;">
-  <i class="fas fa-plus"></i> Add New Offer
- </button>
-
- <button type="button" id="generateCardBtn" style="background:#2563eb;margin-top:30px;">
-  <i class="fas fa-magic"></i> Generate Digital Card
- </button>
+<div class="card">
+ <div class="row"><i class="fas fa-phone"></i><span id="phone"></span></div>
+ <div class="row"><i class="fas fa-envelope"></i><span id="email"></span></div>
+ <div class="row"><i class="fas fa-location-dot"></i><span id="address"></span></div>
 </div>
 
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<div class="section" id="aboutBox" style="display:none">
+ <h3><i class="fas fa-circle-info"></i> About</h3>
+ <span id="aboutShort"></span>
+ <span id="aboutMore" style="display:none"></span>
+ <div class="more" id="toggleAbout"></div>
+</div>
+
+<div class="section" id="webBox" style="display:none">
+ <h3><i class="fas fa-globe"></i> Website</h3>
+ <a id="website" target="_blank"></a>
+</div>
+
+</div>
+
+<div class="actions">
+ <a id="call"><i class="fas fa-phone"></i>Call</a>
+ <a id="wa"><i class="fab fa-whatsapp"></i>WhatsApp</a>
+ <a id="share"><i class="fas fa-share-nodes"></i>Share</a>
+</div>
+
 <script>
-// ============ SUPABASE CONFIGURATION ============
-const SUPABASE_URL = 'https://dfvnefbxgayxqgjjgtrr.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE';
-// =================================================
+const id=new URLSearchParams(location.search).get("id");
+const data=JSON.parse(localStorage.getItem("card_"+id));
 
-// Global variables
-let db = null; // Changed variable name to avoid conflict
-let offerCount = 0;
+if(!data){alert("Card not found");location.href="index.html";}
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
- console.log("Initializing Digital Card Creator...");
- 
- // Initialize Supabase (using 'db' instead of 'supabase' to avoid conflict)
- try {
-  db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  console.log("Supabase initialized successfully");
- } catch (error) {
-  console.error("Failed to initialize Supabase:", error);
-  showToast("Error: Failed to connect to database", "error");
-  return;
- }
+avatar.innerText=data.name.charAt(0).toUpperCase();
+name.innerText=data.name;
+phone.innerText=data.phone;
+email.innerText=data.email || "—";
+address.innerText=data.address || "—";
 
- // Initialize business hours
- initializeBusinessHours();
- 
- // Initialize event listeners
- initializeEventListeners();
- 
- // Add initial offer
- addOffer();
- 
- console.log("Digital Card Creator initialized successfully");
-});
+call.href="tel:"+data.phone;
+wa.href="https://wa.me/"+data.phone.replace(/\D/g,"");
 
-function initializeBusinessHours() {
- const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
- const daysContainer = document.getElementById('daysContainer');
- 
- days.forEach(day => {
-  const dayBox = document.createElement("div");
-  dayBox.className = "dayBox";
-  dayBox.innerHTML = `
-   <div class="dayCheck">
-    <input type="checkbox" checked class="dayOpen">
-   </div>
-   <div class="dayContent">
-    <div class="dayRow">
-     <label>${day}</label>
-     <select class="dayStatus" style="width:120px;padding:8px;">
-      <option value="open">Open</option>
-      <option value="closed">Closed</option>
-     </select>
-    </div>
-    <div class="dayRow">
-     <input type="time" class="dayStart" value="09:00" style="width:120px;">
-     <span>to</span>
-     <input type="time" class="dayEnd" value="17:00" style="width:120px;">
-    </div>
-   </div>
-  `;
-  
-  daysContainer.appendChild(dayBox);
-  
-  // Add event listener for status change
-  const statusSelect = dayBox.querySelector('.dayStatus');
-  const timeInputs = dayBox.querySelectorAll('.dayStart, .dayEnd');
-  const openCheckbox = dayBox.querySelector('.dayOpen');
-  
-  statusSelect.addEventListener('change', function() {
-   if(this.value === 'closed') {
-    timeInputs.forEach(input => {
-     input.disabled = true;
-     input.style.opacity = '0.5';
-    });
-    openCheckbox.checked = false;
-   } else {
-    timeInputs.forEach(input => {
-     input.disabled = false;
-     input.style.opacity = '1';
-    });
-    openCheckbox.checked = true;
-   }
-  });
- });
-}
-
-function initializeEventListeners() {
- console.log("Setting up event listeners...");
- 
- // Payment method toggle
- document.querySelectorAll('input[name="payment"]').forEach(radio => {
-  radio.addEventListener('change', function() {
-   document.getElementById('jazzcashSection').style.display = 
-    this.value === 'jazzcash' ? 'block' : 'none';
-  });
- });
-
- // Add holiday button
- document.querySelector('.addHolidayBtn').addEventListener('click', addHoliday);
- 
- // Add offer button
- document.getElementById('addOfferBtn').addEventListener('click', addOffer);
- 
- // Generate card button
- document.getElementById('generateCardBtn').addEventListener('click', generateCard);
- 
- console.log("Event listeners set up successfully");
-}
-
-// Holiday management
-function addHoliday() {
- const container = document.getElementById('holidaysContainer');
- const holidayItem = document.createElement('div');
- holidayItem.className = 'holidayItem';
- holidayItem.innerHTML = `
-  <input type="text" class="holidayName" placeholder="E.g., Eid ul-Fitr">
-  <input type="date" class="holidayDate">
-  <button type="button" class="removeHoliday">×</button>
- `;
- container.appendChild(holidayItem);
- 
- // Add event listener to remove button
- holidayItem.querySelector('.removeHoliday').addEventListener('click', function() {
-  holidayItem.remove();
- });
-}
-
-// Offer management
-function addOffer(){
- offerCount++;
- const box = document.createElement("div");
- box.className = "offerBox";
- box.innerHTML = `
-  <h3>🎁 Offer ${offerCount}</h3>
-  <div class="fileInput">
-   <input type="file" class="offerImg" accept="image/*" title="Upload offer image">
-  </div>
-  <input class="offerTitle" placeholder="Offer Title (e.g., 20% Discount)">
-  <textarea class="offerDesc" placeholder="Offer Description" rows="3"></textarea>
-  <div class="priceInput">
-   <input type="text" class="offerPrice" placeholder="Current Price (e.g., Rs 999)" style="flex:2">
-   <input type="text" class="offerOriginalPrice" placeholder="Original Price (e.g., Rs 1499)" style="flex:2">
-  </div>
-  
-  <label style="margin-top:12px;display:block;font-weight:600;">Tags:</label>
-  <div class="badgeGrid">
-   <label><input type="checkbox" value="🔥 Hot Deal"> Hot Deal</label>
-   <label><input type="checkbox" value="⭐ Best Seller"> Best Seller</label>
-   <label><input type="checkbox" value="💸 Discount"> Discount</label>
-   <label><input type="checkbox" value="⏳ Limited Time"> Limited Time</label>
-   <label><input type="checkbox" value="🚚 Free Delivery"> Free Delivery</label>
-   <label><input type="checkbox" value="🏷 Special Price"> Special Price</label>
-  </div>
- `;
- document.getElementById('offersForm').appendChild(box);
-}
-
-// Image compression function
-function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.7) {
- return new Promise((resolve, reject) => {
-  if (!file) {
-   resolve('');
-   return;
-  }
-  
-  if (!file.type.match('image.*')) {
-   reject(new Error('File is not an image'));
-   return;
-  }
-  
-  const reader = new FileReader();
-  reader.onload = function(e) {
-   const img = new Image();
-   img.onload = function() {
-    const canvas = document.createElement('canvas');
-    let width = img.width;
-    let height = img.height;
-    
-    // Calculate new dimensions
-    if (width > height) {
-     if (width > maxWidth) {
-      height = Math.round((height * maxWidth) / width);
-      width = maxWidth;
-     }
-    } else {
-     if (height > maxHeight) {
-      width = Math.round((width * maxHeight) / height);
-      height = maxHeight;
-     }
-    }
-    
-    canvas.width = width;
-    canvas.height = height;
-    
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0, width, height);
-    
-    // Convert to data URL with compression
-    const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-    resolve(compressedDataUrl);
-   };
-   img.onerror = () => {
-    console.warn("Image load error, using original");
-    resolve(e.target.result);
-   };
-   img.src = e.target.result;
+if(data.about){
+ aboutBox.style.display="block";
+ if(data.about.length>120){
+  aboutShort.innerText=data.about.slice(0,120)+"...";
+  aboutMore.innerText=data.about.slice(120);
+  toggleAbout.innerText="Read more";
+  toggleAbout.onclick=()=>{
+   const open=aboutMore.style.display==="inline";
+   aboutMore.style.display=open?"none":"inline";
+   toggleAbout.innerText=open?"Read more":"Show less";
   };
-  reader.onerror = () => {
-   console.warn("File read error");
-   resolve('');
-  };
-  reader.readAsDataURL(file);
- });
+ }else{
+  aboutShort.innerText=data.about;
+ }
 }
 
-// Toast notification
-function showToast(message, type = 'success') {
- const toast = document.getElementById('toast');
- toast.textContent = message;
- 
- if (type === 'error') {
-  toast.style.background = '#ef4444';
-  toast.classList.add('error-toast');
- } else {
-  toast.style.background = '#10b981';
-  toast.classList.remove('error-toast');
- }
- 
- toast.style.display = 'block';
- 
- // Clear any existing timeout
- if (window.toastTimeout) {
-  clearTimeout(window.toastTimeout);
- }
- 
- window.toastTimeout = setTimeout(() => {
-  toast.style.display = 'none';
- }, 3000);
+if(data.website){
+ webBox.style.display="block";
+ website.href=data.website;
+ website.innerText=data.website;
 }
 
-// Validate phone number
-function validatePhoneNumber(phone) {
- const cleaned = phone.replace(/\D/g, '');
- if (cleaned.length < 10 || cleaned.length > 15) {
-  return false;
- }
- return true;
-}
-
-// Generate card function
-async function generateCard() {
- console.log("Generating card...");
- 
- // Validate required fields
- const fullName = document.getElementById('fullName').value.trim();
- const phoneNumber = document.getElementById('phoneNumber').value.trim();
- 
- if(!fullName || !phoneNumber){
-  showToast("❌ Name and Phone number are required fields!", "error");
-  document.getElementById('fullName').focus();
-  return;
- }
-
- // Validate phone number format
- if(!validatePhoneNumber(phoneNumber)){
-  showToast("❌ Please enter a valid phone number (10-15 digits)!", "error");
-  document.getElementById('phoneNumber').focus();
-  return;
- }
-
- // Show loading
- const loadingEl = document.getElementById('loading');
- loadingEl.style.display = 'flex';
-
- try {
-  // Generate unique ID
-  const id = crypto.randomUUID();
-  console.log("Generated card ID:", id);
-
-  // Collect profile data
-  const profileImageFile = document.getElementById('profileImage').files[0];
-  let profileImageData = '';
-  if(profileImageFile){
-   try {
-    profileImageData = await compressImage(profileImageFile);
-    console.log("Profile image compressed");
-   } catch(err) {
-    console.warn("Profile image compression failed:", err);
-    // Use original file as fallback
-    const reader = new FileReader();
-    profileImageData = await new Promise((resolve) => {
-     reader.onload = () => resolve(reader.result);
-     reader.readAsDataURL(profileImageFile);
-    });
-   }
-  }
-
-  // Collect business hours - FIXED STRUCTURE
-  const businessHoursArray = [];
-  const dayBoxes = document.querySelectorAll(".dayBox");
-  
-  dayBoxes.forEach((box) => {
-   const openCheckbox = box.querySelector(".dayOpen");
-   const statusSelect = box.querySelector(".dayStatus");
-   const startInput = box.querySelector(".dayStart");
-   const endInput = box.querySelector(".dayEnd");
-   
-   const isOpen = openCheckbox.checked && statusSelect.value === 'open';
-   const startTime = isOpen ? (startInput.value || "09:00") : "";
-   const endTime = isOpen ? (endInput.value || "17:00") : "";
-   
-   businessHoursArray.push({
-    open: isOpen,
-    status: statusSelect.value,
-    start: startTime,
-    end: endTime
-   });
+share.onclick=()=>{
+ if(navigator.share){
+  navigator.share({
+   title:data.name,
+   text:data.about,
+   url:location.href
   });
-
-  // Collect holidays
-  const holidaysArray = [];
-  const holidayItems = document.querySelectorAll(".holidayItem");
-  holidayItems.forEach(item => {
-   const nameInput = item.querySelector(".holidayName");
-   const dateInput = item.querySelector(".holidayDate");
-   
-   if(nameInput && nameInput.value.trim()) {
-    holidaysArray.push({
-     name: nameInput.value.trim(),
-     date: dateInput.value || "Date not specified"
-    });
-   }
-  });
-
-  // Collect payment method
-  const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
-  let jazzcashData = null;
-  
-  if(paymentMethod === 'jazzcash') {
-   const jazzcashNumber = document.getElementById('jazzcashNumber').value.trim();
-   const jazzcashQrFile = document.getElementById('jazzcashQr').files[0];
-   let jazzcashQrData = '';
-   
-   if(jazzcashQrFile){
-    try {
-     jazzcashQrData = await compressImage(jazzcashQrFile, 400, 400, 0.8);
-     console.log("JazzCash QR compressed");
-    } catch(err) {
-     console.warn("JazzCash QR compression failed:", err);
-    }
-   }
-   
-   jazzcashData = {
-    number: jazzcashNumber || '',
-    qr: jazzcashQrData
-   };
-  }
-
-  // Collect offers
-  const offersArray = [];
-  const offerBoxes = document.querySelectorAll(".offerBox");
-  
-  for(let i = 0; i < offerBoxes.length; i++){
-   const box = offerBoxes[i];
-   const titleInput = box.querySelector(".offerTitle");
-   const descInput = box.querySelector(".offerDesc");
-   const priceInput = box.querySelector(".offerPrice");
-   const originalPriceInput = box.querySelector(".offerOriginalPrice");
-   const fileInput = box.querySelector(".offerImg");
-   
-   const title = titleInput ? titleInput.value.trim() : '';
-   const desc = descInput ? descInput.value.trim() : '';
-   const price = priceInput ? priceInput.value.trim() : '';
-   const originalPrice = originalPriceInput ? originalPriceInput.value.trim() : '';
-   const file = fileInput ? fileInput.files[0] : null;
-   
-   // Only add if there's any data
-   if(title || desc || price || originalPrice || file){
-    const badges = Array.from(box.querySelectorAll("input[type=checkbox]:checked"))
-     .map(cb => cb.value);
-    
-    const offerData = {
-     title: title || "Special Offer",
-     desc: desc || "",
-     price: price || "Contact for price",
-     originalPrice: originalPrice || "",
-     badges: badges,
-     image: "",
-     cartEnabled: true
-    };
-    
-    if(file){
-     try {
-      offerData.image = await compressImage(file);
-     } catch(err) {
-      console.warn("Offer image compression failed:", err);
-     }
-    }
-    
-    offersArray.push(offerData);
-   }
-  }
-
-  // Prepare complete card data - MATCHING card.html STRUCTURE
-  const cardData = {
-   name: fullName,
-   phone: phoneNumber.replace(/\D/g, ''), // Clean phone number
-   email: document.getElementById('email').value.trim(),
-   address: document.getElementById('address').value.trim(),
-   website: document.getElementById('website').value.trim(),
-   businessName: document.getElementById('businessName').value.trim(),
-   businessAbout: document.getElementById('businessAbout').value.trim(),
-   businessHours: businessHoursArray,
-   holidays: holidaysArray,
-   paymentMethod: paymentMethod,
-   jazzcash: jazzcashData,
-   offers: offersArray,
-   profileImage: profileImageData
-  };
-
-  console.log("Prepared card data for Supabase:", cardData);
-
-  // Save to Supabase
-  const { data, error } = await db
-    .from('cards')
-    .insert([
-      {
-        id: id,
-        data: cardData,
-        created_at: new Date().toISOString()
-      }
-    ])
-    .select()
-    .single();
-
-  if(error){
-    console.error("Supabase insert error details:", error);
-    
-    // Check for common errors
-    let errorMessage = "Failed to create card. ";
-    if (error.code === '42501') {
-     errorMessage += "Permission denied. Check Supabase RLS policies.";
-    } else if (error.code === '42P01') {
-     errorMessage += "Table 'cards' doesn't exist.";
-    } else if (error.message.includes('JWT')) {
-     errorMessage += "Invalid API key.";
-    } else if (error.message.includes('network')) {
-     errorMessage += "Network error. Check your internet connection.";
-    } else {
-     errorMessage += error.message;
-    }
-    
-    throw new Error(errorMessage);
-  }
-
-  console.log("Card saved successfully to Supabase:", data);
-
-  // Store ID in localStorage and redirect
-  localStorage.setItem("lastCardId", id);
-  showToast("✅ Card created successfully! Redirecting...");
-  
-  // Wait a bit before redirecting to show the success message
-  setTimeout(() => {
-   window.location.href = `card.html?id=${id}`;
-  }, 1500);
-
- } catch (error) {
-  console.error("Generate card error:", error);
-  loadingEl.style.display = 'none';
-  
-  // Show user-friendly error message
-  showToast(`❌ ${error.message}`, "error");
+ }else{
+  prompt("Copy link",location.href);
  }
-}
-
-// Add keyboard shortcut (Ctrl+Enter) to generate card
-document.addEventListener('keydown', function(e) {
- if (e.ctrlKey && e.key === 'Enter') {
-  e.preventDefault();
-  generateCard();
- }
-});
+};
 </script>
+
 </body>
 </html>
