@@ -10,8 +10,43 @@
 
 <style>
 body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
-.topbar{display:flex;justify-content:space-around;padding:12px;background:#0f172a}
-.topbar a{color:#fff;font-size:20px}
+
+/* HEADER WITH CART */
+.header {
+  background: #0f172a;
+  color: white;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header h1 {
+  margin: 0;
+  font-size: 18px;
+}
+.cart-icon {
+  position: relative;
+  font-size: 20px;
+  cursor: pointer;
+}
+.cart-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ef4444;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
 .profile{display:flex;gap:16px;padding:16px;background:#e2e8f0;position:relative}
 .profile img{width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid #2563eb;background:#fff}
 .info{flex:1;display:flex;flex-direction:column;gap:4px}
@@ -23,15 +58,227 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 .aboutText{overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 .about.expanded .aboutText{-webkit-line-clamp:unset}
 .aboutMore{color:#2563eb;font-weight:600;margin-top:6px;display:inline-block}
+
+/* PRODUCTS/ OFFERS WITH BUY BUTTONS */
 .offers{display:flex;gap:12px;padding:12px;overflow-x:auto}
-.offer{min-width:160px;height:200px;border-radius:16px;background:#fff;position:relative;cursor:pointer;overflow:hidden}
+.offer{
+  min-width:160px;
+  height:200px;
+  border-radius:16px;
+  background:#fff;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
 .offer img{width:100%;height:100%;object-fit:contain}
 .offerBadges{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:6px}
 .offerBadges span{background:#ef4444;color:#fff;font-size:12px;font-weight:700;padding:4px 8px;border-radius:8px}
-#offerPanel{position:fixed;inset:0;background:#fff;z-index:999;display:none}
-#offerPanel img{width:100%;max-height:280px;object-fit:contain}
+
+/* Product Price & Buy Buttons */
+.offer-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255,255,255,0.95);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.price {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.original-price {
+  text-decoration: line-through;
+  color: #666;
+  font-size: 12px;
+}
+.discount-price {
+  color: #ef4444;
+  font-weight: bold;
+  font-size: 14px;
+}
+.buy-buttons {
+  display: flex;
+  gap: 8px;
+}
+.buy-now, .add-cart {
+  flex: 1;
+  padding: 6px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.buy-now {
+  background: #16a34a;
+  color: white;
+}
+.add-cart {
+  background: #2563eb;
+  color: white;
+}
+
+/* PRODUCT DETAIL PANEL */
+#productPanel{
+  position:fixed;
+  inset:0;
+  background:#fff;
+  z-index:999;
+  display:none;
+  overflow-y:auto;
+}
+#productPanel img{width:100%;max-height:280px;object-fit:contain}
 .panelContent{padding:16px}
-.panelCTA{margin-top:16px;background:#16a34a;color:#fff;padding:16px;text-align:center;border-radius:12px;font-weight:700;cursor:pointer}
+.panelTitle{font-size:20px;font-weight:700;margin-bottom:8px}
+.panelDesc{color:#666;margin-bottom:16px}
+.panelPrice{font-size:24px;color:#16a34a;font-weight:700;margin:16px 0}
+
+/* Payment Options in Panel */
+.payment-options {
+  margin: 20px 0;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 20px;
+}
+.payment-option {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.payment-option.selected {
+  background: #dbeafe;
+  border-color: #2563eb;
+}
+.payment-option h4 {
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* CART MODAL */
+.cart-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  z-index: 1000;
+  display: none;
+  justify-content: flex-end;
+}
+.cart-content {
+  background: white;
+  width: 100%;
+  max-width: 400px;
+  height: 100%;
+  padding: 20px;
+  overflow-y: auto;
+}
+.cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e2e8f0;
+}
+.close-cart {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+/* CART ITEMS */
+.cart-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+.cart-item img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.cart-item-info {
+  flex: 1;
+}
+.cart-item-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.cart-item-price {
+  color: #16a34a;
+  font-weight: bold;
+}
+.cart-item-remove {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* CHECKOUT */
+.cart-total {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #e2e8f0;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: right;
+}
+.checkout-btn {
+  width: 100%;
+  padding: 14px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+/* Payment Receipt Upload */
+.receipt-upload {
+  margin: 20px 0;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 2px dashed #cbd5f5;
+  text-align: center;
+}
+.receipt-upload input[type="file"] {
+  display: none;
+}
+.upload-label {
+  display: block;
+  padding: 12px;
+  background: #2563eb;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
 .actions{display:flex;justify-content:space-around;padding:16px;background:#0f172a}
 .actions a{color:#fff;font-size:22px}
 
@@ -65,9 +312,13 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
 
 <body>
 
-<div class="topbar">
- <a id="map"><i class="fa-solid fa-location-dot"></i></a>
- <a id="sms"><i class="fa fa-comment"></i></a>
+<!-- HEADER WITH CART -->
+<div class="header">
+  <h1 id="businessHeader"></h1>
+  <div class="cart-icon" onclick="openCart()">
+    <i class="fas fa-shopping-cart"></i>
+    <span class="cart-count" id="cartCount">0</span>
+  </div>
 </div>
 
 <div class="profile">
@@ -116,38 +367,274 @@ body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
  </a>
 </div>
 
-<div class="offers" id="offers"></div>
+<!-- PRODUCTS SECTION -->
+<div class="offers" id="productsContainer"></div>
 
 <div class="actions">
  <a id="call"><i class="fa fa-phone"></i></a>
  <a id="mail"><i class="fa fa-envelope"></i></a>
 </div>
 
-<div id="offerPanel">
+<!-- PRODUCT DETAIL PANEL -->
+<div id="productPanel">
  <img id="panelImg">
  <div class="panelContent">
-  <h2 id="panelTitle"></h2>
-  <p id="panelDesc"></p>
-  <div class="panelCTA" id="panelCTA">WhatsApp</div>
+  <h2 class="panelTitle" id="panelTitle"></h2>
+  <p class="panelDesc" id="panelDesc"></p>
+  
+  <div class="panelPrice" id="panelPrice"></div>
+  
+  <!-- Payment Options -->
+  <div class="payment-options" id="paymentOptions" style="display:none;">
+    <h3>💳 Select Payment Method</h3>
+    <div class="payment-option" onclick="selectPaymentMethod('jazzcash')" id="jazzcashPayment">
+      <h4>💰 JazzCash / EasyPaisa</h4>
+      <p>Pay instantly via mobile wallet</p>
+    </div>
+    <div class="payment-option" onclick="selectPaymentMethod('cod')" id="codPayment">
+      <h4>📦 Cash on Delivery</h4>
+      <p>Pay cash when product is delivered</p>
+    </div>
+    
+    <!-- Receipt Upload for JazzCash -->
+    <div id="receiptSection" style="display:none;margin-top:20px;">
+      <div class="receipt-upload">
+        <h4>📸 Upload Payment Receipt</h4>
+        <p>After payment, upload your JazzCash/EasyPaisa receipt</p>
+        <input type="file" id="receiptFile" accept="image/*" onchange="uploadReceipt()">
+        <label for="receiptFile" class="upload-label">📤 Upload Receipt</label>
+        <img id="receiptPreview" style="max-width:200px;margin-top:10px;display:none;">
+      </div>
+      <button onclick="confirmPayment()" style="width:100%;padding:12px;background:#16a34a;color:white;border:none;border-radius:8px;margin-top:10px;cursor:pointer;">
+        ✅ Confirm Payment
+      </button>
+    </div>
+    
+    <!-- WhatsApp for COD -->
+    <div id="whatsappSection" style="display:none;margin-top:20px;">
+      <div style="padding:15px;background:#d1fae5;border-radius:10px;">
+        <h4>📱 Confirm Order via WhatsApp</h4>
+        <p>Click below to confirm your COD order via WhatsApp</p>
+        <button onclick="sendCODMessage()" style="width:100%;padding:12px;background:#25D366;color:white;border:none;border-radius:8px;margin-top:10px;cursor:pointer;">
+          📞 WhatsApp Order
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div style="display:flex;gap:10px;margin-top:20px;">
+    <button class="buy-now" onclick="buyNow()" style="flex:1;padding:12px;font-size:16px;">🛒 Buy Now</button>
+    <button class="add-cart" onclick="addToCart(currentProduct)" style="flex:1;padding:12px;font-size:16px;">➕ Add to Cart</button>
+  </div>
  </div>
+</div>
+
+<!-- CART MODAL -->
+<div class="cart-modal" id="cartModal">
+  <div class="cart-content">
+    <div class="cart-header">
+      <h2>🛒 Your Cart</h2>
+      <button class="close-cart" onclick="closeCart()">×</button>
+    </div>
+    
+    <div id="cartItems"></div>
+    
+    <div class="cart-total">
+      Total: PKR <span id="cartTotal">0</span>
+    </div>
+    
+    <button class="checkout-btn" onclick="checkout()">
+      🚀 Proceed to Checkout
+    </button>
+  </div>
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-document.addEventListener("DOMContentLoaded", async ()=>{
+// Global variables
+let card = {};
+let currentProduct = null;
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+let selectedPaymentMethod = null;
 
-const $=id=>document.getElementById(id);
+// DOM Elements
+const $ = id => document.getElementById(id);
+
+// Cart functions
+function updateCartCount() {
+  const count = cart.length;
+  $('cartCount').textContent = count;
+  $('cartCount').style.display = count > 0 ? 'flex' : 'none';
+}
+
+function addToCart(product) {
+  cart.push(product);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  updateCartCount();
+  alert('✅ Added to cart!');
+}
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  updateCartCount();
+  renderCart();
+}
+
+function openCart() {
+  renderCart();
+  $('cartModal').style.display = 'flex';
+}
+
+function closeCart() {
+  $('cartModal').style.display = 'none';
+}
+
+function renderCart() {
+  const cartItems = $('cartItems');
+  cartItems.innerHTML = '';
+  
+  let total = 0;
+  
+  cart.forEach((item, index) => {
+    const price = item.discountPrice || item.originalPrice || 0;
+    total += parseFloat(price);
+    
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'cart-item';
+    itemDiv.innerHTML = `
+      <img src="${item.image || ''}" onerror="this.style.display='none'">
+      <div class="cart-item-info">
+        <div class="cart-item-title">${item.title}</div>
+        <div class="cart-item-price">PKR ${price}</div>
+      </div>
+      <button class="cart-item-remove" onclick="removeFromCart(${index})">×</button>
+    `;
+    cartItems.appendChild(itemDiv);
+  });
+  
+  $('cartTotal').textContent = total.toFixed(2);
+}
+
+function checkout() {
+  if (cart.length === 0) {
+    alert('Your cart is empty!');
+    return;
+  }
+  
+  closeCart();
+  // For now, just show WhatsApp message option
+  sendOrderMessage();
+}
+
+// Payment methods
+function selectPaymentMethod(method) {
+  selectedPaymentMethod = method;
+  
+  // Remove selected class from all
+  document.querySelectorAll('.payment-option').forEach(opt => {
+    opt.classList.remove('selected');
+  });
+  
+  // Add selected class to clicked one
+  if (method === 'jazzcash') {
+    $('jazzcashPayment').classList.add('selected');
+    $('receiptSection').style.display = 'block';
+    $('whatsappSection').style.display = 'none';
+  } else if (method === 'cod') {
+    $('codPayment').classList.add('selected');
+    $('receiptSection').style.display = 'none';
+    $('whatsappSection').style.display = 'block';
+  }
+}
+
+function uploadReceipt() {
+  const file = $('receiptFile').files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      $('receiptPreview').src = e.target.result;
+      $('receiptPreview').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function confirmPayment() {
+  if (!selectedPaymentMethod) {
+    alert('Please select a payment method first');
+    return;
+  }
+  
+  if (selectedPaymentMethod === 'jazzcash' && !$('receiptFile').files[0]) {
+    alert('Please upload payment receipt first');
+    return;
+  }
+  
+  // Create order message
+  const product = currentProduct;
+  const message = `✅ Order Confirmed!\n\nProduct: ${product.title}\nPrice: PKR ${product.discountPrice || product.originalPrice}\nPayment Method: ${selectedPaymentMethod === 'jazzcash' ? 'JazzCash/EasyPaisa' : 'Cash on Delivery'}\n\nThank you for your order!`;
+  
+  alert(message);
+  
+  // Close panel
+  $('productPanel').style.display = 'none';
+  
+  // Clear cart if it was buy now
+  if (!cart.some(item => item.title === product.title)) {
+    // Send WhatsApp confirmation
+    const phone = card.phone.replace(/\D/g, "");
+    const whatsappMsg = encodeURIComponent(`Hi! I've just placed an order for:\n\nProduct: ${product.title}\nPrice: PKR ${product.discountPrice || product.originalPrice}\nPayment Method: ${selectedPaymentMethod}\n\nPlease confirm my order.`);
+    window.open(`https://wa.me/${phone}?text=${whatsappMsg}`, '_blank');
+  }
+}
+
+function sendCODMessage() {
+  const product = currentProduct;
+  const phone = card.phone.replace(/\D/g, "");
+  const message = encodeURIComponent(`Hi! I want to place a COD order:\n\nProduct: ${product.title}\nPrice: PKR ${product.discountPrice || product.originalPrice}\n\nPlease confirm availability and delivery details.`);
+  window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+  
+  // Close panel
+  $('productPanel').style.display = 'none';
+}
+
+function sendOrderMessage() {
+  const phone = card.phone.replace(/\D/g, "");
+  let message = "Hi! I want to place an order:\n\n";
+  
+  cart.forEach((item, index) => {
+    message += `${index + 1}. ${item.title} - PKR ${item.discountPrice || item.originalPrice}\n`;
+  });
+  
+  message += `\nTotal: PKR ${$('cartTotal').textContent}\n\nPlease confirm my order.`;
+  
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+  
+  // Clear cart after order
+  cart = [];
+  localStorage.setItem('cart', JSON.stringify(cart));
+  updateCartCount();
+}
+
+// Product functions
+function buyNow() {
+  $('paymentOptions').style.display = 'block';
+}
+
+// Main initialization
+document.addEventListener("DOMContentLoaded", async ()=>{
 
 const photo=$("photo"), nameEl=$("name"), businessEl=$("business"),
 phoneEl=$("phone"), emailEl=$("email"), addressEl=$("address"), websiteText=$("websiteText"),
 aboutText=$("aboutText"), aboutMore=$("aboutMore"), aboutBox=$("aboutBox"),
-offers=$("offers"), call=$("call"), mail=$("mail"), map=$("map"), sms=$("sms"),
-panelImg=$("panelImg"), panelTitle=$("panelTitle"), panelDesc=$("panelDesc"),
-panelCTA=$("panelCTA"), offerPanel=$("offerPanel"),
+productsContainer=$("productsContainer"), call=$("call"), mail=$("mail"),
 hoursContainer=$("hoursContainer"), businessHours=$("businessHours"),
 holidaysContainer=$("holidaysContainer"), holidaysList=$("holidaysList"),
 websiteContainer=$("websiteContainer"), websiteLink=$("websiteLink"), websiteUrl=$("websiteUrl"),
-websiteBanner=$("websiteBanner"), websiteBannerLink=$("websiteBannerLink");
+websiteBanner=$("websiteBanner"), websiteBannerLink=$("websiteBannerLink"),
+panelImg=$("panelImg"), panelTitle=$("panelTitle"), panelDesc=$("panelDesc"),
+panelPrice=$("panelPrice"), productPanel=$("productPanel");
 
 const supa = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
@@ -160,7 +647,10 @@ if(!id){document.body.innerHTML="<h2 style='padding:20px'>No card found</h2>";re
 const {data,error}=await supa.from("cards").select("*").eq("id",id).single();
 if(error || !data){document.body.innerHTML="<h2 style='padding:20px'>Card not found</h2>";return;}
 
-const card=JSON.parse(data.data);
+card = JSON.parse(data.data);
+
+// Update header
+$('businessHeader').textContent = card.businessName || card.name || "Digital Card";
 
 // Populate basic info
 photo.src=card.profileImage||"";
@@ -177,18 +667,14 @@ if(card.website && card.website.trim()) {
  websiteContainer.style.display="block";
  websiteUrl.textContent = card.website;
  websiteLink.href = card.website;
- 
- // Show special banner
  websiteBanner.style.display="block";
  websiteBannerLink.href = card.website;
 }
 
 call.href="tel:"+card.phone;
 mail.href="mailto:"+card.email;
-map.href="https://maps.google.com/?q="+encodeURIComponent(card.address);
-sms.href="sms:"+card.phone;
 
-// Populate business hours if they exist
+// Business hours
 if(card.businessHours && Array.isArray(card.businessHours) && card.businessHours.length > 0){
  hoursContainer.style.display = "block";
  const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
@@ -215,7 +701,7 @@ if(card.businessHours && Array.isArray(card.businessHours) && card.businessHours
  });
 }
 
-// Populate holidays if they exist
+// Holidays
 if(card.holidays && Array.isArray(card.holidays) && card.holidays.length > 0){
  holidaysContainer.style.display = "block";
  
@@ -224,7 +710,6 @@ if(card.holidays && Array.isArray(card.holidays) && card.holidays.length > 0){
      const holidayDiv = document.createElement("div");
      holidayDiv.className = "holidayItem";
      
-     // Format date
      const date = new Date(holiday.date);
      const formattedDate = date.toLocaleDateString('en-US', {
        month: 'short',
@@ -242,36 +727,37 @@ if(card.holidays && Array.isArray(card.holidays) && card.holidays.length > 0){
  });
 }
 
-// Populate offers
-offers.innerHTML="";
-(card.offers||[]).forEach(o=>{
- if(!o.title && !o.image) return;
+// Populate products
+productsContainer.innerHTML="";
+(card.products||card.offers||[]).forEach(p=>{
+ if(!p.title && !p.image) return;
  
- const d=document.createElement("div");
- d.className="offer";
- d.innerHTML=`<img src="${o.image||''}" onerror="this.style.display='none'">
- <div class="offerBadges">${(o.badges||[]).map(b=>`<span>${b}</span>`).join("")}</div>`;
+ const productDiv=document.createElement("div");
+ productDiv.className="offer";
  
- if(o.title) {
-   const titleOverlay = document.createElement("div");
-   titleOverlay.style.cssText = "position:absolute;bottom:10px;left:10px;right:10px;background:rgba(0,0,0,0.7);color:white;padding:6px;border-radius:8px;font-size:12px;text-align:center;";
-   titleOverlay.textContent = o.title;
-   d.appendChild(titleOverlay);
- }
+ const price = p.discountPrice || p.originalPrice;
  
- d.onclick=()=>{
-  panelImg.src=o.image||'';
-  panelTitle.textContent=o.title||'';
-  panelDesc.textContent=o.desc||'';
-  panelCTA.onclick=()=>location.href=`https://wa.me/${card.phone.replace(/\D/g,"")}?text=Hi! I'm interested in your offer: ${encodeURIComponent(o.title||'')}`;
-  offerPanel.style.display="block";
- };
- offers.appendChild(d);
+ productDiv.innerHTML=`
+  <img src="${p.image||''}" onerror="this.style.display='none'">
+  <div class="offerBadges">${(p.badges||[]).map(b=>`<span>${b}</span>`).join("")}</div>
+  <div class="offer-footer">
+    <div class="price">
+      ${p.originalPrice ? `<span class="original-price">PKR ${p.originalPrice}</span>` : ''}
+      ${price ? `<span class="discount-price">PKR ${price}</span>` : ''}
+    </div>
+    <div class="buy-buttons">
+      <button class="buy-now" onclick="showProductDetails(${JSON.stringify(p).replace(/"/g, '&quot;')})">Buy Now</button>
+      <button class="add-cart" onclick="addToCart(${JSON.stringify(p).replace(/"/g, '&quot;')})">Add Cart</button>
+    </div>
+  </div>
+ `;
+ 
+ productsContainer.appendChild(productDiv);
 });
 
-// If no offers, hide the offers section
-if((card.offers||[]).length === 0) {
- offers.style.display = "none";
+// If no products, hide section
+if((card.products||card.offers||[]).length === 0) {
+ productsContainer.style.display = "none";
 }
 
 window.toggleAbout=()=>{
@@ -280,7 +766,6 @@ window.toggleAbout=()=>{
 };
 
 window.saveCard=()=>{
- // Create vCard data
  const vcard = `BEGIN:VCARD
 VERSION:3.0
 FN:${card.name}
@@ -292,7 +777,6 @@ URL:${card.website||''}
 NOTE:${card.business?.about||''}
 END:VCARD`;
 
- // Create blob and download
  const blob = new Blob([vcard], { type: 'text/vcard' });
  const url = URL.createObjectURL(blob);
  const a = document.createElement('a');
@@ -306,12 +790,35 @@ END:VCARD`;
  alert("Contact saved as vCard file!");
 };
 
-// Close offer panel when clicking outside
-offerPanel.onclick = (e) => {
- if(e.target === offerPanel) {
-  offerPanel.style.display = "none";
+// Show product details
+window.showProductDetails = function(product) {
+  currentProduct = product;
+  
+  panelImg.src = product.image || '';
+  panelTitle.textContent = product.title || '';
+  panelDesc.textContent = product.desc || '';
+  
+  const price = product.discountPrice || product.originalPrice;
+  panelPrice.textContent = price ? `PKR ${price}` : '';
+  
+  // Hide payment options initially
+  $('paymentOptions').style.display = 'none';
+  $('receiptSection').style.display = 'none';
+  $('whatsappSection').style.display = 'none';
+  selectedPaymentMethod = null;
+  
+  productPanel.style.display = "block";
+};
+
+// Close product panel
+productPanel.onclick = (e) => {
+ if(e.target === productPanel) {
+  productPanel.style.display = "none";
  }
 };
+
+// Initialize cart count
+updateCartCount();
 });
 </script>
 </body>
