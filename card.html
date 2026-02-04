@@ -24,10 +24,92 @@ body {
   position: relative;
 }
 
-/* Fixed Floating Action Buttons - Only Arrow Up (WhatsApp removed from LHS) */
-.fab-container {
+/* Social Media - Minimal Floating Icon */
+.social-float-container {
   position: fixed;
   bottom: 100px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.social-main-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 22px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  z-index: 1001;
+}
+
+.social-main-icon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+}
+
+.social-expandable-icons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 15px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.social-expandable-icons.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.social-icon-item {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 20px;
+  color: white;
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.social-icon-item:hover {
+  transform: scale(1.15);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.social-icon-item i {
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+/* Platform colors */
+.social-facebook { background: #1877F2; }
+.social-instagram { background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D); }
+.social-twitter { background: #1DA1F2; }
+.social-linkedin { background: #0077B5; }
+.social-youtube { background: #FF0000; }
+.social-tiktok { background: #000000; }
+.social-website { background: #667eea; }
+.social-whatsapp { background: #25D366; }
+
+/* Fixed Floating Action Buttons - Only Arrow Up */
+.fab-container {
+  position: fixed;
+  bottom: 170px;
   right: 20px;
   z-index: 1000;
   display: flex;
@@ -273,12 +355,11 @@ body {
   flex-shrink: 0;
 }
 
-/* Live Chat - Moved to LHS of profile image */
+/* Live Chat - Moved 3cm below header */
 .live-chat-profile {
   position: absolute;
   left: 24px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 180px; /* 3cm below header */
   z-index: 10;
 }
 
@@ -353,11 +434,11 @@ body {
   color: #1e293b;
 }
 
-/* About Section */
+/* About Section - Text aligned both sides */
 .about-content {
   line-height: 1.6;
   color: #475569;
-  text-align: center;
+  text-align: justify; /* Both sides aligned */
 }
 
 .read-more {
@@ -368,53 +449,6 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-}
-
-/* Social Media Icons on RHS of arrow-up (expandable) */
-.social-fab-container {
-  position: fixed;
-  bottom: 170px;
-  right: 20px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: center;
-}
-
-.social-fab {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s;
-  color: white;
-  font-size: 18px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  opacity: 0;
-  transform: translateY(10px);
-  animation: fadeInUp 0.3s forwards;
-  display: none; /* Hidden by default */
-}
-
-.social-fab:nth-child(1) { animation-delay: 0.1s; }
-.social-fab:nth-child(2) { animation-delay: 0.2s; }
-.social-fab:nth-child(3) { animation-delay: 0.3s; }
-.social-fab:nth-child(4) { animation-delay: 0.4s; }
-
-.social-fab:hover {
-  transform: scale(1.1) translateY(0);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-}
-
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* Products - Grid layout like Facebook ads (5 cards per row) */
@@ -685,7 +719,7 @@ body {
   transform: translateY(-2px);
 }
 
-/* Footer Actions - WhatsApp icon fixed */
+/* Footer Actions - WhatsApp icon fixed (no empty oval) */
 .footer-actions {
   display: flex;
   justify-content: center;
@@ -731,12 +765,33 @@ body {
 }
 .message-btn .action-icon { 
   background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  position: relative;
+  overflow: visible;
 }
 .email-btn .action-icon { 
   background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); 
 }
 .map-btn .action-icon { 
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
+}
+
+/* Fix WhatsApp icon visibility - Ensure it's clearly visible */
+.message-btn .action-icon i {
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  position: relative;
+  z-index: 2;
+}
+
+/* Add WhatsApp logo background for better visibility */
+.message-btn .action-icon::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="white" d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>') no-repeat center center;
+  background-size: contain;
+  opacity: 0.9;
+  z-index: 1;
 }
 
 .action-label {
@@ -775,6 +830,7 @@ body {
   
   .live-chat-profile {
     left: 15px;
+    top: 160px;
   }
   
   .live-chat-btn {
@@ -789,6 +845,16 @@ body {
   .profile-section {
     margin-top: -50px;
   }
+  
+  .social-float-container {
+    bottom: 90px;
+    right: 15px;
+  }
+  
+  .fab-container {
+    bottom: 160px;
+    right: 15px;
+  }
 }
 
 @media (max-width: 360px) {
@@ -801,15 +867,8 @@ body {
     padding: 5px 10px;
   }
   
-  .social-fab-container {
-    bottom: 160px;
-    right: 15px;
-  }
-  
-  .social-fab {
-    width: 40px;
-    height: 40px;
-    font-size: 16px;
+  .live-chat-profile {
+    top: 150px;
   }
 }
 </style>
@@ -817,16 +876,21 @@ body {
 
 <body>
 
-<!-- Fixed Floating Action Buttons - Only Arrow Up (WhatsApp removed from LHS) -->
-<div class="fab-container">
-  <div class="fab fab-primary" onclick="toggleSocialIcons()">
-    <i class="fas fa-arrow-up"></i>
-    <span class="fab-label">Social</span>
+<!-- Social Media Floating Icon -->
+<div class="social-float-container">
+  <div class="social-expandable-icons" id="socialIcons"></div>
+  <div class="social-main-icon" onclick="toggleSocialIcons()">
+    <i class="fas fa-share-alt"></i>
   </div>
 </div>
 
-<!-- Social Media Icons on RHS of arrow-up (expandable) -->
-<div class="social-fab-container" id="socialFabContainer"></div>
+<!-- Fixed Floating Action Buttons - Only Arrow Up -->
+<div class="fab-container">
+  <div class="fab fab-primary" onclick="scrollToTop()">
+    <i class="fas fa-arrow-up"></i>
+    <span class="fab-label">Top</span>
+  </div>
+</div>
 
 <!-- Main Card Container -->
 <div class="card-container">
@@ -849,7 +913,7 @@ body {
 
     <!-- Professional Profile Section with centered text -->
     <div class="profile-section">
-      <!-- Live Chat moved to LHS of profile image -->
+      <!-- Live Chat moved 3cm below header -->
       <div class="live-chat-profile">
         <button class="live-chat-btn" onclick="openWhatsAppChat('greeting')">
           <span class="live-dot"></span>
@@ -882,7 +946,7 @@ body {
       </div>
     </div>
 
-    <!-- About Section -->
+    <!-- About Section - Text aligned both sides -->
     <div class="section" id="aboutSection">
       <div class="section-header">
         <i class="fas fa-info-circle"></i>
@@ -1089,18 +1153,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupSocialIcons();
 });
 
-// Setup Social Media Icons on RHS of arrow-up
+// Social Media Icons Setup
 function setupSocialIcons() {
-  const socialFabContainer = document.getElementById('socialFabContainer');
+  const socialIcons = document.getElementById('socialIcons');
   const socialMedia = card.socialMedia || {};
   
   const socialPlatforms = [
-    { key: 'facebook', icon: 'fab fa-facebook-f', label: 'Facebook', color: '#1877F2' },
-    { key: 'instagram', icon: 'fab fa-instagram', label: 'Instagram', color: '#E4405F' },
-    { key: 'twitter', icon: 'fab fa-twitter', label: 'Twitter', color: '#1DA1F2' },
-    { key: 'linkedin', icon: 'fab fa-linkedin-in', label: 'LinkedIn', color: '#0A66C2' },
-    { key: 'youtube', icon: 'fab fa-youtube', label: 'YouTube', color: '#FF0000' },
-    { key: 'tiktok', icon: 'fab fa-tiktok', label: 'TikTok', color: '#000000' }
+    { key: 'facebook', icon: 'fab fa-facebook-f', label: 'Facebook', color: 'social-facebook' },
+    { key: 'instagram', icon: 'fab fa-instagram', label: 'Instagram', color: 'social-instagram' },
+    { key: 'twitter', icon: 'fab fa-twitter', label: 'Twitter', color: 'social-twitter' },
+    { key: 'linkedin', icon: 'fab fa-linkedin-in', label: 'LinkedIn', color: 'social-linkedin' },
+    { key: 'youtube', icon: 'fab fa-youtube', label: 'YouTube', color: 'social-youtube' },
+    { key: 'tiktok', icon: 'fab fa-tiktok', label: 'TikTok', color: 'social-tiktok' }
   ];
   
   let hasSocialMedia = false;
@@ -1109,50 +1173,57 @@ function setupSocialIcons() {
     const url = socialMedia[platform.key];
     if(url && url.trim()) {
       hasSocialMedia = true;
-      const socialFab = document.createElement('div');
-      socialFab.className = 'social-fab';
-      socialFab.style.background = platform.color;
-      socialFab.innerHTML = `<i class="${platform.icon}"></i>`;
-      socialFab.title = platform.label;
-      socialFab.onclick = () => {
+      const socialIcon = document.createElement('div');
+      socialIcon.className = `social-icon-item ${platform.color}`;
+      socialIcon.innerHTML = `<i class="${platform.icon}"></i>`;
+      socialIcon.title = platform.label;
+      socialIcon.onclick = () => {
         window.open(url.includes('://') ? url : `https://${url}`, '_blank');
       };
-      socialFabContainer.appendChild(socialFab);
+      socialIcons.appendChild(socialIcon);
     }
   });
   
   // Add website if available
   if(card.website && card.website.trim()) {
     hasSocialMedia = true;
-    const websiteFab = document.createElement('div');
-    websiteFab.className = 'social-fab';
-    websiteFab.style.background = '#667eea';
-    websiteFab.innerHTML = `<i class="fas fa-globe"></i>`;
-    websiteFab.title = 'Website';
-    websiteFab.onclick = () => {
+    const websiteIcon = document.createElement('div');
+    websiteIcon.className = 'social-icon-item social-website';
+    websiteIcon.innerHTML = `<i class="fas fa-globe"></i>`;
+    websiteIcon.title = 'Website';
+    websiteIcon.onclick = () => {
       window.open(card.website, '_blank');
     };
-    socialFabContainer.appendChild(websiteFab);
+    socialIcons.appendChild(websiteIcon);
+  }
+  
+  // Add WhatsApp if phone available
+  if(card.phone) {
+    hasSocialMedia = true;
+    const whatsappIcon = document.createElement('div');
+    whatsappIcon.className = 'social-icon-item social-whatsapp';
+    whatsappIcon.innerHTML = `<i class="fab fa-whatsapp"></i>`;
+    whatsappIcon.title = 'WhatsApp';
+    whatsappIcon.onclick = () => {
+      openWhatsAppChat('greeting');
+    };
+    socialIcons.appendChild(whatsappIcon);
+  }
+  
+  if(!hasSocialMedia) {
+    document.querySelector('.social-float-container').style.display = 'none';
   }
 }
 
 // Toggle Social Icons
 function toggleSocialIcons() {
+  const socialIcons = document.getElementById('socialIcons');
   socialIconsVisible = !socialIconsVisible;
-  const socialIcons = document.querySelectorAll('.social-fab');
-  const arrowUpBtn = document.querySelector('.fab-primary .fab-label');
   
   if(socialIconsVisible) {
-    socialIcons.forEach(icon => {
-      icon.style.display = 'flex';
-    });
-    if(arrowUpBtn) arrowUpBtn.textContent = 'Close';
-    scrollToTop();
+    socialIcons.classList.add('active');
   } else {
-    socialIcons.forEach(icon => {
-      icon.style.display = 'none';
-    });
-    if(arrowUpBtn) arrowUpBtn.textContent = 'Social';
+    socialIcons.classList.remove('active');
   }
 }
 
@@ -1220,11 +1291,10 @@ function renderCard() {
     document.getElementById('addressItem').style.display = 'none';
   }
   
-  // About
+  // About - Text aligned both sides
   const aboutText = card.business?.about || card.about || "";
   if(aboutText) {
     document.getElementById('aboutText').textContent = aboutText;
-    document.getElementById('aboutText').style.textAlign = 'center';
   } else {
     document.getElementById('aboutSection').style.display = 'none';
   }
