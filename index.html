@@ -168,6 +168,152 @@ button{
  font-weight:600;
  color:#0f172a;
 }
+
+/* PAYMENT MODAL STYLES - IMPROVED */
+.payment-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+.payment-content {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+.payment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e2e8f0;
+}
+.payment-header h2 {
+  margin: 0;
+  color: #0f172a;
+}
+.close-payment {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.payment-option {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.payment-option:hover {
+  background: #f1f5f9;
+  border-color: #2563eb;
+}
+.payment-option.active {
+  background: #dbeafe;
+  border-color: #2563eb;
+  position: relative;
+}
+.payment-option.active::after {
+  content: "✓ Selected";
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #10b981;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+.payment-option h3 {
+  margin: 0 0 10px 0;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.payment-details {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #e2e8f0;
+  display: none;
+}
+.payment-option.active .payment-details {
+  display: block;
+}
+.payment-input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #cbd5f5;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+.payment-file {
+  width: 100%;
+  padding: 10px;
+  border: 2px dashed #cbd5f5;
+  border-radius: 8px;
+  margin: 8px 0;
+  text-align: center;
+  cursor: pointer;
+  background: white;
+}
+.payment-file:hover {
+  border-color: #2563eb;
+  background: #f8fafc;
+}
+.preview-barcode {
+  max-width: 200px;
+  margin: 10px auto;
+  display: block;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+}
+.submit-payment {
+  width: 100%;
+  padding: 14px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 20px;
+}
+.payment-status {
+  margin: 10px 0;
+  padding: 8px 12px;
+  background: #d1fae5;
+  border: 1px solid #10b981;
+  border-radius: 8px;
+  color: #065f46;
+  font-size: 14px;
+  display: none;
+}
+.payment-status.active {
+  display: block;
+}
 </style>
 
 <script>
@@ -224,7 +370,66 @@ if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standa
 <div id="offersForm"></div>
 <button type="button" onclick="addOffer()" style="background:#8b5cf6;margin-top:12px">➕ Add Offer</button>
 
+<!-- Payment Button - Shows status -->
+<button type="button" onclick="openPaymentModal()" style="background:#059669;margin-top:24px;position:relative;" id="paymentButton">
+  💳 Add Payment Methods
+  <span id="paymentStatusBadge" style="position:absolute;top:-8px;right:-8px;background:#10b981;color:white;border-radius:50%;width:24px;height:24px;display:none;align-items:center;justify-content:center;font-size:12px;font-weight:bold;">✓</span>
+</button>
+
+<div id="paymentStatus" class="payment-status">
+  ✓ Payment methods added. They will be included in your digital card.
+</div>
+
 <button type="button" onclick="generate()" style="background:#2563eb;margin-top:24px">✨ Generate Digital Card</button>
+</div>
+
+<!-- Payment Modal -->
+<div class="payment-modal" id="paymentModal">
+  <div class="payment-content">
+    <div class="payment-header">
+      <h2>💳 Payment Methods</h2>
+      <button class="close-payment" onclick="closePaymentModal()">×</button>
+    </div>
+    
+    <!-- WhatsApp Payment -->
+    <div class="payment-option" onclick="selectPayment('whatsapp')" id="whatsappOption">
+      <h3>📱 WhatsApp Payment</h3>
+      <p>Customers can contact you via WhatsApp for payments</p>
+      <div class="payment-details" id="whatsappDetails">
+        <input type="text" class="payment-input" id="whatsappNumber" placeholder="WhatsApp Number (e.g., +92 300 1234567)">
+        <small style="color:#64748b;display:block;margin-top:5px;">Include country code (+92 for Pakistan)</small>
+      </div>
+    </div>
+    
+    <!-- JazzCash / EasyPaisa -->
+    <div class="payment-option" onclick="selectPayment('jazzcash')" id="jazzcashOption">
+      <h3>💰 JazzCash / EasyPaisa</h3>
+      <p>Accept payments via JazzCash or EasyPaisa</p>
+      <div class="payment-details" id="jazzcashDetails">
+        <h4>Choose Payment Method:</h4>
+        <select class="payment-input" id="mobileWalletType">
+          <option value="jazzcash">JazzCash</option>
+          <option value="easypaisa">EasyPaisa</option>
+        </select>
+        
+        <h4 style="margin-top:15px;">Option A: Barcode/QR Code</h4>
+        <input type="file" class="payment-file" id="jazzcashBarcode" accept="image/*" onchange="previewBarcode(this)">
+        <img id="barcodePreview" class="preview-barcode" style="display:none;">
+        
+        <h4 style="margin-top:15px;">Option B: Cell Number</h4>
+        <input type="text" class="payment-input" id="jazzcashNumber" placeholder="Cell Number (e.g., 0300 1234567)">
+        
+        <div style="margin-top:10px;font-size:14px;color:#64748b;">
+          <strong>Note:</strong> Add at least one payment option.
+        </div>
+      </div>
+    </div>
+    
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <button class="submit-payment" onclick="savePaymentMethods()" style="flex:2;">💾 Save & Continue</button>
+      <button onclick="clearPaymentMethods()" style="flex:1;background:#ef4444;color:white;border:none;border-radius:10px;padding:14px;cursor:pointer;">Clear</button>
+    </div>
+  </div>
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -233,6 +438,26 @@ const db = supabase.createClient(
  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
+
+// Payment Methods Data - GLOBAL VARIABLE
+let paymentMethods = {
+  whatsapp: { active: false, number: '' },
+  jazzcash: { 
+    active: false, 
+    type: 'jazzcash',
+    barcode: '',
+    number: ''
+  }
+};
+
+// Check if payment methods exist on page load
+window.addEventListener('load', function() {
+  const saved = localStorage.getItem('paymentMethods');
+  if (saved) {
+    paymentMethods = JSON.parse(saved);
+    updatePaymentUI();
+  }
+});
 
 // Initialize business hours
 const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
@@ -260,7 +485,6 @@ days.forEach(d => {
  `;
  daysContainer.appendChild(dayBox);
  
- // Add event listener for status change
  const statusSelect = dayBox.querySelector('.dayStatus');
  const timeInputs = dayBox.querySelectorAll('.dayStart, .dayEnd');
  const openCheckbox = dayBox.querySelector('.dayOpen');
@@ -335,7 +559,129 @@ function resizeImage(file){
  });
 }
 
-// Generate card
+// PAYMENT METHODS FUNCTIONS - IMPROVED
+function openPaymentModal() {
+  document.getElementById('paymentModal').style.display = 'flex';
+  loadPaymentMethods();
+}
+
+function closePaymentModal() {
+  document.getElementById('paymentModal').style.display = 'none';
+}
+
+function selectPayment(type) {
+  // Remove active class from all
+  document.querySelectorAll('.payment-option').forEach(option => {
+    option.classList.remove('active');
+  });
+  
+  // Activate selected
+  const option = document.getElementById(type + 'Option');
+  option.classList.add('active');
+}
+
+async function previewBarcode(input) {
+  if (input.files && input.files[0]) {
+    const compressed = await resizeImage(input.files[0]);
+    const preview = document.getElementById('barcodePreview');
+    preview.src = compressed;
+    preview.style.display = 'block';
+    paymentMethods.jazzcash.barcode = compressed;
+  }
+}
+
+function loadPaymentMethods() {
+  // Load saved data
+  if (paymentMethods.whatsapp.active) {
+    document.getElementById('whatsappNumber').value = paymentMethods.whatsapp.number || '';
+    selectPayment('whatsapp');
+  } else if (paymentMethods.jazzcash.active) {
+    document.getElementById('mobileWalletType').value = paymentMethods.jazzcash.type || 'jazzcash';
+    document.getElementById('jazzcashNumber').value = paymentMethods.jazzcash.number || '';
+    
+    if (paymentMethods.jazzcash.barcode) {
+      const preview = document.getElementById('barcodePreview');
+      preview.src = paymentMethods.jazzcash.barcode;
+      preview.style.display = 'block';
+    }
+    
+    selectPayment('jazzcash');
+  }
+}
+
+async function savePaymentMethods() {
+  // Get current values
+  const whatsappNumber = document.getElementById('whatsappNumber').value.trim();
+  const jazzcashType = document.getElementById('mobileWalletType').value;
+  const jazzcashNumber = document.getElementById('jazzcashNumber').value.trim();
+  
+  // Get barcode file if exists
+  const barcodeFile = document.getElementById('jazzcashBarcode').files[0];
+  if (barcodeFile && !paymentMethods.jazzcash.barcode) {
+    paymentMethods.jazzcash.barcode = await resizeImage(barcodeFile);
+  }
+  
+  // Update paymentMethods
+  paymentMethods.whatsapp.number = whatsappNumber;
+  paymentMethods.whatsapp.active = !!whatsappNumber;
+  
+  paymentMethods.jazzcash.type = jazzcashType;
+  paymentMethods.jazzcash.number = jazzcashNumber;
+  paymentMethods.jazzcash.active = !!(paymentMethods.jazzcash.barcode || jazzcashNumber);
+  
+  // Save to localStorage
+  localStorage.setItem('paymentMethods', JSON.stringify(paymentMethods));
+  
+  // Update UI
+  updatePaymentUI();
+  
+  alert('✅ Payment methods saved successfully!');
+  closePaymentModal();
+}
+
+function clearPaymentMethods() {
+  paymentMethods = {
+    whatsapp: { active: false, number: '' },
+    jazzcash: { 
+      active: false, 
+      type: 'jazzcash',
+      barcode: '',
+      number: ''
+    }
+  };
+  
+  localStorage.removeItem('paymentMethods');
+  
+  // Clear form
+  document.getElementById('whatsappNumber').value = '';
+  document.getElementById('mobileWalletType').value = 'jazzcash';
+  document.getElementById('jazzcashNumber').value = '';
+  document.getElementById('jazzcashBarcode').value = '';
+  document.getElementById('barcodePreview').style.display = 'none';
+  
+  // Update UI
+  updatePaymentUI();
+  
+  alert('🗑️ Payment methods cleared!');
+}
+
+function updatePaymentUI() {
+  const hasPayment = paymentMethods.whatsapp.active || paymentMethods.jazzcash.active;
+  
+  // Update button badge
+  const badge = document.getElementById('paymentStatusBadge');
+  const statusDiv = document.getElementById('paymentStatus');
+  
+  if (hasPayment) {
+    badge.style.display = 'flex';
+    statusDiv.classList.add('active');
+  } else {
+    badge.style.display = 'none';
+    statusDiv.classList.remove('active');
+  }
+}
+
+// Generate card - FIXED to include payment methods
 async function generate(){
  if(!fullName.value || !phoneNumber.value){
   alert("Name & Phone number are required");
@@ -404,7 +750,13 @@ async function generate(){
   }
  }
 
- // Prepare data
+ // IMPORTANT: Load latest payment methods from localStorage
+ const savedPayment = localStorage.getItem('paymentMethods');
+ if (savedPayment) {
+   paymentMethods = JSON.parse(savedPayment);
+ }
+
+ // Prepare data with payment methods
  const cardData = {
   name: fullName.value.trim(),
   phone: phoneNumber.value.trim(),
@@ -417,7 +769,8 @@ async function generate(){
   },
   businessHours: businessHoursArray,
   holidays: holidaysArray,
-  offers: offersArray
+  offers: offersArray,
+  payments: paymentMethods  // ADDED PAYMENT METHODS
  };
 
  // Add profile image if exists
