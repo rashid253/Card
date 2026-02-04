@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2563eb">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
 body{margin:0;font-family:system-ui;background:#f1f5f9}
@@ -169,7 +170,41 @@ button{
  color:#0f172a;
 }
 
-/* PAYMENT MODAL STYLES - IMPROVED */
+/* E-COMMERCE SPECIFIC STYLES */
+.offerOptions {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+.offerPrice {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 10px 0;
+}
+.priceInput {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cbd5f5;
+  border-radius: 8px;
+  font-size: 14px;
+}
+.shippingOptions {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}
+.shippingOptions label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* PAYMENT METHODS STYLES */
 .payment-modal {
   display: none;
   position: fixed;
@@ -366,18 +401,18 @@ if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standa
  </div>
 </div>
 
-<h2>🎁 Offers</h2>
+<h2>🎁 Products/Offers</h2>
 <div id="offersForm"></div>
-<button type="button" onclick="addOffer()" style="background:#8b5cf6;margin-top:12px">➕ Add Offer</button>
+<button type="button" onclick="addOffer()" style="background:#8b5cf6;margin-top:12px">➕ Add Product</button>
 
-<!-- Payment Button - Shows status -->
+<!-- Payment Button -->
 <button type="button" onclick="openPaymentModal()" style="background:#059669;margin-top:24px;position:relative;" id="paymentButton">
-  💳 Add Payment Methods
+  💳 Configure Payment Methods
   <span id="paymentStatusBadge" style="position:absolute;top:-8px;right:-8px;background:#10b981;color:white;border-radius:50%;width:24px;height:24px;display:none;align-items:center;justify-content:center;font-size:12px;font-weight:bold;">✓</span>
 </button>
 
 <div id="paymentStatus" class="payment-status">
-  ✓ Payment methods added. They will be included in your digital card.
+  ✓ Payment methods configured. Customers can now buy products directly.
 </div>
 
 <button type="button" onclick="generate()" style="background:#2563eb;margin-top:24px">✨ Generate Digital Card</button>
@@ -387,24 +422,24 @@ if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standa
 <div class="payment-modal" id="paymentModal">
   <div class="payment-content">
     <div class="payment-header">
-      <h2>💳 Payment Methods</h2>
+      <h2>💳 Payment Methods Setup</h2>
       <button class="close-payment" onclick="closePaymentModal()">×</button>
     </div>
     
     <!-- WhatsApp Payment -->
     <div class="payment-option" onclick="selectPayment('whatsapp')" id="whatsappOption">
       <h3>📱 WhatsApp Payment</h3>
-      <p>Customers can contact you via WhatsApp for payments</p>
+      <p>Customers contact you via WhatsApp for orders</p>
       <div class="payment-details" id="whatsappDetails">
         <input type="text" class="payment-input" id="whatsappNumber" placeholder="WhatsApp Number (e.g., +92 300 1234567)">
-        <small style="color:#64748b;display:block;margin-top:5px;">Include country code (+92 for Pakistan)</small>
+        <small style="color:#64748b;">For order confirmation & payment on delivery</small>
       </div>
     </div>
     
     <!-- JazzCash / EasyPaisa -->
     <div class="payment-option" onclick="selectPayment('jazzcash')" id="jazzcashOption">
       <h3>💰 JazzCash / EasyPaisa</h3>
-      <p>Accept payments via JazzCash or EasyPaisa</p>
+      <p>Accept instant payments via mobile wallets</p>
       <div class="payment-details" id="jazzcashDetails">
         <h4>Choose Payment Method:</h4>
         <select class="payment-input" id="mobileWalletType">
@@ -412,21 +447,33 @@ if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standa
           <option value="easypaisa">EasyPaisa</option>
         </select>
         
-        <h4 style="margin-top:15px;">Option A: Barcode/QR Code</h4>
+        <h4 style="margin-top:15px;">Barcode/QR Code</h4>
         <input type="file" class="payment-file" id="jazzcashBarcode" accept="image/*" onchange="previewBarcode(this)">
         <img id="barcodePreview" class="preview-barcode" style="display:none;">
         
-        <h4 style="margin-top:15px;">Option B: Cell Number</h4>
-        <input type="text" class="payment-input" id="jazzcashNumber" placeholder="Cell Number (e.g., 0300 1234567)">
+        <h4 style="margin-top:15px;">Mobile Number</h4>
+        <input type="text" class="payment-input" id="jazzcashNumber" placeholder="0300 1234567">
         
         <div style="margin-top:10px;font-size:14px;color:#64748b;">
-          <strong>Note:</strong> Add at least one payment option.
+          <strong>Note:</strong> Customers will pay via barcode/number and upload receipt.
         </div>
       </div>
     </div>
     
+    <!-- Cash on Delivery -->
+    <div class="payment-option" onclick="selectPayment('cod')" id="codOption">
+      <h3>📦 Cash on Delivery</h3>
+      <p>Accept cash payments upon delivery</p>
+      <div class="payment-details" id="codDetails">
+        <div style="padding:10px;background:#fef3c7;border-radius:8px;">
+          <strong>Instructions:</strong> Customer will pay cash when product is delivered.
+        </div>
+        <small style="color:#64748b;display:block;margin-top:8px;">Will use WhatsApp for delivery coordination</small>
+      </div>
+    </div>
+    
     <div style="display:flex;gap:10px;margin-top:20px;">
-      <button class="submit-payment" onclick="savePaymentMethods()" style="flex:2;">💾 Save & Continue</button>
+      <button class="submit-payment" onclick="savePaymentMethods()" style="flex:2;">💾 Save Payment Setup</button>
       <button onclick="clearPaymentMethods()" style="flex:1;background:#ef4444;color:white;border:none;border-radius:10px;padding:14px;cursor:pointer;">Clear</button>
     </div>
   </div>
@@ -439,7 +486,7 @@ const db = supabase.createClient(
  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
 );
 
-// Payment Methods Data - GLOBAL VARIABLE
+// E-commerce Payment Data
 let paymentMethods = {
   whatsapp: { active: false, number: '' },
   jazzcash: { 
@@ -447,15 +494,24 @@ let paymentMethods = {
     type: 'jazzcash',
     barcode: '',
     number: ''
-  }
+  },
+  cod: { active: false }
 };
 
-// Check if payment methods exist on page load
+// Products/Offers Data
+let products = [];
+
+// Check saved data on load
 window.addEventListener('load', function() {
   const saved = localStorage.getItem('paymentMethods');
   if (saved) {
     paymentMethods = JSON.parse(saved);
     updatePaymentUI();
+  }
+  
+  const savedProducts = localStorage.getItem('products');
+  if (savedProducts) {
+    products = JSON.parse(savedProducts);
   }
 });
 
@@ -517,25 +573,37 @@ function removeHoliday(button) {
  button.parentElement.remove();
 }
 
-// Offer management
-let offerCount = 0;
+// Product/Offer management
+let productCount = 0;
 function addOffer(){
- offerCount++;
+ productCount++;
  const box = document.createElement("div");
  box.className = "offerBox";
  box.innerHTML = `
-  <h3 style="margin-top:0">🎁 Offer ${offerCount}</h3>
-  <input type="file" class="offerImg" accept="image/*">
-  <input class="offerTitle" placeholder="Title (e.g., 20% Off)">
-  <textarea class="offerDesc" placeholder="Description (e.g., Valid until Dec 31)" rows="3"></textarea>
+  <h3 style="margin-top:0">🎁 Product ${productCount}</h3>
+  <input type="file" class="productImg" accept="image/*">
+  <input class="productTitle" placeholder="Product Title">
+  <textarea class="productDesc" placeholder="Product Description" rows="3"></textarea>
+  
+  <div class="offerOptions">
+    <div class="offerPrice">
+      <input type="number" class="priceInput originalPrice" placeholder="Original Price (PKR)">
+      <input type="number" class="priceInput discountPrice" placeholder="Discounted Price (PKR)">
+    </div>
+    
+    <div class="shippingOptions">
+      <label><input type="checkbox" class="shippingOption" value="free_delivery"> 🚚 Free Delivery</label>
+      <label><input type="checkbox" class="shippingOption" value="cash_on_delivery"> 📦 Cash on Delivery</label>
+    </div>
+  </div>
   
   <div class="badgeGrid">
    <label><input type="checkbox" value="🔥 Hot Deal"> Hot Deal</label>
    <label><input type="checkbox" value="⭐ Best Seller"> Best Seller</label>
    <label><input type="checkbox" value="💸 Discount"> Discount</label>
-   <label><input type="checkbox" value="⏳ Limited Time"> Limited Time</label>
-   <label><input type="checkbox" value="🚚 Free Delivery"> Free Delivery</label>
-   <label><input type="checkbox" value="🏷 Special Price"> Special Price</label>
+   <label><input type="checkbox" value="⏳ Limited Stock"> Limited Stock</label>
+   <label><input type="checkbox" value="🛒 In Stock"> In Stock</label>
+   <label><input type="checkbox" value="🏷 Special Offer"> Special Offer</label>
   </div>
  `;
  offersForm.appendChild(box);
@@ -559,7 +627,7 @@ function resizeImage(file){
  });
 }
 
-// PAYMENT METHODS FUNCTIONS - IMPROVED
+// PAYMENT METHODS FUNCTIONS
 function openPaymentModal() {
   document.getElementById('paymentModal').style.display = 'flex';
   loadPaymentMethods();
@@ -570,14 +638,15 @@ function closePaymentModal() {
 }
 
 function selectPayment(type) {
-  // Remove active class from all
   document.querySelectorAll('.payment-option').forEach(option => {
     option.classList.remove('active');
   });
   
-  // Activate selected
   const option = document.getElementById(type + 'Option');
   option.classList.add('active');
+  
+  // Activate payment method
+  paymentMethods[type].active = true;
 }
 
 async function previewBarcode(input) {
@@ -591,7 +660,6 @@ async function previewBarcode(input) {
 }
 
 function loadPaymentMethods() {
-  // Load saved data
   if (paymentMethods.whatsapp.active) {
     document.getElementById('whatsappNumber').value = paymentMethods.whatsapp.number || '';
     selectPayment('whatsapp');
@@ -606,16 +674,20 @@ function loadPaymentMethods() {
     }
     
     selectPayment('jazzcash');
+  } else if (paymentMethods.cod.active) {
+    selectPayment('cod');
   }
 }
 
 async function savePaymentMethods() {
-  // Get current values
+  // Get WhatsApp number
   const whatsappNumber = document.getElementById('whatsappNumber').value.trim();
+  
+  // Get JazzCash data
   const jazzcashType = document.getElementById('mobileWalletType').value;
   const jazzcashNumber = document.getElementById('jazzcashNumber').value.trim();
   
-  // Get barcode file if exists
+  // Get barcode if exists
   const barcodeFile = document.getElementById('jazzcashBarcode').files[0];
   if (barcodeFile && !paymentMethods.jazzcash.barcode) {
     paymentMethods.jazzcash.barcode = await resizeImage(barcodeFile);
@@ -629,13 +701,16 @@ async function savePaymentMethods() {
   paymentMethods.jazzcash.number = jazzcashNumber;
   paymentMethods.jazzcash.active = !!(paymentMethods.jazzcash.barcode || jazzcashNumber);
   
+  // COD is active if selected
+  paymentMethods.cod.active = document.getElementById('codOption').classList.contains('active');
+  
   // Save to localStorage
   localStorage.setItem('paymentMethods', JSON.stringify(paymentMethods));
   
   // Update UI
   updatePaymentUI();
   
-  alert('✅ Payment methods saved successfully!');
+  alert('✅ Payment methods saved! Customers can now buy directly.');
   closePaymentModal();
 }
 
@@ -647,7 +722,8 @@ function clearPaymentMethods() {
       type: 'jazzcash',
       barcode: '',
       number: ''
-    }
+    },
+    cod: { active: false }
   };
   
   localStorage.removeItem('paymentMethods');
@@ -666,9 +742,8 @@ function clearPaymentMethods() {
 }
 
 function updatePaymentUI() {
-  const hasPayment = paymentMethods.whatsapp.active || paymentMethods.jazzcash.active;
+  const hasPayment = paymentMethods.whatsapp.active || paymentMethods.jazzcash.active || paymentMethods.cod.active;
   
-  // Update button badge
   const badge = document.getElementById('paymentStatusBadge');
   const statusDiv = document.getElementById('paymentStatus');
   
@@ -681,7 +756,7 @@ function updatePaymentUI() {
   }
 }
 
-// Generate card - FIXED to include payment methods
+// Generate card with e-commerce features
 async function generate(){
  if(!fullName.value || !phoneNumber.value){
   alert("Name & Phone number are required");
@@ -721,42 +796,54 @@ async function generate(){
   }
  });
 
- // Collect offers
- const offersArray = [];
- const offerBoxes = document.querySelectorAll(".offerBox");
+ // Collect products with e-commerce data
+ const productsArray = [];
+ const productBoxes = document.querySelectorAll(".offerBox");
  
- for(let i = 0; i < offerBoxes.length; i++){
-  const box = offerBoxes[i];
-  const title = box.querySelector(".offerTitle").value;
-  const desc = box.querySelector(".offerDesc").value;
-  const file = box.querySelector(".offerImg").files[0];
+ for(let i = 0; i < productBoxes.length; i++){
+  const box = productBoxes[i];
+  const title = box.querySelector(".productTitle").value;
+  const desc = box.querySelector(".productDesc").value;
+  const file = box.querySelector(".productImg").files[0];
+  const originalPrice = box.querySelector(".originalPrice").value;
+  const discountPrice = box.querySelector(".discountPrice").value;
   
   if(title || desc || file){
    const badges = Array.from(box.querySelectorAll("input[type=checkbox]:checked"))
     .map(cb => cb.value);
    
-   const offerData = {
+   // Get shipping options
+   const shippingOptions = [];
+   const shippingCheckboxes = box.querySelectorAll(".shippingOption:checked");
+   shippingCheckboxes.forEach(cb => {
+     shippingOptions.push(cb.value);
+   });
+   
+   const productData = {
     title: title || "",
     desc: desc || "",
+    originalPrice: originalPrice || null,
+    discountPrice: discountPrice || null,
     badges: badges,
+    shippingOptions: shippingOptions,
     image: ""
    };
    
    if(file){
-    offerData.image = await resizeImage(file);
+    productData.image = await resizeImage(file);
    }
    
-   offersArray.push(offerData);
+   productsArray.push(productData);
   }
  }
 
- // IMPORTANT: Load latest payment methods from localStorage
+ // Load latest payment methods
  const savedPayment = localStorage.getItem('paymentMethods');
  if (savedPayment) {
    paymentMethods = JSON.parse(savedPayment);
  }
 
- // Prepare data with payment methods
+ // Prepare data with e-commerce features
  const cardData = {
   name: fullName.value.trim(),
   phone: phoneNumber.value.trim(),
@@ -769,8 +856,9 @@ async function generate(){
   },
   businessHours: businessHoursArray,
   holidays: holidaysArray,
-  offers: offersArray,
-  payments: paymentMethods  // ADDED PAYMENT METHODS
+  products: productsArray,  // Changed from offers to products
+  payments: paymentMethods,
+  ecommerce: true  // Flag to identify e-commerce card
  };
 
  // Add profile image if exists
