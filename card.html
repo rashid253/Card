@@ -928,67 +928,6 @@ body {
   50% { opacity: 0.3; }
 }
 
-/* WhatsApp Chat Widget */
-.whatsapp-widget {
-  position: fixed;
-  bottom: 240px;
-  right: 20px;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-  width: 300px;
-  z-index: 2001;
-  display: none;
-}
-
-.widget-header {
-  background: #25D366;
-  color: white;
-  padding: 20px;
-  border-radius: 20px 20px 0 0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.widget-header i {
-  font-size: 24px;
-}
-
-.widget-body {
-  padding: 20px;
-}
-
-.widget-message {
-  background: #f1f5f9;
-  padding: 12px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  font-size: 14px;
-  color: #475569;
-}
-
-.widget-input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 14px;
-  margin-bottom: 12px;
-}
-
-.widget-send-btn {
-  width: 100%;
-  padding: 12px;
-  background: #25D366;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
 /* Responsive */
 @media (max-width: 480px) {
   .card-container {
@@ -1036,26 +975,6 @@ body {
 <div class="live-chat-indicator" onclick="openWhatsAppChat()">
   <span class="live-dot"></span>
   Live Chat Available
-</div>
-
-<!-- WhatsApp Chat Widget -->
-<div class="whatsapp-widget" id="whatsappWidget">
-  <div class="widget-header">
-    <i class="fab fa-whatsapp"></i>
-    <div>
-      <div style="font-weight: 600;">Live Chat</div>
-      <div style="font-size: 12px; opacity: 0.9;">Typically replies within minutes</div>
-    </div>
-  </div>
-  <div class="widget-body">
-    <div class="widget-message">
-      Hi there! 👋 How can I help you today?
-    </div>
-    <input type="text" class="widget-input" placeholder="Type your message..." id="chatInput">
-    <button class="widget-send-btn" onclick="sendChatMessage()">
-      <i class="fab fa-whatsapp"></i> Send via WhatsApp
-    </button>
-  </div>
 </div>
 
 <!-- Main Card Container -->
@@ -1373,16 +1292,22 @@ function renderCard() {
   if(phone) {
     document.getElementById('phone').textContent = phone;
     document.getElementById('phoneItem').style.display = 'flex';
+  } else {
+    document.getElementById('phoneItem').style.display = 'none';
   }
   
   if(email) {
     document.getElementById('email').textContent = email;
     document.getElementById('emailItem').style.display = 'flex';
+  } else {
+    document.getElementById('emailItem').style.display = 'none';
   }
   
   if(address) {
     document.getElementById('address').textContent = address;
     document.getElementById('addressItem').style.display = 'flex';
+  } else {
+    document.getElementById('addressItem').style.display = 'none';
   }
   
   // About
@@ -1514,6 +1439,9 @@ function addToCart(productIndex) {
     setTimeout(() => {
       cartIcon.style.transform = 'scale(1)';
     }, 300);
+    
+    // Show notification
+    showNotification('✅ Product added to cart!');
   }
 }
 
@@ -1523,7 +1451,7 @@ function addToCartFromModal() {
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
     closeModal('productModal');
-    alert('✅ Product added to cart!');
+    showNotification('✅ Product added to cart!');
   }
 }
 
@@ -1568,37 +1496,44 @@ function removeFromCart(index) {
   localStorage.setItem('cart', JSON.stringify(cart));
   updateCartCount();
   renderCartItems();
+  showNotification('🗑️ Item removed from cart');
 }
 
 function checkoutCart() {
   if(cart.length === 0) {
-    alert('Your cart is empty!');
+    showNotification('Your cart is empty!');
     return;
   }
   
   let message = "🛒 *New Order Request*\n\n";
   message += `Customer: ${card.name}\n`;
-  message += `Phone: ${card.phone}\n\n`;
-  message += "*Order Items:*\n`;
+  message += `Phone: ${card.phone || 'Not provided'}\n\n`;
+  message += "*Order Items:*\n";
   
   let total = 0;
   cart.forEach((item, index) => {
     const price = item.discountPrice || item.originalPrice || 0;
     total += parseFloat(price);
-    message += `${index + 1}. ${item.title} - PKR ${price}\n`;
+    message += `${index + 1}. ${item.title || 'Product'} - PKR ${price}\n`;
   });
   
   message += `\n*Total: PKR ${total.toFixed(2)}*\n`;
   message += `\nPlease confirm this order.`;
   
-  const phone = card.phone.replace(/\D/g, '');
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+  if(card.phone) {
+    const phone = card.phone.replace(/\D/g, '');
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+  } else {
+    // If no phone, show message
+    alert(message + '\n\nPlease save this order information.');
+  }
   
   // Clear cart
   cart = [];
   localStorage.setItem('cart', JSON.stringify(cart));
   updateCartCount();
   closeCartModal();
+  showNotification('✅ Order sent successfully!');
 }
 
 // Product Modal Functions
@@ -1606,7 +1541,10 @@ function showProductModal(productIndex) {
   const products = card.products || card.offers || [];
   currentProduct = products[productIndex];
   
-  if(!currentProduct) return;
+  if(!currentProduct) {
+    showNotification('Product not found!');
+    return;
+  }
   
   document.getElementById('modalImage').src = currentProduct.image || '';
   document.getElementById('modalTitle').textContent = currentProduct.title || 'Product';
@@ -1619,6 +1557,12 @@ function showProductModal(productIndex) {
   document.getElementById('paymentSection').style.display = 'none';
   document.getElementById('receiptUpload').style.display = 'none';
   document.getElementById('codConfirmation').style.display = 'none';
+  
+  // Reset selected payment
+  selectedPaymentMethod = null;
+  document.querySelectorAll('.payment-option').forEach(opt => {
+    opt.classList.remove('selected');
+  });
   
   openModal('productModal');
 }
@@ -1639,7 +1583,7 @@ function selectPayment(method) {
     document.getElementById('jazzcashOption').classList.add('selected');
     document.getElementById('receiptUpload').style.display = 'block';
     document.getElementById('codConfirmation').style.display = 'none';
-  } else {
+  } else if(method === 'cod') {
     document.getElementById('codOption').classList.add('selected');
     document.getElementById('receiptUpload').style.display = 'none';
     document.getElementById('codConfirmation').style.display = 'block';
@@ -1649,48 +1593,54 @@ function selectPayment(method) {
 function uploadReceipt() {
   const file = document.getElementById('receiptFile').files[0];
   if(file) {
-    alert('✅ Receipt uploaded successfully! Click "Confirm Payment" to complete.');
+    showNotification('✅ Receipt uploaded successfully!');
   }
 }
 
 function confirmPayment() {
   if(!selectedPaymentMethod) {
-    alert('Please select a payment method first.');
+    showNotification('Please select a payment method first.');
     return;
   }
   
   if(selectedPaymentMethod === 'jazzcash' && !document.getElementById('receiptFile').files[0]) {
-    alert('Please upload your payment receipt first.');
+    showNotification('Please upload your payment receipt first.');
     return;
   }
   
   const product = currentProduct;
-  const price = product.discountPrice || product.originalPrice;
+  const price = product.discountPrice || product.originalPrice || 0;
   
   let message = "✅ *Payment Confirmed*\n\n";
-  message += `Product: ${product.title}\n`;
+  message += `Product: ${product.title || 'Product'}\n`;
   message += `Price: PKR ${price}\n`;
   message += `Payment Method: ${selectedPaymentMethod === 'jazzcash' ? 'JazzCash/EasyPaisa' : 'Cash on Delivery'}\n\n`;
   message += `Transaction ID: ${Date.now()}\n`;
   message += `Thank you for your order!`;
   
-  alert(message);
-  
-  // Send WhatsApp confirmation
-  const phone = card.phone.replace(/\D/g, '');
-  const whatsappMsg = `Hi! I've made a payment for:\n\nProduct: ${product.title}\nPrice: PKR ${price}\nPayment Method: ${selectedPaymentMethod}\n\nPlease confirm my order.`;
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(whatsappMsg)}`, '_blank');
+  if(card.phone) {
+    const phone = card.phone.replace(/\D/g, '');
+    const whatsappMsg = `Hi! I've made a payment for:\n\nProduct: ${product.title}\nPrice: PKR ${price}\nPayment Method: ${selectedPaymentMethod}\n\nPlease confirm my order.`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(whatsappMsg)}`, '_blank');
+  } else {
+    alert(message);
+  }
   
   closeModal('productModal');
+  showNotification('✅ Payment confirmed!');
 }
 
 function confirmCOD() {
   const product = currentProduct;
-  const price = product.discountPrice || product.originalPrice;
+  const price = product.discountPrice || product.originalPrice || 0;
   
-  const phone = card.phone.replace(/\D/g, '');
-  const message = `Hi! I want to place a COD order:\n\nProduct: ${product.title}\nPrice: PKR ${price}\n\nPlease confirm availability and delivery details.`;
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+  if(card.phone) {
+    const phone = card.phone.replace(/\D/g, '');
+    const message = `Hi! I want to place a COD order:\n\nProduct: ${product.title || 'Product'}\nPrice: PKR ${price}\n\nPlease confirm availability and delivery details.`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+  } else {
+    alert(`COD Order:\n\nProduct: ${product.title}\nPrice: PKR ${price}\n\nPlease contact the business to confirm.`);
+  }
   
   closeModal('productModal');
 }
@@ -1705,7 +1655,7 @@ function closeShareModal() {
 }
 
 function shareViaWhatsApp() {
-  const message = `Check out ${card.name}'s digital business card: ${window.location.href}`;
+  const message = `Check out ${card.name || 'this'}'s digital business card: ${window.location.href}`;
   window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
 }
 
@@ -1714,58 +1664,62 @@ function shareViaFacebook() {
 }
 
 function shareViaMessenger() {
-  window.open(`fb-messenger://share?link=${encodeURIComponent(window.location.href)}`, '_blank');
+  // Simple Messenger share
+  const message = `Check out ${card.name || 'this'}'s digital business card: ${window.location.href}`;
+  window.open(`https://m.me/?text=${encodeURIComponent(message)}`, '_blank');
 }
 
 function copyCardLink() {
   navigator.clipboard.writeText(window.location.href).then(() => {
-    alert('✅ Card link copied to clipboard!');
+    showNotification('✅ Card link copied to clipboard!');
+  }).catch(err => {
+    // Fallback for older browsers
+    const textArea = document.createElement('textarea');
+    textArea.value = window.location.href;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+    showNotification('✅ Card link copied to clipboard!');
   });
 }
 
 function shareViaSMS() {
-  const message = `Check out ${card.name}'s digital card: ${window.location.href}`;
+  const message = `Check out ${card.name || 'this'}'s digital card: ${window.location.href}`;
   window.open(`sms:?body=${encodeURIComponent(message)}`, '_blank');
 }
 
 function shareViaEmail() {
-  const subject = `${card.name}'s Digital Business Card`;
-  const body = `Hi,\n\nCheck out ${card.name}'s digital business card:\n${window.location.href}\n\nBest regards,\n${card.name}`;
+  const subject = `${card.name || 'Digital'} Business Card`;
+  const body = `Hi,\n\nCheck out ${card.name || 'this'}'s digital business card:\n${window.location.href}\n\nBest regards,\n${card.name || 'Digital Card'}`;
   window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
 }
 
 // Live Chat Functions
 function openWhatsAppChat() {
-  const phone = card.phone.replace(/\D/g, '');
-  window.open(`https://wa.me/${phone}`, '_blank');
-}
-
-function openMessenger() {
-  // In real implementation, you would use Facebook Messenger API
-  alert('Messenger integration would open here. For now, using WhatsApp.');
-  openWhatsAppChat();
-}
-
-function sendChatMessage() {
-  const input = document.getElementById('chatInput');
-  const message = input.value.trim();
-  
-  if(message) {
+  if(card.phone) {
     const phone = card.phone.replace(/\D/g, '');
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
-    input.value = '';
-    closeWhatsAppWidget();
+    window.open(`https://wa.me/${phone}`, '_blank');
+  } else {
+    showNotification('Phone number not available for WhatsApp');
   }
 }
 
-function closeWhatsAppWidget() {
-  document.getElementById('whatsappWidget').style.display = 'none';
+function openMessenger() {
+  // Simple implementation - opens WhatsApp if no Messenger
+  if(card.phone) {
+    openWhatsAppChat();
+  } else {
+    showNotification('Messenger integration not available');
+  }
 }
 
-// Footer Action Functions
+// Footer Action Functions - ALL DEFINED NOW
 function makeCall() {
   if(card.phone) {
     window.location.href = `tel:${card.phone}`;
+  } else {
+    showNotification('Phone number not available');
   }
 }
 
@@ -1776,43 +1730,116 @@ function sendWhatsApp() {
 function sendEmail() {
   if(card.email) {
     window.location.href = `mailto:${card.email}`;
+  } else {
+    showNotification('Email not available');
   }
 }
 
 function openMap() {
   if(card.address) {
     window.open(`https://maps.google.com/?q=${encodeURIComponent(card.address)}`, '_blank');
+  } else {
+    showNotification('Address not available');
   }
 }
 
 // Utility Functions
 function openModal(modalId) {
-  document.getElementById(modalId).style.display = 'flex';
+  const modal = document.getElementById(modalId);
+  if(modal) {
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
 }
 
 function closeModal(modalId) {
-  document.getElementById(modalId).style.display = 'none';
+  const modal = document.getElementById(modalId);
+  if(modal) {
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
 }
 
 function toggleAbout() {
   const aboutSection = document.getElementById('aboutSection');
   const aboutMore = document.getElementById('aboutMore');
-  const icon = aboutMore.nextElementSibling;
   
-  aboutSection.classList.toggle('expanded');
-  
-  if(aboutSection.classList.contains('expanded')) {
-    aboutMore.textContent = 'See less';
-    icon.className = 'fas fa-chevron-up';
-  } else {
-    aboutMore.textContent = 'See more';
-    icon.className = 'fas fa-chevron-down';
+  if(aboutSection && aboutMore) {
+    aboutSection.classList.toggle('expanded');
+    
+    const icon = aboutMore.nextElementSibling;
+    if(aboutSection.classList.contains('expanded')) {
+      aboutMore.textContent = 'See less';
+      if(icon) icon.className = 'fas fa-chevron-up';
+    } else {
+      aboutMore.textContent = 'See more';
+      if(icon) icon.className = 'fas fa-chevron-down';
+    }
   }
 }
 
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+function showNotification(message) {
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    z-index: 3000;
+    max-width: 300px;
+    animation: slideIn 0.3s ease;
+    font-weight: 500;
+    font-size: 14px;
+  `;
+  
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  
+  // Remove after 3 seconds
+  setTimeout(() => {
+    notification.style.opacity = '0';
+    notification.style.transform = 'translateY(-20px)';
+    setTimeout(() => {
+      if(notification.parentNode) {
+        document.body.removeChild(notification);
+      }
+    }, 300);
+  }, 3000);
+}
+
+// Close modals when clicking outside
+document.addEventListener('click', (e) => {
+  const modals = ['productModal', 'cartModal', 'shareModal'];
+  
+  modals.forEach(modalId => {
+    const modal = document.getElementById(modalId);
+    if(modal && modal.style.display === 'flex' && e.target === modal) {
+      closeModal(modalId);
+    }
+  });
+});
+
+// Close modals with Escape key
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape') {
+    const modals = ['productModal', 'cartModal', 'shareModal'];
+    modals.forEach(modalId => {
+      const modal = document.getElementById(modalId);
+      if(modal && modal.style.display === 'flex') {
+        closeModal(modalId);
+      }
+    });
+  }
+});
 
 // Initialize
 updateCartCount();
