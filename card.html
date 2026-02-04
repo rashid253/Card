@@ -7,445 +7,1317 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f172a">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
 
 <style>
-body{margin:0;font-family:system-ui;background:#f1f5f9;color:#0f172a}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-/* HEADER WITH CART */
-.header {
-  background: #0f172a;
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  color: #1e293b;
+}
+
+/* Floating Action Buttons */
+.fab-container {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fab {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 22px;
+  position: relative;
+}
+
+.fab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+}
+
+.fab-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 12px 16px;
+}
+
+.fab-whatsapp {
+  background: #25D366;
+  color: white;
+}
+
+.fab-facebook {
+  background: #1877F2;
+  color: white;
+}
+
+.fab-share {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+  color: white;
+}
+
+.fab-label {
+  position: absolute;
+  right: 70px;
+  background: rgba(255,255,255,0.95);
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.3s;
+  pointer-events: none;
+}
+
+.fab:hover .fab-label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Main Card Container */
+.card-container {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 0;
+  margin-bottom: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  border: 1px solid rgba(255,255,255,0.2);
+  overflow: hidden;
+  position: relative;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Enhanced Header with Share */
+.header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 24px 24px 0 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  position: relative;
+  overflow: hidden;
 }
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.1;
+}
+
 .header h1 {
   margin: 0;
-  font-size: 18px;
-}
-.cart-icon {
-  position: relative;
   font-size: 20px;
-  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: -0.5px;
 }
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.share-btn, .cart-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.share-btn:hover, .cart-icon:hover {
+  background: rgba(255,255,255,0.3);
+  transform: translateY(-2px);
+}
+
 .cart-count {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #ef4444;
+  top: -5px;
+  right: -5px;
+  background: #FF6B6B;
   color: white;
   border-radius: 50%;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   font-size: 12px;
+  font-weight: 600;
   display: none;
   align-items: center;
   justify-content: center;
 }
 
-.profile{display:flex;gap:16px;padding:16px;background:#e2e8f0;position:relative}
-.profile img{width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid #2563eb;background:#fff}
-.info{flex:1;display:flex;flex-direction:column;gap:4px}
-#name{font-size:17px;font-weight:700}
-#business{font-weight:600}
-#phone,#email,#address,#websiteText{font-size:14px;opacity:.85}
-.saveIcon{position:absolute;right:14px;bottom:14px;font-size:22px;color:#2563eb;cursor:pointer}
-.about{background:#fff;padding:14px 16px;cursor:pointer}
-.aboutText{overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
-.about.expanded .aboutText{-webkit-line-clamp:unset}
-.aboutMore{color:#2563eb;font-weight:600;margin-top:6px;display:inline-block}
-
-/* PRODUCTS/ OFFERS WITH BUY BUTTONS */
-.offers{display:flex;gap:12px;padding:12px;overflow-x:auto}
-.offer{
-  min-width:160px;
-  height:200px;
-  border-radius:16px;
-  background:#fff;
-  position:relative;
-  overflow:hidden;
-  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+/* Profile Section */
+.profile-section {
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
 }
-.offer img{width:100%;height:100%;object-fit:contain}
-.offerBadges{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:6px}
-.offerBadges span{background:#ef4444;color:#fff;font-size:12px;font-weight:700;padding:4px 8px;border-radius:8px}
 
-/* Product Price & Buy Buttons */
-.offer-footer {
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
+  object-fit: cover;
+  border: 4px solid white;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-avatar::after {
+  content: '';
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(255,255,255,0.95);
-  padding: 10px;
+  inset: -2px;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  border-radius: 22px;
+  z-index: -1;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.verified-badge {
+  color: #667eea;
+  font-size: 16px;
+}
+
+.profile-business {
+  font-size: 16px;
+  color: #764ba2;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.profile-contact {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
-.price {
+
+.contact-item {
   display: flex;
-  gap: 8px;
   align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #64748b;
 }
+
+.contact-item i {
+  width: 20px;
+  color: #667eea;
+}
+
+/* Sections */
+.section {
+  padding: 24px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.section-header i {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.section-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* About Section */
+.about-content {
+  line-height: 1.6;
+  color: #475569;
+}
+
+.read-more {
+  color: #667eea;
+  font-weight: 600;
+  margin-top: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Products Grid */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.product-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  transition: all 0.3s;
+  cursor: pointer;
+  position: relative;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.product-image {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+
+.product-badges {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.badge {
+  background: rgba(239, 68, 68, 0.95);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.product-details {
+  padding: 16px;
+}
+
+.product-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
 .original-price {
   text-decoration: line-through;
-  color: #666;
+  color: #94a3b8;
   font-size: 12px;
 }
+
 .discount-price {
   color: #ef4444;
-  font-weight: bold;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 16px;
 }
-.buy-buttons {
+
+.product-actions {
   display: flex;
   gap: 8px;
 }
-.buy-now, .add-cart {
+
+.btn-buy, .btn-cart {
   flex: 1;
-  padding: 6px;
+  padding: 8px;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s;
 }
-.buy-now {
-  background: #16a34a;
-  color: white;
-}
-.add-cart {
-  background: #2563eb;
+
+.btn-buy {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
 }
 
-/* PRODUCT DETAIL PANEL */
-#productPanel{
-  position:fixed;
-  inset:0;
-  background:#fff;
-  z-index:999;
-  display:none;
-  overflow-y:auto;
+.btn-cart {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
 }
-#productPanel img{width:100%;max-height:280px;object-fit:contain}
-.panelContent{padding:16px}
-.panelTitle{font-size:20px;font-weight:700;margin-bottom:8px}
-.panelDesc{color:#666;margin-bottom:16px}
-.panelPrice{font-size:24px;color:#16a34a;font-weight:700;margin:16px 0}
 
-/* Payment Options in Panel */
-.payment-options {
-  margin: 20px 0;
-  border-top: 1px solid #e2e8f0;
-  padding-top: 20px;
+.btn-buy:hover, .btn-cart:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
 }
-.payment-option {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 12px;
-  margin-bottom: 10px;
-  cursor: pointer;
-}
-.payment-option.selected {
-  background: #dbeafe;
-  border-color: #2563eb;
-}
-.payment-option h4 {
-  margin: 0 0 8px 0;
+
+/* Business Hours */
+.hours-list {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 12px;
 }
 
-/* CART MODAL */
-.cart-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.7);
-  z-index: 1000;
-  display: none;
-  justify-content: flex-end;
-}
-.cart-content {
-  background: white;
-  width: 100%;
-  max-width: 400px;
-  height: 100%;
-  padding: 20px;
-  overflow-y: auto;
-}
-.cart-header {
+.hour-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #e2e8f0;
-}
-.close-cart {
-  background: #ef4444;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
-/* CART ITEMS */
-.cart-item {
-  display: flex;
-  gap: 12px;
   padding: 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  margin-bottom: 10px;
-}
-.cart-item img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-.cart-item-info {
-  flex: 1;
-}
-.cart-item-title {
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-.cart-item-price {
-  color: #16a34a;
-  font-weight: bold;
-}
-.cart-item-remove {
-  background: #ef4444;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 4px 8px;
-  cursor: pointer;
-  font-size: 12px;
+  background: rgba(241, 245, 249, 0.5);
+  border-radius: 12px;
 }
 
-/* CHECKOUT */
-.cart-total {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 2px solid #e2e8f0;
-  font-size: 18px;
-  font-weight: bold;
-  text-align: right;
-}
-.checkout-btn {
-  width: 100%;
-  padding: 14px;
-  background: #16a34a;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 600;
-  margin-top: 20px;
-  cursor: pointer;
+.day-name {
+  font-weight: 500;
+  color: #475569;
 }
 
-/* Payment Receipt Upload */
-.receipt-upload {
-  margin: 20px 0;
+.day-time {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.closed {
+  color: #ef4444;
+}
+
+/* Holidays */
+.holidays-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.holiday-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 142, 83, 0.1) 100%);
+  border-radius: 12px;
+  border-left: 4px solid #FF6B6B;
+}
+
+.holiday-name {
+  font-weight: 600;
+  color: #dc2626;
+}
+
+.holiday-date {
+  font-size: 13px;
+  color: #ef4444;
+  font-weight: 500;
+}
+
+/* Website Banner */
+.website-banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
   padding: 20px;
+  border-radius: 16px;
+  text-align: center;
+  margin: 20px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.website-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 30px 30px;
+  opacity: 0.3;
+}
+
+.website-banner h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.website-link {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50px;
+  margin-top: 12px;
+  transition: all 0.3s;
+}
+
+.website-link:hover {
+  background: rgba(255,255,255,0.3);
+  transform: translateY(-2px);
+}
+
+/* Footer Actions */
+.footer-actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: 24px;
+  margin-top: 20px;
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+}
+
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  padding: 12px;
+  border-radius: 16px;
+  flex: 1;
+  max-width: 80px;
+}
+
+.action-btn:hover {
   background: #f8fafc;
-  border-radius: 10px;
-  border: 2px dashed #cbd5f5;
+  transform: translateY(-4px);
+}
+
+.action-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: white;
+}
+
+.call-btn .action-icon { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+.message-btn .action-icon { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+.email-btn .action-icon { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+.map-btn .action-icon { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+
+.action-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
   text-align: center;
 }
-.receipt-upload input[type="file"] {
+
+/* Product Detail Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(10px);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-image {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 24px 24px 0 0;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 12px;
+}
+
+.modal-description {
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.modal-price {
+  font-size: 28px;
+  font-weight: 700;
+  color: #10b981;
+  margin-bottom: 24px;
+}
+
+.payment-section {
+  margin: 24px 0;
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.payment-option {
+  padding: 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.payment-option:hover {
+  border-color: #667eea;
+  background: #f8fafc;
+}
+
+.payment-option.selected {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.payment-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: white;
+}
+
+.jazzcash-icon { background: #FF6B00; }
+.cod-icon { background: #10b981; }
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.modal-btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.modal-btn-secondary {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+}
+
+.modal-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* Cart Modal */
+.cart-modal .modal-content {
+  max-width: 400px;
+}
+
+.cart-header {
+  padding: 24px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cart-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.close-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  color: #64748b;
+}
+
+.cart-items {
+  padding: 24px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.cart-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.cart-item-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.cart-item-details {
+  flex: 1;
+}
+
+.cart-item-title {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.cart-item-price {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.cart-total {
+  padding: 24px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.checkout-btn {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.checkout-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* Share Modal */
+.share-modal .modal-content {
+  max-width: 350px;
+}
+
+.share-options {
+  padding: 24px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.share-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  border-radius: 16px;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.share-option:hover {
+  background: #e2e8f0;
+  transform: translateY(-4px);
+}
+
+.share-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+}
+
+.whatsapp-share { background: #25D366; }
+.facebook-share { background: #1877F2; }
+.messenger-share { background: #006AFF; }
+.copy-share { background: #8b5cf6; }
+.sms-share { background: #3b82f6; }
+.email-share { background: #ef4444; }
+
+.share-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+}
+
+/* Live Chat Indicator */
+.live-chat-indicator {
+  position: fixed;
+  bottom: 180px;
+  right: 20px;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+  z-index: 999;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* WhatsApp Chat Widget */
+.whatsapp-widget {
+  position: fixed;
+  bottom: 240px;
+  right: 20px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  width: 300px;
+  z-index: 2001;
   display: none;
 }
-.upload-label {
-  display: block;
-  padding: 12px;
-  background: #2563eb;
+
+.widget-header {
+  background: #25D366;
   color: white;
-  border-radius: 8px;
+  padding: 20px;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.widget-header i {
+  font-size: 24px;
+}
+
+.widget-body {
+  padding: 20px;
+}
+
+.widget-message {
+  background: #f1f5f9;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #475569;
+}
+
+.widget-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.widget-send-btn {
+  width: 100%;
+  padding: 12px;
+  background: #25D366;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
 }
 
-.actions{display:flex;justify-content:space-around;padding:16px;background:#0f172a}
-.actions a{color:#fff;font-size:22px}
-
-/* Business Hours Styles */
-.hoursContainer{background:#fff;padding:16px;margin-top:8px;}
-.hoursContainer h3{margin:0 0 12px 0;font-size:16px;color:#0f172a;}
-.dayRow{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f1f1;}
-.dayRow:last-child{border-bottom:none;}
-.dayName{font-weight:500;}
-.dayTime{color:#666;}
-.closed{color:#ef4444;}
-
-/* Website Section */
-.websiteContainer{background:#fff;padding:16px;margin-top:8px;}
-.websiteContainer h3{margin:0 0 12px 0;font-size:16px;color:#0f172a;}
-.websiteLink{display:flex;align-items:center;gap:10px;padding:12px;background:#f8fafc;border-radius:10px;text-decoration:none;color:#2563eb;font-weight:600;margin-top:8px;}
-.websiteLink i{font-size:18px;}
-
-/* Holidays Section */
-.holidaysContainer{background:#fff;padding:16px;margin-top:8px;}
-.holidaysContainer h3{margin:0 0 12px 0;font-size:16px;color:#0f172a;}
-.holidayItem{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#f8fafc;border-radius:8px;margin-bottom:8px;}
-.holidayName{font-weight:500;color:#0f172a;}
-.holidayDate{color:#ef4444;font-size:14px;}
-
-/* Special Text for Website */
-.websiteSpecial{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;padding:14px;border-radius:12px;margin:12px;text-align:center;font-weight:700;font-size:15px;}
-.websiteSpecial a{color:white;text-decoration:none;}
+/* Responsive */
+@media (max-width: 480px) {
+  .card-container {
+    padding: 15px;
+  }
+  
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .footer-actions {
+    gap: 10px;
+  }
+  
+  .action-btn {
+    max-width: 70px;
+  }
+}
 </style>
 </head>
 
 <body>
 
-<!-- HEADER WITH CART -->
-<div class="header">
-  <h1 id="businessHeader"></h1>
-  <div class="cart-icon" onclick="openCart()">
-    <i class="fas fa-shopping-cart"></i>
-    <span class="cart-count" id="cartCount">0</span>
+<!-- Floating Action Buttons -->
+<div class="fab-container">
+  <div class="fab fab-whatsapp" onclick="openWhatsAppChat()">
+    <i class="fab fa-whatsapp"></i>
+    <span class="fab-label">Live Chat</span>
+  </div>
+  <div class="fab fab-facebook" onclick="openMessenger()">
+    <i class="fab fa-facebook-messenger"></i>
+    <span class="fab-label">Messenger</span>
+  </div>
+  <div class="fab fab-share" onclick="openShareModal()">
+    <i class="fas fa-share-alt"></i>
+    <span class="fab-label">Share Card</span>
+  </div>
+  <div class="fab fab-primary" onclick="scrollToTop()">
+    <i class="fas fa-arrow-up"></i>
+    <span class="fab-label">Top</span>
   </div>
 </div>
 
-<div class="profile">
- <img id="photo">
- <div class="info">
-  <div id="name"></div>
-  <div id="business"></div>
-  <div id="phone"></div>
-  <div id="email"></div>
-  <div id="address"></div>
-  <div id="websiteText"></div>
- </div>
- <i class="fa fa-floppy-disk saveIcon" onclick="saveCard()"></i>
+<!-- Live Chat Indicator -->
+<div class="live-chat-indicator" onclick="openWhatsAppChat()">
+  <span class="live-dot"></span>
+  Live Chat Available
 </div>
 
-<div class="about" id="aboutBox" onclick="toggleAbout()">
- <div class="aboutText" id="aboutText"></div>
- <span class="aboutMore" id="aboutMore">See more</span>
-</div>
-
-<!-- Website Section -->
-<div class="websiteContainer" id="websiteContainer" style="display:none;">
- <h3>🌐 Visit Our Website</h3>
- <a class="websiteLink" id="websiteLink" target="_blank" rel="noopener">
-  <i class="fas fa-external-link-alt"></i>
-  <span id="websiteUrl"></span>
- </a>
-</div>
-
-<!-- Business Hours Section -->
-<div class="hoursContainer" id="hoursContainer" style="display:none;">
- <h3>🕐 Business Hours</h3>
- <div id="businessHours"></div>
-</div>
-
-<!-- Holidays Section -->
-<div class="holidaysContainer" id="holidaysContainer" style="display:none;">
- <h3>📅 Special Holidays</h3>
- <div id="holidaysList"></div>
-</div>
-
-<!-- Special Website Banner -->
-<div class="websiteSpecial" id="websiteBanner" style="display:none;">
- <a id="websiteBannerLink" target="_blank" rel="noopener">
-  🛒 Shop Now on Our Online Store! Get Exclusive Offers! 🌟
- </a>
-</div>
-
-<!-- PRODUCTS SECTION -->
-<div class="offers" id="productsContainer"></div>
-
-<div class="actions">
- <a id="call"><i class="fa fa-phone"></i></a>
- <a id="mail"><i class="fa fa-envelope"></i></a>
-</div>
-
-<!-- PRODUCT DETAIL PANEL -->
-<div id="productPanel">
- <img id="panelImg">
- <div class="panelContent">
-  <h2 class="panelTitle" id="panelTitle"></h2>
-  <p class="panelDesc" id="panelDesc"></p>
-  
-  <div class="panelPrice" id="panelPrice"></div>
-  
-  <!-- Payment Options -->
-  <div class="payment-options" id="paymentOptions" style="display:none;">
-    <h3>💳 Select Payment Method</h3>
-    <div class="payment-option" onclick="selectPaymentMethod('jazzcash')" id="jazzcashPayment">
-      <h4>💰 JazzCash / EasyPaisa</h4>
-      <p>Pay instantly via mobile wallet</p>
+<!-- WhatsApp Chat Widget -->
+<div class="whatsapp-widget" id="whatsappWidget">
+  <div class="widget-header">
+    <i class="fab fa-whatsapp"></i>
+    <div>
+      <div style="font-weight: 600;">Live Chat</div>
+      <div style="font-size: 12px; opacity: 0.9;">Typically replies within minutes</div>
     </div>
-    <div class="payment-option" onclick="selectPaymentMethod('cod')" id="codPayment">
-      <h4>📦 Cash on Delivery</h4>
-      <p>Pay cash when product is delivered</p>
+  </div>
+  <div class="widget-body">
+    <div class="widget-message">
+      Hi there! 👋 How can I help you today?
     </div>
-    
-    <!-- Receipt Upload for JazzCash -->
-    <div id="receiptSection" style="display:none;margin-top:20px;">
-      <div class="receipt-upload">
-        <h4>📸 Upload Payment Receipt</h4>
-        <p>After payment, upload your JazzCash/EasyPaisa receipt</p>
-        <input type="file" id="receiptFile" accept="image/*" onchange="uploadReceipt()">
-        <label for="receiptFile" class="upload-label">📤 Upload Receipt</label>
-        <img id="receiptPreview" style="max-width:200px;margin-top:10px;display:none;">
+    <input type="text" class="widget-input" placeholder="Type your message..." id="chatInput">
+    <button class="widget-send-btn" onclick="sendChatMessage()">
+      <i class="fab fa-whatsapp"></i> Send via WhatsApp
+    </button>
+  </div>
+</div>
+
+<!-- Main Card Container -->
+<div class="card-container">
+  
+  <!-- Header with Share -->
+  <div class="glass-card">
+    <div class="header">
+      <h1 id="businessHeader">Digital Business Card</h1>
+      <div class="header-actions">
+        <div class="share-btn" onclick="openShareModal()">
+          <i class="fas fa-share-alt"></i>
+        </div>
+        <div class="cart-icon" onclick="openCartModal()">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-count" id="cartCount">0</span>
+        </div>
       </div>
-      <button onclick="confirmPayment()" style="width:100%;padding:12px;background:#16a34a;color:white;border:none;border-radius:8px;margin-top:10px;cursor:pointer;">
-        ✅ Confirm Payment
-      </button>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="profile-section">
+      <img src="" id="photo" class="profile-avatar">
+      <div class="profile-info">
+        <div class="profile-name">
+          <span id="name">Loading...</span>
+          <i class="fas fa-badge-check verified-badge"></i>
+        </div>
+        <div class="profile-business" id="business"></div>
+        <div class="profile-contact">
+          <div class="contact-item" id="phoneItem">
+            <i class="fas fa-phone"></i>
+            <span id="phone"></span>
+          </div>
+          <div class="contact-item" id="emailItem">
+            <i class="fas fa-envelope"></i>
+            <span id="email"></span>
+          </div>
+          <div class="contact-item" id="addressItem">
+            <i class="fas fa-map-marker-alt"></i>
+            <span id="address"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="section" id="aboutSection">
+      <div class="section-header">
+        <i class="fas fa-info-circle"></i>
+        <h3>About Business</h3>
+      </div>
+      <div class="about-content">
+        <div id="aboutText"></div>
+        <div class="read-more" onclick="toggleAbout()">
+          <span id="aboutMore">See more</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Section -->
+    <div class="section" id="productsSection">
+      <div class="section-header">
+        <i class="fas fa-gift"></i>
+        <h3>Products & Offers</h3>
+      </div>
+      <div class="products-grid" id="productsGrid">
+        <!-- Products will be inserted here -->
+      </div>
+    </div>
+
+    <!-- Business Hours -->
+    <div class="section" id="hoursSection" style="display: none;">
+      <div class="section-header">
+        <i class="fas fa-clock"></i>
+        <h3>Business Hours</h3>
+      </div>
+      <div class="hours-list" id="businessHours"></div>
+    </div>
+
+    <!-- Holidays -->
+    <div class="section" id="holidaysSection" style="display: none;">
+      <div class="section-header">
+        <i class="fas fa-calendar-times"></i>
+        <h3>Special Holidays</h3>
+      </div>
+      <div class="holidays-list" id="holidaysList"></div>
+    </div>
+  </div>
+
+  <!-- Website Banner -->
+  <div class="website-banner" id="websiteBanner" style="display: none;">
+    <h3>🎯 Exclusive Online Store</h3>
+    <p>Visit our website for special offers!</p>
+    <a href="#" id="websiteBannerLink" class="website-link" target="_blank">
+      <i class="fas fa-external-link-alt"></i>
+      Shop Now
+    </a>
+  </div>
+
+  <!-- Footer Actions -->
+  <div class="footer-actions">
+    <div class="action-btn call-btn" onclick="makeCall()">
+      <div class="action-icon">
+        <i class="fas fa-phone"></i>
+      </div>
+      <div class="action-label">Call</div>
     </div>
     
-    <!-- WhatsApp for COD -->
-    <div id="whatsappSection" style="display:none;margin-top:20px;">
-      <div style="padding:15px;background:#d1fae5;border-radius:10px;">
-        <h4>📱 Confirm Order via WhatsApp</h4>
-        <p>Click below to confirm your COD order via WhatsApp</p>
-        <button onclick="sendCODMessage()" style="width:100%;padding:12px;background:#25D366;color:white;border:none;border-radius:8px;margin-top:10px;cursor:pointer;">
-          📞 WhatsApp Order
+    <div class="action-btn message-btn" onclick="sendWhatsApp()">
+      <div class="action-icon">
+        <i class="fab fa-whatsapp"></i>
+      </div>
+      <div class="action-label">WhatsApp</div>
+    </div>
+    
+    <div class="action-btn email-btn" onclick="sendEmail()">
+      <div class="action-icon">
+        <i class="fas fa-envelope"></i>
+      </div>
+      <div class="action-label">Email</div>
+    </div>
+    
+    <div class="action-btn map-btn" onclick="openMap()">
+      <div class="action-icon">
+        <i class="fas fa-map-marker-alt"></i>
+      </div>
+      <div class="action-label">Location</div>
+    </div>
+  </div>
+</div>
+
+<!-- Product Detail Modal -->
+<div class="modal" id="productModal">
+  <div class="modal-content">
+    <img src="" id="modalImage" class="modal-image">
+    <div class="modal-body">
+      <h2 class="modal-title" id="modalTitle"></h2>
+      <p class="modal-description" id="modalDescription"></p>
+      <div class="modal-price" id="modalPrice"></div>
+      
+      <div class="payment-section" id="paymentSection" style="display: none;">
+        <h3>Select Payment Method</h3>
+        <div class="payment-options">
+          <div class="payment-option" onclick="selectPayment('jazzcash')" id="jazzcashOption">
+            <div class="payment-icon jazzcash-icon">
+              <i class="fas fa-qrcode"></i>
+            </div>
+            <div>
+              <div style="font-weight: 600;">JazzCash / EasyPaisa</div>
+              <div style="font-size: 12px; color: #64748b;">Pay via QR Code or Number</div>
+            </div>
+          </div>
+          <div class="payment-option" onclick="selectPayment('cod')" id="codOption">
+            <div class="payment-icon cod-icon">
+              <i class="fas fa-truck"></i>
+            </div>
+            <div>
+              <div style="font-weight: 600;">Cash on Delivery</div>
+              <div style="font-size: 12px; color: #64748b;">Pay when product arrives</div>
+            </div>
+          </div>
+        </div>
+        
+        <div id="receiptUpload" style="display: none; margin-top: 20px;">
+          <div style="padding: 20px; background: #f8fafc; border-radius: 12px;">
+            <h4>📸 Upload Payment Receipt</h4>
+            <input type="file" id="receiptFile" accept="image/*" onchange="uploadReceipt()" style="margin: 10px 0;">
+            <button class="modal-btn modal-btn-primary" onclick="confirmPayment()" style="width: 100%;">
+              ✅ Confirm Payment
+            </button>
+          </div>
+        </div>
+        
+        <div id="codConfirmation" style="display: none; margin-top: 20px;">
+          <div style="padding: 20px; background: #d1fae5; border-radius: 12px;">
+            <h4>📱 Confirm Order via WhatsApp</h4>
+            <button class="modal-btn modal-btn-primary" onclick="confirmCOD()" style="width: 100%; background: #25D366;">
+              <i class="fab fa-whatsapp"></i> Confirm COD Order
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-primary" onclick="buyNowProduct()">
+          🛒 Buy Now
+        </button>
+        <button class="modal-btn modal-btn-secondary" onclick="addToCartFromModal()">
+          ➕ Add to Cart
         </button>
       </div>
     </div>
   </div>
-  
-  <div style="display:flex;gap:10px;margin-top:20px;">
-    <button class="buy-now" onclick="buyNow()" style="flex:1;padding:12px;font-size:16px;">🛒 Buy Now</button>
-    <button class="add-cart" onclick="addToCart(currentProduct)" style="flex:1;padding:12px;font-size:16px;">➕ Add to Cart</button>
-  </div>
- </div>
 </div>
 
-<!-- CART MODAL -->
-<div class="cart-modal" id="cartModal">
-  <div class="cart-content">
+<!-- Cart Modal -->
+<div class="modal cart-modal" id="cartModal">
+  <div class="modal-content">
     <div class="cart-header">
-      <h2>🛒 Your Cart</h2>
-      <button class="close-cart" onclick="closeCart()">×</button>
+      <div class="cart-title">Your Shopping Cart</div>
+      <button class="close-btn" onclick="closeCartModal()">×</button>
     </div>
-    
-    <div id="cartItems"></div>
-    
+    <div class="cart-items" id="cartItems"></div>
     <div class="cart-total">
-      Total: PKR <span id="cartTotal">0</span>
+      <span>Total:</span>
+      <span>PKR <span id="cartTotal">0</span></span>
     </div>
-    
-    <button class="checkout-btn" onclick="checkout()">
-      🚀 Proceed to Checkout
-    </button>
+    <div style="padding: 24px;">
+      <button class="checkout-btn" onclick="checkoutCart()">
+        🚀 Proceed to Checkout
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Share Modal -->
+<div class="modal share-modal" id="shareModal">
+  <div class="modal-content">
+    <div class="cart-header">
+      <div class="cart-title">Share Digital Card</div>
+      <button class="close-btn" onclick="closeShareModal()">×</button>
+    </div>
+    <div class="share-options">
+      <div class="share-option" onclick="shareViaWhatsApp()">
+        <div class="share-icon whatsapp-share">
+          <i class="fab fa-whatsapp"></i>
+        </div>
+        <div class="share-label">WhatsApp</div>
+      </div>
+      <div class="share-option" onclick="shareViaFacebook()">
+        <div class="share-icon facebook-share">
+          <i class="fab fa-facebook-f"></i>
+        </div>
+        <div class="share-label">Facebook</div>
+      </div>
+      <div class="share-option" onclick="shareViaMessenger()">
+        <div class="share-icon messenger-share">
+          <i class="fab fa-facebook-messenger"></i>
+        </div>
+        <div class="share-label">Messenger</div>
+      </div>
+      <div class="share-option" onclick="copyCardLink()">
+        <div class="share-icon copy-share">
+          <i class="fas fa-copy"></i>
+        </div>
+        <div class="share-label">Copy Link</div>
+      </div>
+      <div class="share-option" onclick="shareViaSMS()">
+        <div class="share-icon sms-share">
+          <i class="fas fa-sms"></i>
+        </div>
+        <div class="share-label">SMS</div>
+      </div>
+      <div class="share-option" onclick="shareViaEmail()">
+        <div class="share-icon email-share">
+          <i class="fas fa-envelope"></i>
+        </div>
+        <div class="share-label">Email</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -457,43 +1329,218 @@ let currentProduct = null;
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let selectedPaymentMethod = null;
 
-// DOM Elements
-const $ = id => document.getElementById(id);
+// Initialize Supabase
+const supa = supabase.createClient(
+  "https://dfvnefbxgayxqgjjgtrr.supabase.co",
+  "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
+);
 
-// Cart functions
+// Load card data
+document.addEventListener("DOMContentLoaded", async () => {
+  const id = new URLSearchParams(location.search).get("id") || localStorage.getItem("lastCardId");
+  if(!id) {
+    document.body.innerHTML = "<div style='padding:40px;text-align:center;color:white;'><h2>Card not found</h2></div>";
+    return;
+  }
+
+  const {data, error} = await supa.from("cards").select("*").eq("id", id).single();
+  if(error || !data) {
+    document.body.innerHTML = "<div style='padding:40px;text-align:center;color:white;'><h2>Card not found</h2></div>";
+    return;
+  }
+
+  card = JSON.parse(data.data);
+  renderCard();
+  updateCartCount();
+});
+
+// Render card function
+function renderCard() {
+  // Header
+  document.getElementById('businessHeader').textContent = card.businessName || card.name || "Digital Card";
+  
+  // Profile
+  const photo = document.getElementById('photo');
+  if(card.profileImage) photo.src = card.profileImage;
+  
+  document.getElementById('name').textContent = card.name || "";
+  document.getElementById('business').textContent = card.businessName || "";
+  
+  const phone = card.phone || "";
+  const email = card.email || "";
+  const address = card.address || "";
+  
+  if(phone) {
+    document.getElementById('phone').textContent = phone;
+    document.getElementById('phoneItem').style.display = 'flex';
+  }
+  
+  if(email) {
+    document.getElementById('email').textContent = email;
+    document.getElementById('emailItem').style.display = 'flex';
+  }
+  
+  if(address) {
+    document.getElementById('address').textContent = address;
+    document.getElementById('addressItem').style.display = 'flex';
+  }
+  
+  // About
+  const aboutText = card.business?.about || card.about || "";
+  if(aboutText) {
+    document.getElementById('aboutText').textContent = aboutText;
+  } else {
+    document.getElementById('aboutSection').style.display = 'none';
+  }
+  
+  // Products
+  const products = card.products || card.offers || [];
+  const productsGrid = document.getElementById('productsGrid');
+  
+  if(products.length > 0) {
+    products.forEach((product, index) => {
+      const price = product.discountPrice || product.originalPrice;
+      const originalPrice = product.originalPrice && product.discountPrice ? product.originalPrice : null;
+      
+      const productCard = document.createElement('div');
+      productCard.className = 'product-card';
+      productCard.innerHTML = `
+        <img src="${product.image || ''}" class="product-image" onerror="this.style.display='none'">
+        <div class="product-badges">
+          ${(product.badges || []).map(badge => `<span class="badge">${badge}</span>`).join('')}
+        </div>
+        <div class="product-details">
+          <div class="product-title">${product.title || 'Product'}</div>
+          <div class="product-price">
+            ${originalPrice ? `<span class="original-price">PKR ${originalPrice}</span>` : ''}
+            ${price ? `<span class="discount-price">PKR ${price}</span>` : ''}
+          </div>
+          <div class="product-actions">
+            <button class="btn-buy" onclick="showProductModal(${index})">Buy Now</button>
+            <button class="btn-cart" onclick="addToCart(${index})">Add to Cart</button>
+          </div>
+        </div>
+      `;
+      productsGrid.appendChild(productCard);
+    });
+  } else {
+    document.getElementById('productsSection').style.display = 'none';
+  }
+  
+  // Business Hours
+  if(card.businessHours && card.businessHours.length > 0) {
+    const hoursList = document.getElementById('businessHours');
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    
+    card.businessHours.forEach((day, index) => {
+      if(day) {
+        const hourItem = document.createElement('div');
+        hourItem.className = 'hour-item';
+        
+        if(!day.open || day.status === 'closed') {
+          hourItem.innerHTML = `
+            <span class="day-name">${days[index]}</span>
+            <span class="day-time closed">Closed</span>
+          `;
+        } else {
+          hourItem.innerHTML = `
+            <span class="day-name">${days[index]}</span>
+            <span class="day-time">${day.start || ''} - ${day.end || ''}</span>
+          `;
+        }
+        
+        hoursList.appendChild(hourItem);
+      }
+    });
+    
+    document.getElementById('hoursSection').style.display = 'block';
+  }
+  
+  // Holidays
+  if(card.holidays && card.holidays.length > 0) {
+    const holidaysList = document.getElementById('holidaysList');
+    
+    card.holidays.forEach(holiday => {
+      if(holiday.name && holiday.date) {
+        const date = new Date(holiday.date);
+        const formattedDate = date.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        });
+        
+        const holidayItem = document.createElement('div');
+        holidayItem.className = 'holiday-item';
+        holidayItem.innerHTML = `
+          <span class="holiday-name">${holiday.name}</span>
+          <span class="holiday-date">${formattedDate}</span>
+        `;
+        holidaysList.appendChild(holidayItem);
+      }
+    });
+    
+    document.getElementById('holidaysSection').style.display = 'block';
+  }
+  
+  // Website Banner
+  if(card.website) {
+    document.getElementById('websiteBanner').style.display = 'block';
+    document.getElementById('websiteBannerLink').href = card.website;
+  }
+}
+
+// Cart Functions
 function updateCartCount() {
   const count = cart.length;
-  $('cartCount').textContent = count;
-  $('cartCount').style.display = count > 0 ? 'flex' : 'none';
+  document.getElementById('cartCount').textContent = count;
+  document.getElementById('cartCount').style.display = count > 0 ? 'flex' : 'none';
 }
 
-function addToCart(product) {
-  cart.push(product);
-  localStorage.setItem('cart', JSON.stringify(cart));
-  updateCartCount();
-  alert('✅ Added to cart!');
-}
-
-function removeFromCart(index) {
-  cart.splice(index, 1);
-  localStorage.setItem('cart', JSON.stringify(cart));
-  updateCartCount();
-  renderCart();
-}
-
-function openCart() {
-  renderCart();
-  $('cartModal').style.display = 'flex';
-}
-
-function closeCart() {
-  $('cartModal').style.display = 'none';
-}
-
-function renderCart() {
-  const cartItems = $('cartItems');
-  cartItems.innerHTML = '';
+function addToCart(productIndex) {
+  const products = card.products || card.offers || [];
+  const product = products[productIndex];
   
+  if(product) {
+    cart.push({
+      ...product,
+      index: productIndex
+    });
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+    
+    // Show success animation
+    const cartIcon = document.querySelector('.cart-icon');
+    cartIcon.style.transform = 'scale(1.2)';
+    setTimeout(() => {
+      cartIcon.style.transform = 'scale(1)';
+    }, 300);
+  }
+}
+
+function addToCartFromModal() {
+  if(currentProduct) {
+    cart.push({...currentProduct});
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+    closeModal('productModal');
+    alert('✅ Product added to cart!');
+  }
+}
+
+function openCartModal() {
+  renderCartItems();
+  openModal('cartModal');
+}
+
+function closeCartModal() {
+  closeModal('cartModal');
+}
+
+function renderCartItems() {
+  const cartItems = document.getElementById('cartItems');
+  const cartTotal = document.getElementById('cartTotal');
+  
+  cartItems.innerHTML = '';
   let total = 0;
   
   cart.forEach((item, index) => {
@@ -503,323 +1550,272 @@ function renderCart() {
     const itemDiv = document.createElement('div');
     itemDiv.className = 'cart-item';
     itemDiv.innerHTML = `
-      <img src="${item.image || ''}" onerror="this.style.display='none'">
-      <div class="cart-item-info">
-        <div class="cart-item-title">${item.title}</div>
+      <img src="${item.image || ''}" class="cart-item-image" onerror="this.style.display='none'">
+      <div class="cart-item-details">
+        <div class="cart-item-title">${item.title || 'Product'}</div>
         <div class="cart-item-price">PKR ${price}</div>
       </div>
-      <button class="cart-item-remove" onclick="removeFromCart(${index})">×</button>
+      <button class="close-btn" onclick="removeFromCart(${index})">×</button>
     `;
     cartItems.appendChild(itemDiv);
   });
   
-  $('cartTotal').textContent = total.toFixed(2);
+  cartTotal.textContent = total.toFixed(2);
 }
 
-function checkout() {
-  if (cart.length === 0) {
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  updateCartCount();
+  renderCartItems();
+}
+
+function checkoutCart() {
+  if(cart.length === 0) {
     alert('Your cart is empty!');
     return;
   }
   
-  closeCart();
-  // For now, just show WhatsApp message option
-  sendOrderMessage();
+  let message = "🛒 *New Order Request*\n\n";
+  message += `Customer: ${card.name}\n`;
+  message += `Phone: ${card.phone}\n\n`;
+  message += "*Order Items:*\n`;
+  
+  let total = 0;
+  cart.forEach((item, index) => {
+    const price = item.discountPrice || item.originalPrice || 0;
+    total += parseFloat(price);
+    message += `${index + 1}. ${item.title} - PKR ${price}\n`;
+  });
+  
+  message += `\n*Total: PKR ${total.toFixed(2)}*\n`;
+  message += `\nPlease confirm this order.`;
+  
+  const phone = card.phone.replace(/\D/g, '');
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+  
+  // Clear cart
+  cart = [];
+  localStorage.setItem('cart', JSON.stringify(cart));
+  updateCartCount();
+  closeCartModal();
 }
 
-// Payment methods
-function selectPaymentMethod(method) {
+// Product Modal Functions
+function showProductModal(productIndex) {
+  const products = card.products || card.offers || [];
+  currentProduct = products[productIndex];
+  
+  if(!currentProduct) return;
+  
+  document.getElementById('modalImage').src = currentProduct.image || '';
+  document.getElementById('modalTitle').textContent = currentProduct.title || 'Product';
+  document.getElementById('modalDescription').textContent = currentProduct.desc || '';
+  
+  const price = currentProduct.discountPrice || currentProduct.originalPrice;
+  document.getElementById('modalPrice').textContent = price ? `PKR ${price}` : '';
+  
+  // Reset payment section
+  document.getElementById('paymentSection').style.display = 'none';
+  document.getElementById('receiptUpload').style.display = 'none';
+  document.getElementById('codConfirmation').style.display = 'none';
+  
+  openModal('productModal');
+}
+
+function buyNowProduct() {
+  document.getElementById('paymentSection').style.display = 'block';
+}
+
+function selectPayment(method) {
   selectedPaymentMethod = method;
   
-  // Remove selected class from all
+  // Update UI
   document.querySelectorAll('.payment-option').forEach(opt => {
     opt.classList.remove('selected');
   });
   
-  // Add selected class to clicked one
-  if (method === 'jazzcash') {
-    $('jazzcashPayment').classList.add('selected');
-    $('receiptSection').style.display = 'block';
-    $('whatsappSection').style.display = 'none';
-  } else if (method === 'cod') {
-    $('codPayment').classList.add('selected');
-    $('receiptSection').style.display = 'none';
-    $('whatsappSection').style.display = 'block';
+  if(method === 'jazzcash') {
+    document.getElementById('jazzcashOption').classList.add('selected');
+    document.getElementById('receiptUpload').style.display = 'block';
+    document.getElementById('codConfirmation').style.display = 'none';
+  } else {
+    document.getElementById('codOption').classList.add('selected');
+    document.getElementById('receiptUpload').style.display = 'none';
+    document.getElementById('codConfirmation').style.display = 'block';
   }
 }
 
 function uploadReceipt() {
-  const file = $('receiptFile').files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      $('receiptPreview').src = e.target.result;
-      $('receiptPreview').style.display = 'block';
-    };
-    reader.readAsDataURL(file);
+  const file = document.getElementById('receiptFile').files[0];
+  if(file) {
+    alert('✅ Receipt uploaded successfully! Click "Confirm Payment" to complete.');
   }
 }
 
 function confirmPayment() {
-  if (!selectedPaymentMethod) {
-    alert('Please select a payment method first');
+  if(!selectedPaymentMethod) {
+    alert('Please select a payment method first.');
     return;
   }
   
-  if (selectedPaymentMethod === 'jazzcash' && !$('receiptFile').files[0]) {
-    alert('Please upload payment receipt first');
+  if(selectedPaymentMethod === 'jazzcash' && !document.getElementById('receiptFile').files[0]) {
+    alert('Please upload your payment receipt first.');
     return;
   }
   
-  // Create order message
   const product = currentProduct;
-  const message = `✅ Order Confirmed!\n\nProduct: ${product.title}\nPrice: PKR ${product.discountPrice || product.originalPrice}\nPayment Method: ${selectedPaymentMethod === 'jazzcash' ? 'JazzCash/EasyPaisa' : 'Cash on Delivery'}\n\nThank you for your order!`;
+  const price = product.discountPrice || product.originalPrice;
+  
+  let message = "✅ *Payment Confirmed*\n\n";
+  message += `Product: ${product.title}\n`;
+  message += `Price: PKR ${price}\n`;
+  message += `Payment Method: ${selectedPaymentMethod === 'jazzcash' ? 'JazzCash/EasyPaisa' : 'Cash on Delivery'}\n\n`;
+  message += `Transaction ID: ${Date.now()}\n`;
+  message += `Thank you for your order!`;
   
   alert(message);
   
-  // Close panel
-  $('productPanel').style.display = 'none';
+  // Send WhatsApp confirmation
+  const phone = card.phone.replace(/\D/g, '');
+  const whatsappMsg = `Hi! I've made a payment for:\n\nProduct: ${product.title}\nPrice: PKR ${price}\nPayment Method: ${selectedPaymentMethod}\n\nPlease confirm my order.`;
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(whatsappMsg)}`, '_blank');
   
-  // Clear cart if it was buy now
-  if (!cart.some(item => item.title === product.title)) {
-    // Send WhatsApp confirmation
-    const phone = card.phone.replace(/\D/g, "");
-    const whatsappMsg = encodeURIComponent(`Hi! I've just placed an order for:\n\nProduct: ${product.title}\nPrice: PKR ${product.discountPrice || product.originalPrice}\nPayment Method: ${selectedPaymentMethod}\n\nPlease confirm my order.`);
-    window.open(`https://wa.me/${phone}?text=${whatsappMsg}`, '_blank');
+  closeModal('productModal');
+}
+
+function confirmCOD() {
+  const product = currentProduct;
+  const price = product.discountPrice || product.originalPrice;
+  
+  const phone = card.phone.replace(/\D/g, '');
+  const message = `Hi! I want to place a COD order:\n\nProduct: ${product.title}\nPrice: PKR ${price}\n\nPlease confirm availability and delivery details.`;
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+  
+  closeModal('productModal');
+}
+
+// Share Functions
+function openShareModal() {
+  openModal('shareModal');
+}
+
+function closeShareModal() {
+  closeModal('shareModal');
+}
+
+function shareViaWhatsApp() {
+  const message = `Check out ${card.name}'s digital business card: ${window.location.href}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+}
+
+function shareViaFacebook() {
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
+}
+
+function shareViaMessenger() {
+  window.open(`fb-messenger://share?link=${encodeURIComponent(window.location.href)}`, '_blank');
+}
+
+function copyCardLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    alert('✅ Card link copied to clipboard!');
+  });
+}
+
+function shareViaSMS() {
+  const message = `Check out ${card.name}'s digital card: ${window.location.href}`;
+  window.open(`sms:?body=${encodeURIComponent(message)}`, '_blank');
+}
+
+function shareViaEmail() {
+  const subject = `${card.name}'s Digital Business Card`;
+  const body = `Hi,\n\nCheck out ${card.name}'s digital business card:\n${window.location.href}\n\nBest regards,\n${card.name}`;
+  window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
+}
+
+// Live Chat Functions
+function openWhatsAppChat() {
+  const phone = card.phone.replace(/\D/g, '');
+  window.open(`https://wa.me/${phone}`, '_blank');
+}
+
+function openMessenger() {
+  // In real implementation, you would use Facebook Messenger API
+  alert('Messenger integration would open here. For now, using WhatsApp.');
+  openWhatsAppChat();
+}
+
+function sendChatMessage() {
+  const input = document.getElementById('chatInput');
+  const message = input.value.trim();
+  
+  if(message) {
+    const phone = card.phone.replace(/\D/g, '');
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+    input.value = '';
+    closeWhatsAppWidget();
   }
 }
 
-function sendCODMessage() {
-  const product = currentProduct;
-  const phone = card.phone.replace(/\D/g, "");
-  const message = encodeURIComponent(`Hi! I want to place a COD order:\n\nProduct: ${product.title}\nPrice: PKR ${product.discountPrice || product.originalPrice}\n\nPlease confirm availability and delivery details.`);
-  window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
-  
-  // Close panel
-  $('productPanel').style.display = 'none';
+function closeWhatsAppWidget() {
+  document.getElementById('whatsappWidget').style.display = 'none';
 }
 
-function sendOrderMessage() {
-  const phone = card.phone.replace(/\D/g, "");
-  let message = "Hi! I want to place an order:\n\n";
-  
-  cart.forEach((item, index) => {
-    message += `${index + 1}. ${item.title} - PKR ${item.discountPrice || item.originalPrice}\n`;
-  });
-  
-  message += `\nTotal: PKR ${$('cartTotal').textContent}\n\nPlease confirm my order.`;
-  
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
-  
-  // Clear cart after order
-  cart = [];
-  localStorage.setItem('cart', JSON.stringify(cart));
-  updateCartCount();
+// Footer Action Functions
+function makeCall() {
+  if(card.phone) {
+    window.location.href = `tel:${card.phone}`;
+  }
 }
 
-// Product functions
-function buyNow() {
-  $('paymentOptions').style.display = 'block';
+function sendWhatsApp() {
+  openWhatsAppChat();
 }
 
-// Main initialization
-document.addEventListener("DOMContentLoaded", async ()=>{
-
-const photo=$("photo"), nameEl=$("name"), businessEl=$("business"),
-phoneEl=$("phone"), emailEl=$("email"), addressEl=$("address"), websiteText=$("websiteText"),
-aboutText=$("aboutText"), aboutMore=$("aboutMore"), aboutBox=$("aboutBox"),
-productsContainer=$("productsContainer"), call=$("call"), mail=$("mail"),
-hoursContainer=$("hoursContainer"), businessHours=$("businessHours"),
-holidaysContainer=$("holidaysContainer"), holidaysList=$("holidaysList"),
-websiteContainer=$("websiteContainer"), websiteLink=$("websiteLink"), websiteUrl=$("websiteUrl"),
-websiteBanner=$("websiteBanner"), websiteBannerLink=$("websiteBannerLink"),
-panelImg=$("panelImg"), panelTitle=$("panelTitle"), panelDesc=$("panelDesc"),
-panelPrice=$("panelPrice"), productPanel=$("productPanel");
-
-const supa = supabase.createClient(
- "https://dfvnefbxgayxqgjjgtrr.supabase.co",
- "sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE"
-);
-
-const id=new URLSearchParams(location.search).get("id") || localStorage.getItem("lastCardId");
-if(!id){document.body.innerHTML="<h2 style='padding:20px'>No card found</h2>";return;}
-
-const {data,error}=await supa.from("cards").select("*").eq("id",id).single();
-if(error || !data){document.body.innerHTML="<h2 style='padding:20px'>Card not found</h2>";return;}
-
-card = JSON.parse(data.data);
-
-// Update header
-$('businessHeader').textContent = card.businessName || card.name || "Digital Card";
-
-// Populate basic info
-photo.src=card.profileImage||"";
-nameEl.textContent=card.name||"";
-businessEl.textContent=card.businessName||"";
-phoneEl.textContent="📞 "+(card.phone||"");
-emailEl.textContent="✉️ "+(card.email||"");
-addressEl.textContent="📍 "+(card.address||"");
-aboutText.textContent=card.business?.about||card.about||"";
-
-// Website info
-if(card.website && card.website.trim()) {
- websiteText.textContent="🌐 " + card.website;
- websiteContainer.style.display="block";
- websiteUrl.textContent = card.website;
- websiteLink.href = card.website;
- websiteBanner.style.display="block";
- websiteBannerLink.href = card.website;
+function sendEmail() {
+  if(card.email) {
+    window.location.href = `mailto:${card.email}`;
+  }
 }
 
-call.href="tel:"+card.phone;
-mail.href="mailto:"+card.email;
-
-// Business hours
-if(card.businessHours && Array.isArray(card.businessHours) && card.businessHours.length > 0){
- hoursContainer.style.display = "block";
- const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
- 
- card.businessHours.forEach((day, index) => {
-   if(day && day.open !== undefined) {
-     const dayDiv = document.createElement("div");
-     dayDiv.className = "dayRow";
-     
-     if(!day.open || day.status === 'closed') {
-       dayDiv.innerHTML = `
-         <span class="dayName">${days[index]}</span>
-         <span class="dayTime closed">Closed</span>
-       `;
-     } else {
-       dayDiv.innerHTML = `
-         <span class="dayName">${days[index]}</span>
-         <span class="dayTime">${day.start} - ${day.end}</span>
-       `;
-     }
-     
-     businessHours.appendChild(dayDiv);
-   }
- });
+function openMap() {
+  if(card.address) {
+    window.open(`https://maps.google.com/?q=${encodeURIComponent(card.address)}`, '_blank');
+  }
 }
 
-// Holidays
-if(card.holidays && Array.isArray(card.holidays) && card.holidays.length > 0){
- holidaysContainer.style.display = "block";
- 
- card.holidays.forEach(holiday => {
-   if(holiday.name && holiday.date) {
-     const holidayDiv = document.createElement("div");
-     holidayDiv.className = "holidayItem";
-     
-     const date = new Date(holiday.date);
-     const formattedDate = date.toLocaleDateString('en-US', {
-       month: 'short',
-       day: 'numeric',
-       year: 'numeric'
-     });
-     
-     holidayDiv.innerHTML = `
-       <span class="holidayName">${holiday.name}</span>
-       <span class="holidayDate">${formattedDate}</span>
-     `;
-     
-     holidaysList.appendChild(holidayDiv);
-   }
- });
+// Utility Functions
+function openModal(modalId) {
+  document.getElementById(modalId).style.display = 'flex';
 }
 
-// Populate products
-productsContainer.innerHTML="";
-(card.products||card.offers||[]).forEach(p=>{
- if(!p.title && !p.image) return;
- 
- const productDiv=document.createElement("div");
- productDiv.className="offer";
- 
- const price = p.discountPrice || p.originalPrice;
- 
- productDiv.innerHTML=`
-  <img src="${p.image||''}" onerror="this.style.display='none'">
-  <div class="offerBadges">${(p.badges||[]).map(b=>`<span>${b}</span>`).join("")}</div>
-  <div class="offer-footer">
-    <div class="price">
-      ${p.originalPrice ? `<span class="original-price">PKR ${p.originalPrice}</span>` : ''}
-      ${price ? `<span class="discount-price">PKR ${price}</span>` : ''}
-    </div>
-    <div class="buy-buttons">
-      <button class="buy-now" onclick="showProductDetails(${JSON.stringify(p).replace(/"/g, '&quot;')})">Buy Now</button>
-      <button class="add-cart" onclick="addToCart(${JSON.stringify(p).replace(/"/g, '&quot;')})">Add Cart</button>
-    </div>
-  </div>
- `;
- 
- productsContainer.appendChild(productDiv);
-});
-
-// If no products, hide section
-if((card.products||card.offers||[]).length === 0) {
- productsContainer.style.display = "none";
+function closeModal(modalId) {
+  document.getElementById(modalId).style.display = 'none';
 }
 
-window.toggleAbout=()=>{
- aboutBox.classList.toggle("expanded");
- aboutMore.textContent=aboutBox.classList.contains("expanded")?"See less":"See more";
-};
-
-window.saveCard=()=>{
- const vcard = `BEGIN:VCARD
-VERSION:3.0
-FN:${card.name}
-ORG:${card.businessName}
-TEL:${card.phone}
-EMAIL:${card.email}
-ADR:${card.address}
-URL:${card.website||''}
-NOTE:${card.business?.about||''}
-END:VCARD`;
-
- const blob = new Blob([vcard], { type: 'text/vcard' });
- const url = URL.createObjectURL(blob);
- const a = document.createElement('a');
- a.href = url;
- a.download = `${card.name.replace(/\s+/g, '_')}_contact.vcf`;
- document.body.appendChild(a);
- a.click();
- document.body.removeChild(a);
- URL.revokeObjectURL(url);
- 
- alert("Contact saved as vCard file!");
-};
-
-// Show product details
-window.showProductDetails = function(product) {
-  currentProduct = product;
+function toggleAbout() {
+  const aboutSection = document.getElementById('aboutSection');
+  const aboutMore = document.getElementById('aboutMore');
+  const icon = aboutMore.nextElementSibling;
   
-  panelImg.src = product.image || '';
-  panelTitle.textContent = product.title || '';
-  panelDesc.textContent = product.desc || '';
+  aboutSection.classList.toggle('expanded');
   
-  const price = product.discountPrice || product.originalPrice;
-  panelPrice.textContent = price ? `PKR ${price}` : '';
-  
-  // Hide payment options initially
-  $('paymentOptions').style.display = 'none';
-  $('receiptSection').style.display = 'none';
-  $('whatsappSection').style.display = 'none';
-  selectedPaymentMethod = null;
-  
-  productPanel.style.display = "block";
-};
+  if(aboutSection.classList.contains('expanded')) {
+    aboutMore.textContent = 'See less';
+    icon.className = 'fas fa-chevron-up';
+  } else {
+    aboutMore.textContent = 'See more';
+    icon.className = 'fas fa-chevron-down';
+  }
+}
 
-// Close product panel
-productPanel.onclick = (e) => {
- if(e.target === productPanel) {
-  productPanel.style.display = "none";
- }
-};
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-// Initialize cart count
+// Initialize
 updateCartCount();
-});
 </script>
 </body>
 </html>
