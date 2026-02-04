@@ -24,7 +24,7 @@ body {
   position: relative;
 }
 
-/* Social Media - White oval spots without colors */
+/* Social Media - Follow/Subscribe icons */
 .social-float-container {
   position: fixed;
   bottom: 100px;
@@ -38,7 +38,7 @@ body {
 .social-main-icon {
   width: 50px;
   height: 50px;
-  border-radius: 25px; /* Oval shape */
+  border-radius: 25px;
   background: rgba(255, 255, 255, 0.95);
   color: #667eea;
   display: flex;
@@ -78,7 +78,7 @@ body {
 .social-icon-item {
   width: 45px;
   height: 45px;
-  border-radius: 22.5px; /* Oval shape */
+  border-radius: 22.5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,7 +87,7 @@ body {
   font-size: 18px;
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(102, 126, 234, 0.2);
-  color: #1e293b; /* Dark color for icons */
+  color: #1e293b;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
@@ -98,7 +98,7 @@ body {
 }
 
 .social-icon-item i {
-  filter: none; /* Remove any filters */
+  filter: none;
 }
 
 /* Main Card Container */
@@ -142,7 +142,7 @@ body {
   align-items: center;
   position: relative;
   overflow: hidden;
-  min-height: 100px; /* Increased height for profile image overlap */
+  min-height: 100px;
 }
 
 .header::before {
@@ -212,7 +212,7 @@ body {
   align-items: center;
   text-align: center;
   position: relative;
-  margin-top: -60px; /* Pull up to overlap with header */
+  margin-top: -60px;
 }
 
 .profile-avatar {
@@ -228,7 +228,6 @@ body {
   margin-bottom: 20px;
 }
 
-/* Blue background circle behind profile image */
 .profile-avatar::before {
   content: '';
   position: absolute;
@@ -297,7 +296,7 @@ body {
 .live-chat-profile {
   position: absolute;
   left: 24px;
-  top: 103px; /* 3mm below header (approximately 3px from 100px header) */
+  top: 103px;
   z-index: 10;
 }
 
@@ -372,11 +371,32 @@ body {
   color: #1e293b;
 }
 
-/* About Section - Text aligned both sides */
+/* About Section - Text aligned both sides with collapse */
 .about-content {
   line-height: 1.6;
   color: #475569;
-  text-align: justify; /* Both sides aligned */
+  text-align: justify;
+}
+
+.about-text-collapsed {
+  max-height: 100px;
+  overflow: hidden;
+  position: relative;
+}
+
+.about-text-collapsed::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.95));
+}
+
+.about-text-expanded {
+  max-height: none;
+  overflow: visible;
 }
 
 .read-more {
@@ -399,24 +419,23 @@ body {
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(10, 135px); /* Create many columns */
+  grid-template-columns: repeat(10, 135px);
   grid-auto-flow: column;
   gap: 12px;
   overflow-x: auto;
   padding: 10px 15px;
-  padding-right: 30px; /* Extra space to show cards are peeking */
-  scrollbar-width: none; /* Hide scrollbar */
-  width: calc(100% + 40px); /* Extend beyond container */
-  margin-left: -15px; /* Pull left to show peeking */
+  padding-right: 30px;
+  scrollbar-width: none;
+  width: calc(100% + 40px);
+  margin-left: -15px;
 }
 
-/* Hide scrollbar completely */
 .products-grid::-webkit-scrollbar {
   display: none;
 }
 
 .product-card {
-  width: 135px; /* Fixed width for consistent size */
+  width: 135px;
   background: white;
   border-radius: 16px;
   overflow: hidden;
@@ -424,7 +443,7 @@ body {
   transition: all 0.3s;
   cursor: pointer;
   position: relative;
-  flex-shrink: 0; /* Prevent cards from shrinking */
+  flex-shrink: 0;
 }
 
 .product-card:hover {
@@ -521,7 +540,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* Right fade effect to indicate more cards */
 .products-container::after {
   content: '';
   position: absolute;
@@ -531,6 +549,53 @@ body {
   height: 100%;
   background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.9));
   pointer-events: none;
+}
+
+/* Offers Cards - Fixed RHS movement */
+.offers-container {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 10px 0;
+  margin-top: 10px;
+  scrollbar-width: thin;
+  position: relative;
+}
+
+.offers-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.offers-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.offers-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+}
+
+.offer-card {
+  min-width: 280px;
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.offer-card h3 {
+  margin-top: 0;
+  color: #1e293b;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 /* Business Hours - Expandable */
@@ -571,7 +636,6 @@ body {
   color: #ef4444;
 }
 
-/* Expandable Hours Section */
 .hours-expandable {
   max-height: 200px;
   overflow: hidden;
@@ -622,7 +686,7 @@ body {
   font-weight: 500;
 }
 
-/* Website Banner */
+/* Website Banner - Only show if there's a link */
 .website-banner {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -671,7 +735,7 @@ body {
   transform: translateY(-2px);
 }
 
-/* Footer Actions - WhatsApp icon fixed (dark color for visibility) */
+/* Footer Actions - WhatsApp icon fixed */
 .footer-actions {
   display: flex;
   justify-content: center;
@@ -725,14 +789,6 @@ body {
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
 }
 
-/* Fix WhatsApp icon visibility - Make icon dark for contrast */
-.message-btn .action-icon i {
-  color: white;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
-  position: relative;
-  z-index: 2;
-}
-
 .action-label {
   font-size: 12px;
   font-weight: 600;
@@ -760,7 +816,7 @@ body {
   }
   
   .products-grid {
-    grid-template-columns: repeat(10, 125px); /* Slightly smaller on mobile */
+    grid-template-columns: repeat(10, 125px);
     gap: 10px;
     padding: 10px 12px;
     padding-right: 25px;
@@ -774,7 +830,7 @@ body {
   
   .live-chat-profile {
     left: 15px;
-    top: 93px; /* Adjust for smaller header */
+    top: 93px;
   }
   
   .live-chat-btn {
@@ -806,6 +862,10 @@ body {
     height: 40px;
     font-size: 16px;
   }
+  
+  .offer-card {
+    min-width: 250px;
+  }
 }
 
 @media (max-width: 360px) {
@@ -825,17 +885,21 @@ body {
   .live-chat-profile {
     top: 83px;
   }
+  
+  .offer-card {
+    min-width: 220px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- Social Media Floating Icon - White oval spots -->
+<!-- Social Media Floating Icon - Follow/Subscribe style -->
 <div class="social-float-container">
   <div class="social-expandable-icons" id="socialIcons"></div>
   <div class="social-main-icon" onclick="toggleSocialIcons()">
-    <i class="fas fa-share-alt"></i>
+    <i class="fas fa-users"></i>
   </div>
 </div>
 
@@ -893,14 +957,14 @@ body {
       </div>
     </div>
 
-    <!-- About Section - Text aligned both sides -->
+    <!-- About Section - Text aligned both sides with collapse -->
     <div class="section" id="aboutSection">
       <div class="section-header">
         <i class="fas fa-info-circle"></i>
         <h3>About Business</h3>
       </div>
       <div class="about-content">
-        <div id="aboutText"></div>
+        <div id="aboutText" class="about-text-collapsed"></div>
         <div class="read-more" onclick="toggleAbout()">
           <span id="aboutMore">See more</span>
           <i class="fas fa-chevron-down"></i>
@@ -918,6 +982,28 @@ body {
         <div class="products-grid" id="productsGrid">
           <!-- Products will be inserted here -->
         </div>
+      </div>
+    </div>
+
+    <!-- Offers Section - Fixed RHS movement -->
+    <div class="section" id="offersSection" style="display: none;">
+      <div class="section-header">
+        <i class="fas fa-tags"></i>
+        <h3>Special Offers</h3>
+      </div>
+      <div class="offers-container" id="offersContainer">
+        <!-- Offers will be inserted here -->
+      </div>
+    </div>
+
+    <!-- Payment Methods Section -->
+    <div class="section" id="paymentSection" style="display: none;">
+      <div class="section-header">
+        <i class="fas fa-credit-card"></i>
+        <h3>Payment Methods</h3>
+      </div>
+      <div id="paymentMethods">
+        <!-- Payment methods will be inserted here -->
       </div>
     </div>
 
@@ -946,7 +1032,7 @@ body {
     </div>
   </div>
 
-  <!-- Website Banner -->
+  <!-- Website Banner - Only show if website link exists -->
   <div class="website-banner" id="websiteBanner" style="display: none;">
     <h3>🎯 Exclusive Online Store</h3>
     <p>Visit our website for special offers!</p>
@@ -956,7 +1042,7 @@ body {
     </a>
   </div>
 
-  <!-- Footer Actions - WhatsApp icon fixed with dark color -->
+  <!-- Footer Actions -->
   <div class="footer-actions">
     <div class="action-btn call-btn" onclick="makeCall()">
       <div class="action-icon">
@@ -997,7 +1083,7 @@ body {
       <p class="modal-description" id="modalDescription" style="color:#64748b;line-height:1.6;margin-bottom:20px;"></p>
       <div class="modal-price" id="modalPrice" style="font-size:28px;font-weight:700;color:#10b981;margin-bottom:24px;"></div>
       
-      <div class="payment-section" id="paymentSection" style="display:none;margin:24px 0;padding-top:24px;border-top:1px solid #e2e8f0;">
+      <div class="payment-section" id="modalPaymentSection" style="display:none;margin:24px 0;padding-top:24px;border-top:1px solid #e2e8f0;">
         <h3 style="margin-bottom:15px;">Select Payment Method</h3>
         <div class="payment-options" style="display:flex;flex-direction:column;gap:12px;">
           <div class="payment-option" onclick="selectPayment('jazzcash')" id="jazzcashOption" style="padding:16px;border:2px solid #e2e8f0;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:12px;">
@@ -1053,7 +1139,7 @@ body {
   </div>
 </div>
 
-<!-- Share Modal -->
+<!-- Share Modal - FIXED FUNCTIONAL SHARE BUTTON -->
 <div class="modal" id="shareModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:2000;align-items:center;justify-content:center;padding:20px;">
   <div class="modal-content" style="background:white;border-radius:24px;width:100%;max-width:350px;max-height:90vh;overflow-y:auto;animation:slideUp 0.3s ease;">
     <div class="cart-header" style="padding:24px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
@@ -1062,6 +1148,24 @@ body {
     </div>
     <div class="share-options" id="shareOptions" style="padding:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
       <!-- Share options will be inserted here -->
+    </div>
+  </div>
+</div>
+
+<!-- JazzCash Payment Modal -->
+<div class="modal" id="jazzcashModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:2000;align-items:center;justify-content:center;padding:20px;">
+  <div class="modal-content" style="background:white;border-radius:24px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;animation:slideUp 0.3s ease;">
+    <div class="cart-header" style="padding:24px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+      <div class="cart-title" style="font-size:20px;font-weight:700;color:#1e293b;">JazzCash Payment</div>
+      <button class="close-btn" onclick="closeJazzcashModal()" style="width:40px;height:40px;border-radius:50%;background:#f1f5f9;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:#64748b;">×</button>
+    </div>
+    <div style="padding:24px;">
+      <div id="jazzcashDetails">
+        <!-- JazzCash details will be inserted here -->
+      </div>
+      <button onclick="proceedWithJazzcash()" style="width:100%;padding:16px;background:linear-gradient(135deg, #FF6B00 0%, #FF8E53 100%);color:white;border:none;border-radius:12px;font-size:16px;font-weight:600;margin-top:20px;cursor:pointer;">
+        <i class="fas fa-check-circle"></i> Confirm Payment
+      </button>
     </div>
   </div>
 </div>
@@ -1102,18 +1206,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupSocialIcons();
 });
 
-// Social Media Icons Setup - Show only icons with links
+// Social Media Icons Setup - Follow/Subscribe style icons
 function setupSocialIcons() {
   const socialIcons = document.getElementById('socialIcons');
   const socialMedia = card.socialMedia || {};
   
   const socialPlatforms = [
-    { key: 'facebook', icon: 'fab fa-facebook-f', label: 'Facebook' },
-    { key: 'instagram', icon: 'fab fa-instagram', label: 'Instagram' },
-    { key: 'twitter', icon: 'fab fa-twitter', label: 'Twitter' },
-    { key: 'linkedin', icon: 'fab fa-linkedin-in', label: 'LinkedIn' },
-    { key: 'youtube', icon: 'fab fa-youtube', label: 'YouTube' },
-    { key: 'tiktok', icon: 'fab fa-tiktok', label: 'TikTok' }
+    { key: 'facebook', icon: 'fab fa-facebook-f', label: 'Follow on Facebook' },
+    { key: 'instagram', icon: 'fab fa-instagram', label: 'Follow on Instagram' },
+    { key: 'twitter', icon: 'fab fa-twitter', label: 'Follow on Twitter' },
+    { key: 'linkedin', icon: 'fab fa-linkedin-in', label: 'Connect on LinkedIn' },
+    { key: 'youtube', icon: 'fab fa-youtube', label: 'Subscribe on YouTube' },
+    { key: 'tiktok', icon: 'fab fa-tiktok', label: 'Follow on TikTok' }
   ];
   
   let hasSocialMedia = false;
@@ -1139,7 +1243,7 @@ function setupSocialIcons() {
     const websiteIcon = document.createElement('div');
     websiteIcon.className = 'social-icon-item';
     websiteIcon.innerHTML = `<i class="fas fa-globe"></i>`;
-    websiteIcon.title = 'Website';
+    websiteIcon.title = 'Visit Website';
     websiteIcon.onclick = () => {
       window.open(card.website, '_blank');
     };
@@ -1152,7 +1256,7 @@ function setupSocialIcons() {
     const whatsappIcon = document.createElement('div');
     whatsappIcon.className = 'social-icon-item';
     whatsappIcon.innerHTML = `<i class="fab fa-whatsapp"></i>`;
-    whatsappIcon.title = 'WhatsApp';
+    whatsappIcon.title = 'Chat on WhatsApp';
     whatsappIcon.onclick = () => {
       openWhatsAppChat('greeting');
     };
@@ -1176,7 +1280,7 @@ function toggleSocialIcons() {
   }
 }
 
-// Setup Share Modal
+// Setup Share Modal - FIXED FUNCTIONALITY
 function setupShareModal() {
   const shareOptions = document.getElementById('shareOptions');
   const shareMethods = [
@@ -1198,7 +1302,7 @@ function setupShareModal() {
   `).join('');
 }
 
-// Render card function
+// Render card function with all fixes
 function renderCard() {
   // Header
   document.getElementById('businessHeader').textContent = card.businessName || card.name || "Digital Card";
@@ -1240,10 +1344,15 @@ function renderCard() {
     document.getElementById('addressItem').style.display = 'none';
   }
   
-  // About - Text aligned both sides
+  // About - Text aligned both sides with collapse
   const aboutText = card.business?.about || card.about || "";
   if(aboutText) {
     document.getElementById('aboutText').textContent = aboutText;
+    if(aboutText.length > 200) {
+      document.getElementById('aboutMore').style.display = 'inline-flex';
+    } else {
+      document.getElementById('aboutMore').style.display = 'none';
+    }
   } else {
     document.getElementById('aboutSection').style.display = 'none';
   }
@@ -1282,12 +1391,92 @@ function renderCard() {
     document.getElementById('productsSection').style.display = 'none';
   }
   
+  // Offers Section - Fixed RHS movement
+  const offersContainer = document.getElementById('offersContainer');
+  if(products.length > 0) {
+    document.getElementById('offersSection').style.display = 'block';
+    
+    products.forEach((product, index) => {
+      if(product.badges && product.badges.length > 0) {
+        const offerCard = document.createElement('div');
+        offerCard.className = 'offer-card';
+        const price = product.discountPrice || product.originalPrice;
+        
+        offerCard.innerHTML = `
+          <h3><i class="fas fa-tag"></i> ${product.title || 'Special Offer'}</h3>
+          <p style="color:#475569;font-size:14px;margin:10px 0;">${product.desc || ''}</p>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:15px;">
+            <div style="font-size:18px;font-weight:700;color:#ef4444;">PKR ${price || '0'}</div>
+            <button onclick="showProductModal(${index})" style="padding:8px 16px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;">
+              View Details
+            </button>
+          </div>
+        `;
+        offersContainer.appendChild(offerCard);
+      }
+    });
+  }
+  
+  // Payment Methods Section
+  if(card.payments) {
+    const paymentSection = document.getElementById('paymentSection');
+    const paymentMethodsDiv = document.getElementById('paymentMethods');
+    
+    if(card.payments.jazzcash && card.payments.jazzcash.active) {
+      document.getElementById('paymentSection').style.display = 'block';
+      
+      let paymentHtml = '';
+      
+      // JazzCash/EasyPaisa
+      if(card.payments.jazzcash.number) {
+        paymentHtml += `
+          <div style="background:#f8fafc;padding:16px;border-radius:12px;margin-bottom:12px;border-left:4px solid #FF6B00;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+              <div style="width:40px;height:40px;border-radius:10px;background:#FF6B00;display:flex;align-items:center;justify-content:center;color:white;">
+                <i class="fas fa-mobile-alt"></i>
+              </div>
+              <div>
+                <div style="font-weight:600;color:#1e293b;">${card.payments.jazzcash.type === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'}</div>
+                <div style="font-size:14px;color:#64748b;">${card.payments.jazzcash.number}</div>
+              </div>
+            </div>
+            ${card.payments.jazzcash.barcode ? `
+              <div style="text-align:center;margin-top:15px;">
+                <div style="font-size:12px;color:#64748b;margin-bottom:8px;">Scan QR Code to Pay</div>
+                <img src="${card.payments.jazzcash.barcode}" style="max-width:200px;max-height:200px;border-radius:8px;border:1px solid #e2e8f0;">
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }
+      
+      // WhatsApp Payment
+      if(card.payments.whatsapp && card.payments.whatsapp.active) {
+        paymentHtml += `
+          <div style="background:#f8fafc;padding:16px;border-radius:12px;margin-bottom:12px;border-left:4px solid #25D366;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:40px;height:40px;border-radius:10px;background:#25D366;display:flex;align-items:center;justify-content:center;color:white;">
+                <i class="fab fa-whatsapp"></i>
+              </div>
+              <div>
+                <div style="font-weight:600;color:#1e293b;">WhatsApp Orders</div>
+                <div style="font-size:14px;color:#64748b;">${card.payments.whatsapp.number || card.phone || ''}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      
+      paymentMethodsDiv.innerHTML = paymentHtml;
+    }
+  }
+  
   // Business Hours - Expandable
   if(card.businessHours && card.businessHours.length > 0) {
     const hoursList = document.getElementById('businessHours');
     const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     
-    let visibleDays = 3; // Show only 3 days initially
+    let visibleDays = 3;
     
     card.businessHours.forEach((day, index) => {
       if(day) {
@@ -1343,10 +1532,30 @@ function renderCard() {
     document.getElementById('holidaysSection').style.display = 'block';
   }
   
-  // Website Banner
-  if(card.website) {
+  // Website Banner - Only show if website link exists and is functional
+  if(card.website && card.website.trim() && card.website.includes('://')) {
     document.getElementById('websiteBanner').style.display = 'block';
     document.getElementById('websiteBannerLink').href = card.website;
+  } else {
+    document.getElementById('websiteBanner').style.display = 'none';
+  }
+}
+
+// Toggle About Text Collapse
+function toggleAbout() {
+  const aboutText = document.getElementById('aboutText');
+  const aboutMore = document.getElementById('aboutMore');
+  const icon = aboutMore.nextElementSibling;
+  
+  aboutText.classList.toggle('about-text-collapsed');
+  aboutText.classList.toggle('about-text-expanded');
+  
+  if(aboutText.classList.contains('about-text-expanded')) {
+    aboutMore.textContent = 'See less';
+    if(icon) icon.className = 'fas fa-chevron-up';
+  } else {
+    aboutMore.textContent = 'See more';
+    if(icon) icon.className = 'fas fa-chevron-down';
   }
 }
 
@@ -1363,7 +1572,6 @@ function toggleHours() {
     hoursMore.textContent = 'Show less';
     if(icon) icon.className = 'fas fa-chevron-up';
     
-    // Show all days
     hourItems.forEach(item => {
       item.style.display = 'flex';
     });
@@ -1371,14 +1579,13 @@ function toggleHours() {
     hoursMore.textContent = 'See all days';
     if(icon) icon.className = 'fas fa-chevron-down';
     
-    // Show only first 3 days
     hourItems.forEach((item, index) => {
       item.style.display = index < 3 ? 'flex' : 'none';
     });
   }
 }
 
-// WhatsApp Functions with Customer Message
+// WhatsApp Functions
 function openWhatsAppChat(context) {
   if(!card.phone) {
     showNotification('WhatsApp number not available');
@@ -1390,7 +1597,6 @@ function openWhatsAppChat(context) {
   
   switch(context) {
     case 'greeting':
-      // Message FROM CUSTOMER TO BUSINESS
       message = `Hello! I found your digital business card and I'm interested in your products/services. Could you please provide more information?`;
       break;
       
@@ -1426,7 +1632,7 @@ function openWhatsAppChat(context) {
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
 }
 
-// Share Functions
+// Share Functions - ALL FIXED AND FUNCTIONAL
 function openShareModal() {
   document.getElementById('shareModal').style.display = 'flex';
   document.body.style.overflow = 'hidden';
@@ -1443,20 +1649,24 @@ function shareViaWhatsApp() {
                  `${card.business?.about ? `${card.business.about.substring(0, 100)}...\n\n` : '\n'}` +
                  `View the complete digital card here:\n${window.location.href}`;
   window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+  closeShareModal();
 }
 
 function shareViaFacebook() {
   window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
+  closeShareModal();
 }
 
 function shareViaTwitter() {
   const message = `Check out ${card.name || 'this'} digital business card! ${window.location.href}`;
   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`, '_blank');
+  closeShareModal();
 }
 
 function copyCardLink() {
   navigator.clipboard.writeText(window.location.href).then(() => {
     showNotification('✅ Card link copied to clipboard!');
+    closeShareModal();
   }).catch(err => {
     const textArea = document.createElement('textarea');
     textArea.value = window.location.href;
@@ -1465,12 +1675,14 @@ function copyCardLink() {
     document.execCommand('copy');
     document.body.removeChild(textArea);
     showNotification('✅ Card link copied to clipboard!');
+    closeShareModal();
   });
 }
 
 function shareViaSMS() {
   const message = `Check out ${card.name || 'this'} digital business card: ${window.location.href}`;
   window.open(`sms:?body=${encodeURIComponent(message)}`, '_blank');
+  closeShareModal();
 }
 
 function shareViaEmail() {
@@ -1481,6 +1693,7 @@ function shareViaEmail() {
               `${card.business?.about ? `About: ${card.business.about.substring(0, 150)}...\n` : ''}\n` +
               `Best regards,\n${card.name || 'Digital Card'}`;
   window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
+  closeShareModal();
 }
 
 // Cart Functions
@@ -1549,7 +1762,6 @@ function openCartModal() {
     cartItems.appendChild(cartItem);
   });
   
-  // Calculate total
   const total = cart.reduce((sum, item) => {
     const price = parseFloat(item.discountPrice || item.originalPrice || 0);
     return sum + price;
@@ -1597,7 +1809,6 @@ function checkoutCart() {
     showNotification('Please contact business directly for order');
   }
   
-  // Clear cart after checkout
   cart = [];
   localStorage.setItem('cart', JSON.stringify(cart));
   updateCartCount();
@@ -1628,6 +1839,13 @@ function showProductModal(productIndex) {
     document.getElementById('modalPrice').textContent = price ? `PKR ${price}` : 'Price not available';
   }
   
+  // Show payment methods if available
+  if(card.payments && (card.payments.jazzcash?.active || card.payments.whatsapp?.active)) {
+    document.getElementById('modalPaymentSection').style.display = 'block';
+  } else {
+    document.getElementById('modalPaymentSection').style.display = 'none';
+  }
+  
   modal.style.display = 'flex';
   document.body.style.overflow = 'hidden';
   selectedPaymentMethod = null;
@@ -1647,8 +1865,12 @@ function addToCartFromModal() {
 
 function buyNowProduct() {
   if(currentProduct) {
-    openWhatsAppChat('order');
-    closeModal('productModal');
+    if(selectedPaymentMethod === 'jazzcash' && card.payments?.jazzcash?.active) {
+      openJazzcashModal();
+    } else {
+      openWhatsAppChat('order');
+      closeModal('productModal');
+    }
   }
 }
 
@@ -1663,6 +1885,67 @@ function selectPayment(method) {
   
   jazzcashOption.style.backgroundColor = method === 'jazzcash' ? '#f8fafc' : 'white';
   codOption.style.backgroundColor = method === 'cod' ? '#f8fafc' : 'white';
+}
+
+// JazzCash Modal Functions
+function openJazzcashModal() {
+  const jazzcashDetails = document.getElementById('jazzcashDetails');
+  let html = '';
+  
+  if(card.payments?.jazzcash?.active) {
+    html = `
+      <div style="text-align:center;">
+        <div style="margin-bottom:20px;">
+          <div style="font-size:16px;font-weight:600;color:#1e293b;margin-bottom:8px;">${card.payments.jazzcash.type === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'} Details</div>
+          <div style="font-size:24px;font-weight:700;color:#FF6B00;margin:15px 0;">${card.payments.jazzcash.number || ''}</div>
+        </div>
+        
+        ${card.payments.jazzcash.barcode ? `
+          <div style="margin:20px 0;">
+            <div style="font-size:14px;color:#64748b;margin-bottom:10px;">Scan QR Code to Pay</div>
+            <img src="${card.payments.jazzcash.barcode}" style="max-width:250px;max-height:250px;border-radius:12px;border:2px solid #e2e8f0;">
+          </div>
+        ` : ''}
+        
+        <div style="background:#f8fafc;padding:15px;border-radius:12px;margin-top:20px;">
+          <div style="font-size:14px;color:#64748b;margin-bottom:8px;">Instructions:</div>
+          <div style="font-size:13px;color:#475569;">
+            1. Send payment to the above ${card.payments.jazzcash.type === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'} number<br>
+            2. Take screenshot of payment confirmation<br>
+            3. Share screenshot via WhatsApp for order confirmation
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  jazzcashDetails.innerHTML = html;
+  document.getElementById('jazzcashModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeJazzcashModal() {
+  document.getElementById('jazzcashModal').style.display = 'none';
+  document.body.style.overflow = 'auto';
+}
+
+function proceedWithJazzcash() {
+  if(currentProduct) {
+    const price = currentProduct.discountPrice || currentProduct.originalPrice;
+    let message = `Hello! I have made a ${card.payments.jazzcash.type === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'} payment for:\n\n` +
+                 `Product: ${currentProduct.title || 'Product'}\n` +
+                 `Amount: PKR ${price || '0'}\n` +
+                 `Payment sent to: ${card.payments.jazzcash.number || ''}\n\n` +
+                 `Please confirm my order.`;
+    
+    if(card.phone) {
+      const phone = card.phone.replace(/\D/g, '');
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+    }
+    
+    closeJazzcashModal();
+    closeModal('productModal');
+  }
 }
 
 // Contact Functions
@@ -1701,27 +1984,6 @@ function closeModal(modalId) {
   document.body.style.overflow = 'auto';
 }
 
-function toggleAbout() {
-  const aboutSection = document.getElementById('aboutSection');
-  const aboutMore = document.getElementById('aboutMore');
-  
-  if(aboutSection && aboutMore) {
-    aboutSection.classList.toggle('expanded');
-    const icon = aboutMore.nextElementSibling;
-    if(aboutSection.classList.contains('expanded')) {
-      aboutMore.textContent = 'See less';
-      if(icon) icon.className = 'fas fa-chevron-up';
-    } else {
-      aboutMore.textContent = 'See more';
-      if(icon) icon.className = 'fas fa-chevron-down';
-    }
-  }
-}
-
-function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
 function showNotification(message) {
   const notification = document.createElement('div');
   notification.style.cssText = `
@@ -1756,7 +2018,7 @@ function showNotification(message) {
 
 // Close modals when clicking outside
 document.addEventListener('click', (e) => {
-  const modals = ['productModal', 'cartModal', 'shareModal'];
+  const modals = ['productModal', 'cartModal', 'shareModal', 'jazzcashModal'];
   
   modals.forEach(modalId => {
     const modal = document.getElementById(modalId);
@@ -1769,7 +2031,7 @@ document.addEventListener('click', (e) => {
 // Close modals with Escape key
 document.addEventListener('keydown', (e) => {
   if(e.key === 'Escape') {
-    const modals = ['productModal', 'cartModal', 'shareModal'];
+    const modals = ['productModal', 'cartModal', 'shareModal', 'jazzcashModal'];
     modals.forEach(modalId => {
       const modal = document.getElementById(modalId);
       if(modal && modal.style.display === 'flex') {
