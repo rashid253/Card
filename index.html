@@ -350,6 +350,27 @@ button:active{
  content:" *";
  color:#ef4444;
 }
+
+/* Toast Notification */
+.toast{
+ position:fixed;
+ top:20px;
+ right:20px;
+ background:#10b981;
+ color:white;
+ padding:12px 20px;
+ border-radius:8px;
+ z-index:2000;
+ animation:fadeInOut 3s;
+ box-shadow:0 4px 12px rgba(0,0,0,0.15);
+ display:none;
+}
+@keyframes fadeInOut {
+ 0% { opacity:0; transform:translateY(-20px); }
+ 15% { opacity:1; transform:translateY(0); }
+ 85% { opacity:1; transform:translateY(0); }
+ 100% { opacity:0; transform:translateY(-20px); }
+}
 </style>
 </head>
 
@@ -358,6 +379,9 @@ button:active{
  <div class="spinner"></div>
  <div>Creating your digital card...</div>
 </div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast"></div>
 
 <div class="wrap">
  <div class="header">
@@ -389,7 +413,7 @@ button:active{
  <div class="holidayBox">
   <div class="holidayHeader">
    <label><i class="fas fa-calendar-times"></i> Special Holidays / Closed Days</label>
-   <button type="button" class="addHolidayBtn" onclick="addHoliday()">+ Add Holiday</button>
+   <button type="button" class="addHolidayBtn">+ Add Holiday</button>
   </div>
   <div id="holidaysContainer">
    <!-- Holidays will be added here -->
@@ -422,11 +446,11 @@ button:active{
 
  <h2><i class="fas fa-gift"></i> Special Offers</h2>
  <div id="offersForm"></div>
- <button type="button" onclick="addOffer()" style="background:#8b5cf6;">
+ <button type="button" id="addOfferBtn" style="background:#8b5cf6;">
   <i class="fas fa-plus"></i> Add New Offer
  </button>
 
- <button type="button" onclick="generateCard()" style="background:#2563eb;margin-top:30px;">
+ <button type="button" id="generateCardBtn" style="background:#2563eb;margin-top:30px;">
   <i class="fas fa-magic"></i> Generate Digital Card
  </button>
 </div>
@@ -438,11 +462,37 @@ const SUPABASE_URL = 'https://dfvnefbxgayxqgjjgtrr.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE';
 // =================================================
 
-// Initialize Supabase
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Global variables
+let supabase = null;
+let offerCount = 0;
 
-// Initialize business hours on page load
+// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+ console.log("Initializing Digital Card Creator...");
+ 
+ // Initialize Supabase
+ try {
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  console.log("Supabase initialized successfully");
+ } catch (error) {
+  console.error("Failed to initialize Supabase:", error);
+  showToast("Error: Failed to connect to database", "error");
+  return;
+ }
+
+ // Initialize business hours
+ initializeBusinessHours();
+ 
+ // Initialize event listeners
+ initializeEventListeners();
+ 
+ // Add initial offer
+ addOffer();
+ 
+ console.log("Digital Card Creator initialized successfully");
+});
+
+function initializeBusinessHours() {
  const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
  const daysContainer = document.getElementById('daysContainer');
  
@@ -492,7 +542,11 @@ document.addEventListener('DOMContentLoaded', function() {
    }
   });
  });
+}
 
+function initializeEventListeners() {
+ console.log("Setting up event listeners...");
+ 
  // Payment method toggle
  document.querySelectorAll('input[name="payment"]').forEach(radio => {
   radio.addEventListener('change', function() {
@@ -501,9 +555,17 @@ document.addEventListener('DOMContentLoaded', function() {
   });
  });
 
- // Add initial offer
- addOffer();
-});
+ // Add holiday button
+ document.querySelector('.addHolidayBtn').addEventListener('click', addHoliday);
+ 
+ // Add offer button
+ document.getElementById('addOfferBtn').addEventListener('click', addOffer);
+ 
+ // Generate card button
+ document.getElementById('generateCardBtn').addEventListener('click', generateCard);
+ 
+ console.log("Event listeners set up successfully");
+}
 
 // Holiday management
 function addHoliday() {
@@ -513,17 +575,17 @@ function addHoliday() {
  holidayItem.innerHTML = `
   <input type="text" class="holidayName" placeholder="E.g., Eid ul-Fitr">
   <input type="date" class="holidayDate">
-  <button type="button" class="removeHoliday" onclick="removeHoliday(this)">×</button>
+  <button type="button" class="removeHoliday">×</button>
  `;
  container.appendChild(holidayItem);
-}
-
-function removeHoliday(button) {
- button.parentElement.remove();
+ 
+ // Add event listener to remove button
+ holidayItem.querySelector('.removeHoliday').addEventListener('click', function() {
+  holidayItem.remove();
+ });
 }
 
 // Offer management
-let offerCount = 0;
 function addOffer(){
  offerCount++;
  const box = document.createElement("div");
@@ -556,6 +618,11 @@ function addOffer(){
 // Image compression function
 function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.7) {
  return new Promise((resolve, reject) => {
+  if (!file) {
+   resolve('');
+   return;
+  }
+  
   if (!file.type.match('image.*')) {
    reject(new Error('File is not an image'));
    return;
@@ -592,31 +659,58 @@ function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.7) {
     const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
     resolve(compressedDataUrl);
    };
-   img.onerror = reject;
+   img.onerror = () => {
+    console.warn("Image load error, using original");
+    resolve(e.target.result);
+   };
    img.src = e.target.result;
   };
-  reader.onerror = reject;
+  reader.onerror = () => {
+   console.warn("File read error");
+   resolve('');
+  };
   reader.readAsDataURL(file);
  });
 }
 
+// Toast notification
+function showToast(message, type = 'success') {
+ const toast = document.getElementById('toast');
+ toast.textContent = message;
+ toast.style.background = type === 'error' ? '#ef4444' : '#10b981';
+ toast.style.display = 'block';
+ 
+ setTimeout(() => {
+  toast.style.display = 'none';
+ }, 3000);
+}
+
+// Validate phone number
+function validatePhoneNumber(phone) {
+ const cleaned = phone.replace(/\D/g, '');
+ if (cleaned.length < 10 || cleaned.length > 15) {
+  return false;
+ }
+ return true;
+}
+
 // Generate card function
 async function generateCard() {
+ console.log("Generating card...");
+ 
  // Validate required fields
  const fullName = document.getElementById('fullName').value.trim();
  const phoneNumber = document.getElementById('phoneNumber').value.trim();
  
  if(!fullName || !phoneNumber){
-  alert("❌ Name and Phone number are required fields!");
+  showToast("❌ Name and Phone number are required fields!", "error");
   document.getElementById('fullName').focus();
   return;
  }
 
  // Validate phone number format
- const phoneRegex = /^[\+]?[0-9]{10,15}$/;
- const cleanedPhone = phoneNumber.replace(/\D/g, '');
- if(!phoneRegex.test(cleanedPhone)){
-  alert("❌ Please enter a valid phone number!");
+ if(!validatePhoneNumber(phoneNumber)){
+  showToast("❌ Please enter a valid phone number (10-15 digits)!", "error");
   document.getElementById('phoneNumber').focus();
   return;
  }
@@ -628,6 +722,7 @@ async function generateCard() {
  try {
   // Generate unique ID
   const id = crypto.randomUUID();
+  console.log("Generated card ID:", id);
 
   // Collect profile data
   const profileImageFile = document.getElementById('profileImage').files[0];
@@ -635,6 +730,7 @@ async function generateCard() {
   if(profileImageFile){
    try {
     profileImageData = await compressImage(profileImageFile);
+    console.log("Profile image compressed");
    } catch(err) {
     console.warn("Profile image compression failed:", err);
     // Use original file as fallback
@@ -646,23 +742,26 @@ async function generateCard() {
    }
   }
 
-  // Collect business hours
+  // Collect business hours - FIXED STRUCTURE
   const businessHoursArray = [];
   const dayBoxes = document.querySelectorAll(".dayBox");
   const dayNames = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
   
   dayBoxes.forEach((box, index) => {
-   const open = box.querySelector(".dayOpen").checked;
-   const status = box.querySelector(".dayStatus").value;
-   const start = box.querySelector(".dayStart").value;
-   const end = box.querySelector(".dayEnd").value;
+   const openCheckbox = box.querySelector(".dayOpen");
+   const statusSelect = box.querySelector(".dayStatus");
+   const startInput = box.querySelector(".dayStart");
+   const endInput = box.querySelector(".dayEnd");
+   
+   const isOpen = openCheckbox.checked && statusSelect.value === 'open';
+   const startTime = isOpen ? (startInput.value || "09:00") : "";
+   const endTime = isOpen ? (endInput.value || "17:00") : "";
    
    businessHoursArray.push({
-    day: dayNames[index] || `Day ${index + 1}`,
-    open: open && status === 'open',
-    status: status,
-    start: (open && status === 'open') ? start || "09:00" : "",
-    end: (open && status === 'open') ? end || "17:00" : ""
+    open: isOpen,
+    status: statusSelect.value,
+    start: startTime,
+    end: endTime
    });
   });
 
@@ -670,12 +769,13 @@ async function generateCard() {
   const holidaysArray = [];
   const holidayItems = document.querySelectorAll(".holidayItem");
   holidayItems.forEach(item => {
-   const name = item.querySelector(".holidayName").value.trim();
-   const date = item.querySelector(".holidayDate").value;
-   if(name) {
+   const nameInput = item.querySelector(".holidayName");
+   const dateInput = item.querySelector(".holidayDate");
+   
+   if(nameInput && nameInput.value.trim()) {
     holidaysArray.push({
-     name: name,
-     date: date || "Date not specified"
+     name: nameInput.value.trim(),
+     date: dateInput.value || "Date not specified"
     });
    }
   });
@@ -692,6 +792,7 @@ async function generateCard() {
    if(jazzcashQrFile){
     try {
      jazzcashQrData = await compressImage(jazzcashQrFile, 400, 400, 0.8);
+     console.log("JazzCash QR compressed");
     } catch(err) {
      console.warn("JazzCash QR compression failed:", err);
     }
@@ -709,11 +810,17 @@ async function generateCard() {
   
   for(let i = 0; i < offerBoxes.length; i++){
    const box = offerBoxes[i];
-   const title = box.querySelector(".offerTitle").value.trim();
-   const desc = box.querySelector(".offerDesc").value.trim();
-   const price = box.querySelector(".offerPrice").value.trim();
-   const originalPrice = box.querySelector(".offerOriginalPrice").value.trim();
-   const file = box.querySelector(".offerImg").files[0];
+   const titleInput = box.querySelector(".offerTitle");
+   const descInput = box.querySelector(".offerDesc");
+   const priceInput = box.querySelector(".offerPrice");
+   const originalPriceInput = box.querySelector(".offerOriginalPrice");
+   const fileInput = box.querySelector(".offerImg");
+   
+   const title = titleInput ? titleInput.value.trim() : '';
+   const desc = descInput ? descInput.value.trim() : '';
+   const price = priceInput ? priceInput.value.trim() : '';
+   const originalPrice = originalPriceInput ? originalPriceInput.value.trim() : '';
+   const file = fileInput ? fileInput.files[0] : null;
    
    // Only add if there's any data
    if(title || desc || price || originalPrice || file){
@@ -742,10 +849,10 @@ async function generateCard() {
    }
   }
 
-  // Prepare complete card data
+  // Prepare complete card data - MATCHING card.html STRUCTURE
   const cardData = {
    name: fullName,
-   phone: cleanedPhone,
+   phone: phoneNumber.replace(/\D/g, ''), // Clean phone number
    email: document.getElementById('email').value.trim(),
    address: document.getElementById('address').value.trim(),
    website: document.getElementById('website').value.trim(),
@@ -756,11 +863,14 @@ async function generateCard() {
    paymentMethod: paymentMethod,
    jazzcash: jazzcashData,
    offers: offersArray,
-   profileImage: profileImageData,
-   createdAt: new Date().toISOString()
+   profileImage: profileImageData
   };
 
-  console.log("Prepared card data:", cardData);
+  console.log("Prepared card data for Supabase:", {
+   id: id,
+   data: cardData,
+   created_at: new Date().toISOString()
+  });
 
   // Save to Supabase
   const { data, error } = await supabase
@@ -776,15 +886,32 @@ async function generateCard() {
     .single();
 
   if(error){
-    console.error("Supabase insert error:", error);
-    throw new Error(`Database error: ${error.message}`);
+    console.error("Supabase insert error details:", error);
+    
+    // Check for common errors
+    if (error.code === '42501') {
+     throw new Error("Permission denied. Check Supabase RLS policies.");
+    } else if (error.code === '42P01') {
+     throw new Error("Table 'cards' doesn't exist. Create it in Supabase.");
+    } else if (error.message.includes('JWT')) {
+     throw new Error("Invalid Supabase credentials. Check your API key.");
+    } else if (error.message.includes('network')) {
+     throw new Error("Network error. Check your internet connection.");
+    } else {
+     throw new Error(`Database error: ${error.message}`);
+    }
   }
 
-  console.log("Card saved successfully:", data);
+  console.log("Card saved successfully to Supabase:", data);
 
   // Store ID in localStorage and redirect
   localStorage.setItem("lastCardId", id);
-  window.location.href = `card.html?id=${id}`;
+  showToast("✅ Card created successfully! Redirecting...");
+  
+  // Wait a bit before redirecting to show the success message
+  setTimeout(() => {
+   window.location.href = `card.html?id=${id}`;
+  }, 1500);
 
  } catch (error) {
   console.error("Generate card error:", error);
@@ -792,18 +919,20 @@ async function generateCard() {
   
   // Show user-friendly error message
   let errorMessage = error.message;
-  if(error.message.includes('network') || error.message.includes('fetch')) {
-   errorMessage = "Network error. Please check your internet connection and try again.";
-  } else if(error.message.includes('Database error')) {
-   errorMessage = "Database error. Please check your Supabase configuration.";
-  }
-  
-  alert(`❌ Error creating card: ${errorMessage}`);
+  showToast(`❌ Error: ${errorMessage}`, "error");
   
   // Log to console for debugging
   console.error("Full error details:", error);
  }
 }
+
+// Add keyboard shortcut (Ctrl+Enter) to generate card
+document.addEventListener('keydown', function(e) {
+ if (e.ctrlKey && e.key === 'Enter') {
+  e.preventDefault();
+  generateCard();
+ }
+});
 </script>
 </body>
 </html>
