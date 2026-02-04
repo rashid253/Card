@@ -399,6 +399,12 @@ body{
  color:white;
  font-size:24px;
  cursor:pointer;
+ padding:0;
+ width:40px;
+ height:40px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
 }
 .offerPanelImg{
  width:100%;
@@ -439,6 +445,10 @@ body{
  flex:1;
  border:none;
  font-size:16px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
 }
 .panelCTA.whatsapp{background:#25d366;color:#fff}
 .panelCTA.cart{background:var(--primary);color:#fff}
@@ -473,6 +483,12 @@ body{
  color:white;
  font-size:24px;
  cursor:pointer;
+ padding:0;
+ width:40px;
+ height:40px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
 }
 .cartItems{
  padding:16px;
@@ -591,6 +607,12 @@ body{
  font-size:24px;
  cursor:pointer;
  color:#64748b;
+ padding:0;
+ width:40px;
+ height:40px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
 }
 .jazzcashQr{
  text-align:center;
@@ -623,6 +645,41 @@ body{
  margin-top:8px;
  text-align:center;
 }
+
+/* Notification */
+.notification{
+ position:fixed;
+ top:20px;
+ right:20px;
+ background:#10b981;
+ color:white;
+ padding:12px 20px;
+ border-radius:8px;
+ z-index:2000;
+ animation:fadeInOut 3s;
+ box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+@keyframes fadeInOut {
+ 0% { opacity:0; transform:translateY(-20px); }
+ 15% { opacity:1; transform:translateY(0); }
+ 85% { opacity:1; transform:translateY(0); }
+ 100% { opacity:0; transform:translateY(-20px); }
+}
+@keyframes fadeOut {
+ to { opacity:0; }
+}
+
+/* Empty State */
+.emptyCart{
+ text-align:center;
+ padding:40px;
+ color:#64748b;
+}
+.emptyCart i{
+ font-size:48px;
+ margin-bottom:16px;
+ opacity:0.3;
+}
 </style>
 </head>
 
@@ -640,14 +697,14 @@ body{
 </div>
 
 <div class="profile">
- <img id="photo" src="" alt="Profile Picture">
+ <img id="photo" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="Profile Picture">
  <div class="info">
   <div id="name">Loading...</div>
   <div id="business">Loading...</div>
   <div id="phone"><i class="fas fa-phone"></i> <span>Loading...</span></div>
   <div id="email"><i class="fas fa-envelope"></i> <span>Loading...</span></div>
   <div id="address"><i class="fas fa-map-marker-alt"></i> <span>Loading...</span></div>
-  <div id="websiteText" style="display:none"><i class="fas fa-globe"></i> <span>Loading...</span></div>
+  <a id="websiteText" style="display:none"><i class="fas fa-globe"></i> <span>Loading...</span></a>
  </div>
  <i class="fa fa-floppy-disk saveIcon" title="Save Contact"></i>
 </div>
@@ -682,11 +739,11 @@ body{
   <h2>Offer Details</h2>
   <button class="closePanel">×</button>
  </div>
- <img id="panelImg" class="offerPanelImg">
+ <img id="panelImg" class="offerPanelImg" src="https://cdn.pixabay.com/photo/2017/06/10/07/18/shopping-2389637_1280.png" alt="Offer Image">
  <div class="offerPanelContent">
-  <h2 id="panelTitle"></h2>
-  <div id="panelPrice" class="offerPanelPrice"></div>
-  <p id="panelDesc" class="offerPanelDesc"></p>
+  <h2 id="panelTitle">Offer Title</h2>
+  <div id="panelPrice" class="offerPanelPrice">Contact for price</div>
+  <p id="panelDesc" class="offerPanelDesc">Offer description will appear here.</p>
   <div class="panelActions">
    <button class="panelCTA whatsapp" id="panelWhatsApp"><i class="fab fa-whatsapp"></i> WhatsApp</button>
    <button class="panelCTA cart" id="panelCart"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -701,14 +758,17 @@ body{
   <button class="closeCart">×</button>
  </div>
  <div class="cartItems" id="cartItems">
-  <!-- Cart items will be added here -->
+  <div class="emptyCart">
+   <i class="fas fa-shopping-cart"></i>
+   <p>Your cart is empty</p>
+  </div>
  </div>
  <div class="cartFooter">
   <div class="cartTotal">
    <span>Total:</span>
    <span id="cartTotalAmount">Rs 0</span>
   </div>
-  <button class="cartCheckout">Proceed to Checkout</button>
+  <button class="cartCheckout" id="checkoutBtn">Proceed to Checkout</button>
  </div>
 </div>
 
@@ -732,29 +792,37 @@ const SUPABASE_URL = 'https://dfvnefbxgayxqgjjgtrr.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE';
 // =================================================
 
-document.addEventListener("DOMContentLoaded", async () => {
- const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
- 
- // Get card ID from URL or localStorage
- const urlParams = new URLSearchParams(window.location.search);
- let cardId = urlParams.get('id');
- 
- if (!cardId) {
-  cardId = localStorage.getItem('lastCardId');
-  if (cardId) {
-   window.history.replaceState({}, '', `?id=${cardId}`);
-  }
- }
- 
- if (!cardId) {
-  showError("No Digital Card Found", "Please scan a valid QR code or use a correct link");
-  return;
- }
+// Global variables
+let currentCard = null;
+let cardId = null;
+let cart = [];
 
+// Initialize when DOM is loaded
+document.addEventListener("DOMContentLoaded", async () => {
+ console.log("DOM loaded, initializing...");
+ 
  try {
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  
+  // Get card ID from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  cardId = urlParams.get('id');
+  
+  if (!cardId) {
+   cardId = localStorage.getItem('lastCardId');
+   if (cardId) {
+    window.history.replaceState({}, '', `?id=${cardId}`);
+   }
+  }
+  
+  if (!cardId) {
+   showError("No Digital Card Found", "Please scan a valid QR code or use a correct link");
+   return;
+  }
+
   console.log('Fetching card with ID:', cardId);
   
-  // Fetch card data from Supabase
+  // Fetch card data
   const { data, error } = await supabase
    .from('cards')
    .select('*')
@@ -774,22 +842,20 @@ document.addEventListener("DOMContentLoaded", async () => {
    throw new Error('Invalid card data format');
   }
 
-  const card = data.data;
-  console.log("Loaded card data:", card);
+  currentCard = data.data;
+  console.log("Loaded card data:", currentCard);
   
-  // Store for global access
-  window.currentCard = card;
-  window.cardId = cardId;
-  window.cart = JSON.parse(localStorage.getItem(`cart_${cardId}`)) || [];
+  // Load cart from localStorage
+  cart = JSON.parse(localStorage.getItem(`cart_${cardId}`)) || [];
   
   // Hide loading
   document.getElementById('loading').style.display = 'none';
   
   // Populate card data
-  populateCardData(card);
+  populateCardData(currentCard);
   
   // Initialize event listeners
-  initializeEventListeners(card);
+  initializeEventListeners();
   
  } catch (error) {
   console.error("Error loading card:", error);
@@ -799,22 +865,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 function showError(title, message) {
  document.getElementById('loading').style.display = 'none';
- document.body.innerHTML = `
-  <div class="error">
-   <h3>${title}</h3>
-   <p>${message}</p>
-   <div style="background:#fef2f2;padding:15px;border-radius:10px;margin:15px 0;max-width:400px;">
-    <p><strong>Troubleshooting:</strong></p>
-    <ul style="text-align:left;margin:10px 20px;">
-     <li>Check if 'cards' table exists in Supabase</li>
-     <li>Run app with Live Server (not file://)</li>
-     <li>Check browser console for errors</li>
-     <li>Verify Supabase credentials are correct</li>
-    </ul>
-   </div>
-   <button onclick="location.href='index.html'">Create New Card</button>
+ const errorDiv = document.createElement('div');
+ errorDiv.className = 'error';
+ errorDiv.innerHTML = `
+  <h3>${title}</h3>
+  <p>${message}</p>
+  <div style="background:#fef2f2;padding:15px;border-radius:10px;margin:15px 0;max-width:400px;">
+   <p><strong>Troubleshooting:</strong></p>
+   <ul style="text-align:left;margin:10px 20px;">
+    <li>Check if 'cards' table exists in Supabase</li>
+    <li>Make sure you have an active internet connection</li>
+    <li>Check browser console for errors</li>
+    <li>Verify Supabase credentials are correct</li>
+   </ul>
   </div>
+  <button onclick="location.href='index.html'">Create New Card</button>
  `;
+ document.body.innerHTML = '';
+ document.body.appendChild(errorDiv);
 }
 
 function populateCardData(card) {
@@ -822,33 +890,33 @@ function populateCardData(card) {
  const photoEl = document.getElementById('photo');
  if (card.profileImage && card.profileImage.startsWith('data:image')) {
   photoEl.src = card.profileImage;
- } else {
-  photoEl.src = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
  }
 
  // Populate basic info
  document.getElementById('name').textContent = card.name || 'No Name';
  document.getElementById('business').textContent = card.businessName || 'Business';
- document.getElementById('phone').querySelector('span').textContent = card.phone || 'N/A';
- document.getElementById('email').querySelector('span').textContent = card.email || 'N/A';
- document.getElementById('address').querySelector('span').textContent = card.address || 'N/A';
+ document.getElementById('phone').querySelector('span').textContent = formatPhoneNumber(card.phone) || 'Not available';
+ document.getElementById('email').querySelector('span').textContent = card.email || 'Not available';
+ document.getElementById('address').querySelector('span').textContent = card.address || 'Not available';
 
  // Website
  const websiteEl = document.getElementById('websiteText');
  if (card.website) {
   websiteEl.style.display = 'flex';
   websiteEl.querySelector('span').textContent = card.website;
-  websiteEl.href = card.website;
+  websiteEl.href = card.website.startsWith('http') ? card.website : `https://${card.website}`;
   websiteEl.target = '_blank';
+  websiteEl.rel = 'noopener noreferrer';
  }
 
  // About section
  const aboutText = document.getElementById('aboutText');
- if (card.businessAbout) {
+ if (card.businessAbout && card.businessAbout.trim()) {
   aboutText.textContent = card.businessAbout;
   // Show "See more" if text is long
   if (card.businessAbout.length > 150) {
-   document.getElementById('aboutMore').style.display = 'inline-block';
+   const aboutMore = document.getElementById('aboutMore');
+   aboutMore.style.display = 'inline-block';
   }
  } else {
   aboutText.textContent = 'No description available';
@@ -861,10 +929,12 @@ function populateCardData(card) {
    const dayName = dayNames[index] || `Day ${index + 1}`;
    
    if (day.open && day.status === 'open') {
+    const startTime = day.start || '09:00';
+    const endTime = day.end || '17:00';
     return `
      <div class="dayRow">
       <div class="dayName">${dayName}</div>
-      <div class="dayTime">${day.start || '09:00'} - ${day.end || '17:00'}</div>
+      <div class="dayTime">${startTime} - ${endTime}</div>
      </div>
     `;
    } else {
@@ -922,7 +992,7 @@ function populateCardData(card) {
     : '';
    
    offerEl.innerHTML = `
-    <img src="${imageSrc}" alt="${offer.title || 'Offer'}">
+    <img src="${imageSrc}" alt="${offer.title || 'Offer'}" loading="lazy">
     <div class="offerBadges">${badgesHTML}</div>
     <div class="offerOverlay">
      <div class="offerTitle">${offer.title || 'Special Offer'}</div>
@@ -949,7 +1019,7 @@ function populateCardData(card) {
   websiteSection.className = 'section';
   websiteSection.innerHTML = `
    <h3><i class="fas fa-globe"></i> Website</h3>
-   <a href="${card.website}" target="_blank" class="websiteLink">
+   <a href="${card.website.startsWith('http') ? card.website : `https://${card.website}`}" target="_blank" class="websiteLink" rel="noopener noreferrer">
     <i class="fas fa-external-link-alt"></i>
     Visit Website
    </a>
@@ -958,7 +1028,9 @@ function populateCardData(card) {
  }
 }
 
-function initializeEventListeners(card) {
+function initializeEventListeners() {
+ console.log("Initializing event listeners...");
+ 
  // About expand/collapse
  const aboutMore = document.getElementById('aboutMore');
  if (aboutMore.style.display !== 'none') {
@@ -971,57 +1043,105 @@ function initializeEventListeners(card) {
 
  // Call button
  document.getElementById('call').addEventListener('click', () => {
-  if (card.phone) {
-   window.location.href = `tel:${card.phone}`;
+  if (currentCard && currentCard.phone) {
+   const phoneNumber = currentCard.phone.replace(/\D/g, '');
+   window.location.href = `tel:${phoneNumber}`;
+  } else {
+   showNotification('Phone number not available');
   }
  });
 
  // WhatsApp button
  document.getElementById('whatsappAction').addEventListener('click', () => {
-  if (card.phone) {
-   const message = encodeURIComponent(`Hello, I'm interested in your services.`);
-   window.open(`https://wa.me/${card.phone.replace(/\D/g, '')}?text=${message}`, '_blank');
+  if (currentCard && currentCard.phone) {
+   const phoneNumber = currentCard.phone.replace(/\D/g, '');
+   const message = encodeURIComponent(`Hello ${currentCard.name}, I saw your digital card and I'm interested in your services.`);
+   window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+  } else {
+   showNotification('WhatsApp number not available');
   }
  });
 
  // Email button
  document.getElementById('mail').addEventListener('click', () => {
-  if (card.email) {
-   window.location.href = `mailto:${card.email}`;
+  if (currentCard && currentCard.email) {
+   window.location.href = `mailto:${currentCard.email}`;
+  } else {
+   showNotification('Email not available');
   }
  });
 
  // Save contact
  document.querySelector('.saveIcon').addEventListener('click', () => {
+  if (!currentCard) return;
+  
   if (navigator.share) {
    navigator.share({
-    title: card.businessName || card.name,
-    text: `Contact ${card.name}: ${card.phone}`,
+    title: currentCard.businessName || currentCard.name,
+    text: `Contact ${currentCard.name}: ${currentCard.phone}`,
     url: window.location.href
    });
   } else {
-   alert(`Contact saved!\nName: ${card.name}\nPhone: ${card.phone}\nEmail: ${card.email || 'N/A'}`);
+   const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:${currentCard.name}
+TEL:${currentCard.phone}
+EMAIL:${currentCard.email || ''}
+ORG:${currentCard.businessName || ''}
+ADR:${currentCard.address || ''}
+URL:${currentCard.website || ''}
+NOTE:${currentCard.businessAbout || ''}
+END:VCARD`;
+   
+   const blob = new Blob([vcard], { type: 'text/vcard' });
+   const url = URL.createObjectURL(blob);
+   const a = document.createElement('a');
+   a.href = url;
+   a.download = `${currentCard.name}.vcf`;
+   a.click();
+   URL.revokeObjectURL(url);
+   
+   showNotification('Contact saved to downloads!');
   }
  });
 
  // Share button
  document.getElementById('share').addEventListener('click', () => {
+  if (!currentCard) return;
+  
   if (navigator.share) {
    navigator.share({
-    title: card.businessName || card.name,
-    text: `Check out ${card.name}'s digital card`,
+    title: currentCard.businessName || currentCard.name,
+    text: `Check out ${currentCard.name}'s digital card`,
     url: window.location.href
    });
   } else {
-   navigator.clipboard.writeText(window.location.href);
-   alert('Link copied to clipboard!');
+   navigator.clipboard.writeText(window.location.href)
+    .then(() => showNotification('Link copied to clipboard!'))
+    .catch(() => {
+     const tempInput = document.createElement('input');
+     tempInput.value = window.location.href;
+     document.body.appendChild(tempInput);
+     tempInput.select();
+     document.execCommand('copy');
+     document.body.removeChild(tempInput);
+     showNotification('Link copied to clipboard!');
+    });
+  }
+ });
+
+ // Map button
+ document.getElementById('map').addEventListener('click', () => {
+  if (currentCard && currentCard.address) {
+   const encodedAddress = encodeURIComponent(currentCard.address);
+   window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, '_blank');
+  } else {
+   showNotification('Address not available');
   }
  });
 
  // Cart button
- document.getElementById('cartBtn').addEventListener('click', () => {
-  showCart();
- });
+ document.getElementById('cartBtn').addEventListener('click', showCart);
 
  // Close offer panel
  document.querySelector('.closePanel').addEventListener('click', () => {
@@ -1037,12 +1157,68 @@ function initializeEventListeners(card) {
  document.querySelector('.closePayment').addEventListener('click', () => {
   document.getElementById('paymentModal').style.display = 'none';
  });
+
+ // Checkout button
+ document.getElementById('checkoutBtn').addEventListener('click', showCheckout);
+
+ // Panel WhatsApp button
+ document.getElementById('panelWhatsApp').addEventListener('click', function() {
+  if (currentCard && currentCard.phone) {
+   const phoneNumber = currentCard.phone.replace(/\D/g, '');
+   const panelTitle = document.getElementById('panelTitle').textContent;
+   const panelPrice = document.getElementById('panelPrice').textContent;
+   const message = encodeURIComponent(`I'm interested in: ${panelTitle}\nPrice: ${panelPrice}`);
+   window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+  }
+ });
+
+ // Panel Cart button
+ document.getElementById('panelCart').addEventListener('click', function() {
+  const offerIndex = parseInt(document.getElementById('offerPanel').dataset.offerIndex);
+  if (!isNaN(offerIndex)) {
+   addToCart(offerIndex);
+   document.getElementById('offerPanel').style.display = 'none';
+  }
+ });
+
+ console.log("Event listeners initialized");
+}
+
+// Helper functions
+function formatPhoneNumber(phone) {
+ if (!phone) return '';
+ const cleaned = phone.replace(/\D/g, '');
+ if (cleaned.length === 10) {
+  return cleaned.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+ } else if (cleaned.length === 11) {
+  return cleaned.replace(/(\d{4})(\d{3})(\d{4})/, '$1-$2-$3');
+ }
+ return phone;
+}
+
+function showNotification(message) {
+ const notification = document.createElement('div');
+ notification.className = 'notification';
+ notification.textContent = message;
+ 
+ document.body.appendChild(notification);
+ 
+ setTimeout(() => {
+  notification.style.animation = 'fadeOut 0.5s';
+  setTimeout(() => {
+   if (notification.parentNode) {
+    notification.parentNode.removeChild(notification);
+   }
+  }, 500);
+ }, 2500);
 }
 
 // Offer functions
 window.viewOffer = function(index) {
- const card = window.currentCard;
- const offer = card.offers[index];
+ if (!currentCard || !currentCard.offers || !currentCard.offers[index]) return;
+ 
+ const offer = currentCard.offers[index];
+ const panel = document.getElementById('offerPanel');
  
  document.getElementById('panelTitle').textContent = offer.title || 'Offer';
  document.getElementById('panelDesc').textContent = offer.desc || 'No description';
@@ -1064,48 +1240,38 @@ window.viewOffer = function(index) {
   imgEl.src = 'https://cdn.pixabay.com/photo/2017/06/10/07/18/shopping-2389637_1280.png';
  }
  
- // Update WhatsApp button
- const whatsappBtn = document.getElementById('panelWhatsApp');
- whatsappBtn.onclick = () => {
-  const message = encodeURIComponent(`I'm interested in: ${offer.title}\nPrice: ${offer.price}`);
-  window.open(`https://wa.me/${card.phone.replace(/\D/g, '')}?text=${message}`, '_blank');
- };
+ // Store offer index for cart button
+ panel.dataset.offerIndex = index;
  
- // Update Add to Cart button
- const cartBtn = document.getElementById('panelCart');
- cartBtn.onclick = () => {
-  addToCart(index);
-  document.getElementById('offerPanel').style.display = 'none';
- };
- 
- document.getElementById('offerPanel').style.display = 'flex';
+ panel.style.display = 'flex';
 };
 
 window.addToCart = function(index) {
- const card = window.currentCard;
- const offer = card.offers[index];
+ if (!currentCard || !currentCard.offers || !currentCard.offers[index]) {
+  showNotification('Offer not available');
+  return;
+ }
+ 
+ const offer = currentCard.offers[index];
  
  // Check if already in cart
- const existingIndex = window.cart.findIndex(item => item.offerIndex === index);
+ const existingIndex = cart.findIndex(item => item.offerIndex === index);
  if (existingIndex > -1) {
-  window.cart[existingIndex].quantity += 1;
+  cart[existingIndex].quantity += 1;
  } else {
-  window.cart.push({
+  cart.push({
    offerIndex: index,
-   title: offer.title,
-   price: offer.price,
-   image: offer.image,
+   title: offer.title || 'Offer',
+   price: offer.price || 'Contact for price',
+   image: offer.image || 'https://cdn.pixabay.com/photo/2017/06/10/07/18/shopping-2389637_1280.png',
    quantity: 1
   });
  }
  
  // Save to localStorage
- localStorage.setItem(`cart_${window.cardId}`, JSON.stringify(window.cart));
+ localStorage.setItem(`cart_${cardId}`, JSON.stringify(cart));
  
- // Show notification
  showNotification('Added to cart!');
- 
- // Update cart display
  updateCartDisplay();
 };
 
@@ -1118,10 +1284,10 @@ function updateCartDisplay() {
  const cartItems = document.getElementById('cartItems');
  const cartTotal = document.getElementById('cartTotalAmount');
  
- if (window.cart.length === 0) {
+ if (cart.length === 0) {
   cartItems.innerHTML = `
-   <div style="text-align:center;padding:40px;color:#64748b;">
-    <i class="fas fa-shopping-cart" style="font-size:48px;margin-bottom:16px;opacity:0.3;"></i>
+   <div class="emptyCart">
+    <i class="fas fa-shopping-cart"></i>
     <p>Your cart is empty</p>
    </div>
   `;
@@ -1130,7 +1296,7 @@ function updateCartDisplay() {
  }
  
  let total = 0;
- const itemsHTML = window.cart.map((item, index) => {
+ const itemsHTML = cart.map((item, index) => {
    // Extract numeric price
    const priceMatch = item.price.match(/\d+/g);
    const price = priceMatch ? parseInt(priceMatch.join('')) : 0;
@@ -1139,7 +1305,7 @@ function updateCartDisplay() {
    
    return `
     <div class="cartItem">
-     <img src="${item.image || 'https://cdn.pixabay.com/photo/2017/06/10/07/18/shopping-2389637_1280.png'}" alt="${item.title}">
+     <img src="${item.image}" alt="${item.title}">
      <div class="cartItemInfo">
       <div class="cartItemTitle">${item.title}</div>
       <div class="cartItemPrice">${item.price}</div>
@@ -1150,7 +1316,9 @@ function updateCartDisplay() {
        <span>${item.quantity}</span>
        <button onclick="updateCartQuantity(${index}, ${item.quantity + 1})">+</button>
       </div>
-      <button class="cartRemove" onclick="removeFromCart(${index})"><i class="fas fa-trash"></i></button>
+      <button class="cartRemove" onclick="removeFromCart(${index})">
+       <i class="fas fa-trash"></i>
+      </button>
      </div>
     </div>
    `;
@@ -1166,86 +1334,60 @@ window.updateCartQuantity = function(index, newQuantity) {
   return;
  }
  
- window.cart[index].quantity = newQuantity;
- localStorage.setItem(`cart_${window.cardId}`, JSON.stringify(window.cart));
+ cart[index].quantity = newQuantity;
+ localStorage.setItem(`cart_${cardId}`, JSON.stringify(cart));
  updateCartDisplay();
 };
 
 window.removeFromCart = function(index) {
- window.cart.splice(index, 1);
- localStorage.setItem(`cart_${window.cardId}`, JSON.stringify(window.cart));
+ cart.splice(index, 1);
+ localStorage.setItem(`cart_${cardId}`, JSON.stringify(cart));
  updateCartDisplay();
+ showNotification('Item removed from cart');
 };
 
-function showNotification(message) {
- const notification = document.createElement('div');
- notification.textContent = message;
- notification.style.cssText = `
-  position:fixed;
-  top:20px;
-  right:20px;
-  background:#10b981;
-  color:white;
-  padding:12px 20px;
-  border-radius:8px;
-  z-index:2000;
-  animation:fadeInOut 3s;
- `;
- 
- document.body.appendChild(notification);
- 
- setTimeout(() => {
-  notification.style.animation = 'fadeOut 0.5s';
-  setTimeout(() => notification.remove(), 500);
- }, 2500);
-}
-
-// Add CSS for animation
-const style = document.createElement('style');
-style.textContent = `
- @keyframes fadeInOut {
-  0% { opacity:0; transform:translateY(-20px); }
-  15% { opacity:1; transform:translateY(0); }
-  85% { opacity:1; transform:translateY(0); }
-  100% { opacity:0; transform:translateY(-20px); }
- }
- @keyframes fadeOut {
-  to { opacity:0; }
- }
-`;
-document.head.appendChild(style);
-
-// Initialize checkout
-document.querySelector('.cartCheckout').addEventListener('click', () => {
- showCheckout();
-});
-
 function showCheckout() {
- const card = window.currentCard;
+ if (cart.length === 0) {
+  showNotification('Your cart is empty');
+  return;
+ }
+ 
  const paymentOptions = document.getElementById('paymentOptions');
  
- if (card.paymentMethod === 'jazzcash' && card.jazzcash) {
-  paymentOptions.innerHTML = `
-   <div class="jazzcashSection">
-    <p>Please pay using JazzCash and send screenshot to confirm your order.</p>
-    ${card.jazzcash.qr ? `
-     <div class="jazzcashQr">
-      <img src="${card.jazzcash.qr}" alt="JazzCash QR Code">
-     </div>
-    ` : ''}
-    ${card.jazzcash.number ? `
-     <div class="jazzcashNumber">
-      <strong>Send payment to:</strong>
-      <code>${card.jazzcash.number}</code>
-     </div>
-    ` : ''}
-   </div>
-  `;
+ if (currentCard.paymentMethod === 'jazzcash' && currentCard.jazzcash) {
+  let content = `
+   <div style="text-align:center;">
+    <p>Please pay using JazzCash and send screenshot to confirm your order.</p>`;
+   
+  if (currentCard.jazzcash.qr) {
+   content += `
+    <div class="jazzcashQr">
+     <img src="${currentCard.jazzcash.qr}" alt="JazzCash QR Code">
+    </div>`;
+  }
+   
+  if (currentCard.jazzcash.number) {
+   content += `
+    <div class="jazzcashNumber">
+     <strong>Send payment to:</strong>
+     <code>${currentCard.jazzcash.number}</code>
+    </div>`;
+  }
+   
+  content += `
+    <div style="margin-top:20px;">
+     <button onclick="sendOrderViaJazzCash()" style="background:#2563eb;color:white;border:none;padding:12px 24px;border-radius:8px;cursor:pointer;font-size:16px;">
+      <i class="fas fa-check"></i> Confirm Payment
+     </button>
+    </div>
+   </div>`;
+   
+  paymentOptions.innerHTML = content;
  } else {
   paymentOptions.innerHTML = `
    <div style="text-align:center;padding:20px;">
     <p>Please send WhatsApp message to confirm your order:</p>
-    <button onclick="sendWhatsAppOrder()" style="background:#25d366;color:white;border:none;padding:12px 24px;border-radius:8px;cursor:pointer;font-size:16px;margin-top:10px;">
+    <button onclick="sendOrderViaWhatsApp()" style="background:#25d366;color:white;border:none;padding:12px 24px;border-radius:8px;cursor:pointer;font-size:16px;margin-top:10px;">
      <i class="fab fa-whatsapp"></i> Send Order via WhatsApp
     </button>
    </div>
@@ -1255,27 +1397,43 @@ function showCheckout() {
  document.getElementById('paymentModal').style.display = 'flex';
 }
 
-window.sendWhatsAppOrder = function() {
- const card = window.currentCard;
- let message = `Order Details:\n\n`;
+window.sendOrderViaWhatsApp = function() {
+ if (!currentCard || !currentCard.phone) {
+  showNotification('Phone number not available');
+  return;
+ }
  
- window.cart.forEach(item => {
+ let message = `📦 *Order Details* 📦\n\n`;
+ 
+ cart.forEach((item, index) => {
   message += `• ${item.title} x${item.quantity} - ${item.price}\n`;
  });
  
- message += `\nTotal: Rs ${calculateTotal()}\n\n`;
- message += `Please confirm this order.`;
- 
- window.open(`https://wa.me/${card.phone.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`, '_blank');
-};
-
-function calculateTotal() {
- return window.cart.reduce((total, item) => {
+ // Calculate total
+ const total = cart.reduce((sum, item) => {
   const priceMatch = item.price.match(/\d+/g);
   const price = priceMatch ? parseInt(priceMatch.join('')) : 0;
-  return total + (price * item.quantity);
+  return sum + (price * item.quantity);
  }, 0);
-}
+ 
+ message += `\n💰 *Total: Rs ${total}*\n\n`;
+ message += `Please confirm this order.`;
+ 
+ const phoneNumber = currentCard.phone.replace(/\D/g, '');
+ window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+};
+
+window.sendOrderViaJazzCash = function() {
+ showNotification('Please take screenshot of payment and send via WhatsApp');
+ 
+ if (currentCard && currentCard.phone) {
+  const phoneNumber = currentCard.phone.replace(/\D/g, '');
+  const message = encodeURIComponent('I have made the payment via JazzCash. Here is the screenshot.');
+  setTimeout(() => {
+   window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+  }, 1000);
+ }
+};
 </script>
 </body>
 </html>
