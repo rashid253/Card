@@ -74,44 +74,85 @@ button{
 
 .holidayBox{
  background:#fff;
- padding:12px;
- border-radius:10px;
- margin:8px 0;
+ padding:16px;
+ border-radius:12px;
+ margin:12px 0;
  border:1px solid #e2e8f0;
 }
 .holidayHeader{
  display:flex;
  justify-content:space-between;
  align-items:center;
- margin-bottom:8px;
+ margin-bottom:12px;
 }
 .holidayHeader label{
  font-weight:600;
- font-size:15px;
+ font-size:16px;
+ color:#0f172a;
 }
 .addHolidayBtn{
  background:#10b981;
  color:white;
  border:none;
- padding:8px 12px;
+ padding:8px 16px;
  border-radius:8px;
  cursor:pointer;
  font-size:14px;
+ font-weight:500;
 }
 .holidayItem{
- display:flex;
- align-items:center;
+ display:grid;
+ grid-template-columns:1fr 120px auto;
  gap:10px;
- margin:6px 0;
- padding:8px;
+ align-items:center;
+ margin:8px 0;
+ padding:10px;
  background:#f8fafc;
- border-radius:8px;
+ border-radius:10px;
+ border:1px solid #e2e8f0;
 }
 .holidayItem input[type="text"]{
- flex:1;
- padding:8px;
+ padding:10px;
  border:1px solid #e2e8f0;
- border-radius:6px;
+ border-radius:8px;
+ font-size:14px;
+ background:white;
+}
+.holidayItem input[type="date"]{
+ padding:10px;
+ border:1px solid #e2e8f0;
+ border-radius:8px;
+ font-size:14px;
+ min-width:120px;
+ background:white;
+ color:#334155;
+}
+.removeHoliday{
+ background:#ef4444;
+ color:white;
+ border:none;
+ border-radius:8px;
+ padding:10px 14px;
+ cursor:pointer;
+ font-size:16px;
+ font-weight:bold;
+ min-width:40px;
+ height:40px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+.removeHoliday:hover{
+ background:#dc2626;
+}
+@media (max-width:480px){
+ .holidayItem{
+  grid-template-columns:1fr;
+  gap:8px;
+ }
+ .holidayItem input[type="date"]{
+  min-width:100%;
+ }
 }
 
 .websiteBox{
@@ -163,18 +204,18 @@ if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standa
 <div class="holidayBox">
  <div class="holidayHeader">
   <label>📅 Special Holidays / Closed Days</label>
-  <button type="button" class="addHolidayBtn" onclick="addHoliday()">+ Add</button>
+  <button type="button" class="addHolidayBtn" onclick="addHoliday()">+ Add Holiday</button>
  </div>
  <div id="holidaysContainer">
   <div class="holidayItem">
    <input type="text" class="holidayName" placeholder="E.g., Eid ul-Fitr" value="Eid ul-Fitr">
    <input type="date" class="holidayDate">
-   <button type="button" class="removeHoliday" onclick="removeHoliday(this)" style="background:#ef4444;color:white;border:none;border-radius:6px;padding:6px 10px;cursor:pointer">×</button>
+   <button type="button" class="removeHoliday" onclick="removeHoliday(this)">×</button>
   </div>
   <div class="holidayItem">
    <input type="text" class="holidayName" placeholder="E.g., Quaid Day" value="Quaid Day">
    <input type="date" class="holidayDate">
-   <button type="button" class="removeHoliday" onclick="removeHoliday(this)" style="background:#ef4444;color:white;border:none;border-radius:6px;padding:6px 10px;cursor:pointer">×</button>
+   <button type="button" class="removeHoliday" onclick="removeHoliday(this)">×</button>
   </div>
  </div>
 </div>
@@ -243,7 +284,7 @@ function addHoliday() {
  holidayItem.innerHTML = `
   <input type="text" class="holidayName" placeholder="E.g., Eid ul-Fitr">
   <input type="date" class="holidayDate">
-  <button type="button" class="removeHoliday" onclick="removeHoliday(this)" style="background:#ef4444;color:white;border:none;border-radius:6px;padding:6px 10px;cursor:pointer">×</button>
+  <button type="button" class="removeHoliday" onclick="removeHoliday(this)">×</button>
  `;
  container.appendChild(holidayItem);
 }
