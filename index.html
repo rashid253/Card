@@ -371,6 +371,10 @@ button:active{
  85% { opacity:1; transform:translateY(0); }
  100% { opacity:0; transform:translateY(-20px); }
 }
+
+.error-toast{
+ background:#ef4444 !important;
+}
 </style>
 </head>
 
@@ -459,20 +463,20 @@ button:active{
 <script>
 // ============ SUPABASE CONFIGURATION ============
 const SUPABASE_URL = 'https://dfvnefbxgayxqgjjgtrr.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE';
+const SUPABASE_ANON_KEY = 'sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE';
 // =================================================
 
 // Global variables
-let supabase = null;
+let db = null; // Changed variable name to avoid conflict
 let offerCount = 0;
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
  console.log("Initializing Digital Card Creator...");
  
- // Initialize Supabase
+ // Initialize Supabase (using 'db' instead of 'supabase' to avoid conflict)
  try {
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   console.log("Supabase initialized successfully");
  } catch (error) {
   console.error("Failed to initialize Supabase:", error);
@@ -677,10 +681,23 @@ function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.7) {
 function showToast(message, type = 'success') {
  const toast = document.getElementById('toast');
  toast.textContent = message;
- toast.style.background = type === 'error' ? '#ef4444' : '#10b981';
+ 
+ if (type === 'error') {
+  toast.style.background = '#ef4444';
+  toast.classList.add('error-toast');
+ } else {
+  toast.style.background = '#10b981';
+  toast.classList.remove('error-toast');
+ }
+ 
  toast.style.display = 'block';
  
- setTimeout(() => {
+ // Clear any existing timeout
+ if (window.toastTimeout) {
+  clearTimeout(window.toastTimeout);
+ }
+ 
+ window.toastTimeout = setTimeout(() => {
   toast.style.display = 'none';
  }, 3000);
 }
@@ -745,9 +762,8 @@ async function generateCard() {
   // Collect business hours - FIXED STRUCTURE
   const businessHoursArray = [];
   const dayBoxes = document.querySelectorAll(".dayBox");
-  const dayNames = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
   
-  dayBoxes.forEach((box, index) => {
+  dayBoxes.forEach((box) => {
    const openCheckbox = box.querySelector(".dayOpen");
    const statusSelect = box.querySelector(".dayStatus");
    const startInput = box.querySelector(".dayStart");
@@ -866,14 +882,10 @@ async function generateCard() {
    profileImage: profileImageData
   };
 
-  console.log("Prepared card data for Supabase:", {
-   id: id,
-   data: cardData,
-   created_at: new Date().toISOString()
-  });
+  console.log("Prepared card data for Supabase:", cardData);
 
   // Save to Supabase
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('cards')
     .insert([
       {
@@ -889,17 +901,20 @@ async function generateCard() {
     console.error("Supabase insert error details:", error);
     
     // Check for common errors
+    let errorMessage = "Failed to create card. ";
     if (error.code === '42501') {
-     throw new Error("Permission denied. Check Supabase RLS policies.");
+     errorMessage += "Permission denied. Check Supabase RLS policies.";
     } else if (error.code === '42P01') {
-     throw new Error("Table 'cards' doesn't exist. Create it in Supabase.");
+     errorMessage += "Table 'cards' doesn't exist.";
     } else if (error.message.includes('JWT')) {
-     throw new Error("Invalid Supabase credentials. Check your API key.");
+     errorMessage += "Invalid API key.";
     } else if (error.message.includes('network')) {
-     throw new Error("Network error. Check your internet connection.");
+     errorMessage += "Network error. Check your internet connection.";
     } else {
-     throw new Error(`Database error: ${error.message}`);
+     errorMessage += error.message;
     }
+    
+    throw new Error(errorMessage);
   }
 
   console.log("Card saved successfully to Supabase:", data);
@@ -918,11 +933,7 @@ async function generateCard() {
   loadingEl.style.display = 'none';
   
   // Show user-friendly error message
-  let errorMessage = error.message;
-  showToast(`❌ Error: ${errorMessage}`, "error");
-  
-  // Log to console for debugging
-  console.error("Full error details:", error);
+  showToast(`❌ ${error.message}`, "error");
  }
 }
 
