@@ -1,338 +1,218 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Digital Card</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f172a">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-body{
- margin:0;
- font-family:system-ui,-apple-system,sans-serif;
- background:#f1f5f9;
- color:#0f172a;
+:root{
+ --primary:#020617;
+ --accent:#22c55e;
+ --bg:#f8fafc;
+ --card:#ffffff;
+ --muted:#64748b;
 }
+
 *{box-sizing:border-box}
 
-/* Top Bar */
-.topbar{
- display:flex;
- justify-content:space-around;
- padding:12px;
- background:#0f172a;
- position:sticky;
- top:0;
- z-index:10;
+body{
+ margin:0;
+ background:var(--bg);
+ font-family:system-ui,-apple-system;
+ color:#0f172a;
 }
-.topbar a{
- color:#fff;
- font-size:20px;
- width:44px;
- height:44px;
+
+.top{
+ background:linear-gradient(135deg,#020617,#0f172a);
+ padding:26px 16px 60px;
+ color:white;
+ text-align:center;
+}
+
+.avatar{
+ width:90px;
+ height:90px;
+ border-radius:50%;
+ background:#22c55e;
  display:flex;
  align-items:center;
  justify-content:center;
- border-radius:50%;
- text-decoration:none;
+ font-size:38px;
+ font-weight:700;
+ margin:auto;
 }
 
-/* Profile */
-.profile{
- display:flex;
- gap:16px;
- padding:20px;
- background:#e2e8f0;
- align-items:center;
- position:relative;
+.name{
+ margin:12px 0 4px;
+ font-size:22px;
+ font-weight:700;
 }
-.profile img{
- width:96px;
- height:96px;
- border-radius:50%;
- object-fit:cover;
- border:3px solid #2563eb;
- background:#fff;
-}
-.info{
- flex:1;
- display:flex;
- flex-direction:column;
- gap:6px;
-}
-#name{font-size:18px;font-weight:700}
-#business{color:#2563eb;font-weight:600}
-.info div, .info a{
+
+.tag{
  font-size:14px;
- color:#475569;
- display:flex;
- gap:8px;
- align-items:center;
- text-decoration:none;
+ opacity:.85;
 }
 
-/* About */
-.about{
- background:#fff;
- margin:8px;
+.wrapper{
+ max-width:560px;
+ margin:auto;
+ padding:0 14px 90px;
+}
+
+.card{
+ background:var(--card);
+ border-radius:18px;
  padding:16px;
- border-radius:12px;
+ box-shadow:0 12px 28px rgba(0,0,0,.08);
+ margin-top:-40px;
 }
-.aboutText{
- overflow:hidden;
- display:-webkit-box;
- -webkit-line-clamp:3;
- -webkit-box-orient:vertical;
+
+.row{
+ display:flex;
+ align-items:center;
+ gap:10px;
+ padding:10px 0;
+ border-bottom:1px solid #e5e7eb;
+ font-size:15px;
 }
-.about.expanded .aboutText{-webkit-line-clamp:unset}
-.aboutMore{
- color:#2563eb;
+
+.row:last-child{border:none}
+.row i{color:var(--accent)}
+
+.section{
+ background:var(--card);
+ border-radius:18px;
+ padding:16px;
+ box-shadow:0 8px 24px rgba(0,0,0,.06);
+ margin-top:14px;
+}
+
+.section h3{
+ margin:0 0 10px;
+ font-size:16px;
+}
+
+.more{
+ color:var(--accent);
  font-weight:600;
  cursor:pointer;
- display:none;
- margin-top:6px;
 }
 
-/* Section */
-.section{
- background:#fff;
- margin:8px;
- padding:16px;
- border-radius:12px;
-}
-.section h3{
- margin:0 0 12px;
- display:flex;
- gap:8px;
- align-items:center;
-}
-
-/* Business hours */
-.dayRow{
- display:flex;
- justify-content:space-between;
- padding:8px 0;
- border-bottom:1px solid #e2e8f0;
-}
-.dayRow:last-child{border-bottom:none}
-.closed{color:#ef4444}
-
-/* Holidays */
-.holidayItem{
- background:#f8fafc;
- padding:10px;
- border-radius:8px;
- display:flex;
- justify-content:space-between;
- margin-bottom:8px;
-}
-
-/* Offers */
-.offers{
- display:flex;
- gap:12px;
- padding:12px;
- overflow-x:auto;
-}
-.offer{
- min-width:180px;
- height:220px;
- border-radius:14px;
- overflow:hidden;
- position:relative;
- box-shadow:0 2px 8px rgba(0,0,0,.15);
-}
-.offer img{
- width:100%;
- height:100%;
- object-fit:cover;
-}
-.offerBadges{
- position:absolute;
- top:8px;
- left:8px;
- display:flex;
- flex-direction:column;
- gap:4px;
-}
-.offerBadges span{
- background:#ef4444;
- color:#fff;
- font-size:11px;
- padding:3px 6px;
- border-radius:6px;
-}
-.offerOverlay{
- position:absolute;
+.actions{
+ position:fixed;
  bottom:0;
  left:0;
  right:0;
- background:linear-gradient(transparent,rgba(0,0,0,.8));
- color:#fff;
- padding:10px;
-}
-.offerTitle{font-weight:600}
-.offerPrice{
+ background:white;
+ border-top:1px solid #e5e7eb;
  display:flex;
- gap:8px;
+}
+
+.actions a{
+ flex:1;
+ padding:12px;
+ text-align:center;
+ text-decoration:none;
+ color:#0f172a;
  font-size:13px;
 }
-.offerPrice .current{font-size:16px;font-weight:700}
-.offerPrice .original{text-decoration:line-through;opacity:.7}
 
-/* Footer */
-.actions{
- display:flex;
- justify-content:space-around;
- padding:14px;
- background:#0f172a;
- position:sticky;
- bottom:0;
-}
-.actions a{
- color:#fff;
- font-size:22px;
- width:48px;
- height:48px;
- display:flex;
- align-items:center;
- justify-content:center;
- border-radius:50%;
- text-decoration:none;
+.actions i{
+ display:block;
+ font-size:20px;
+ margin-bottom:4px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
- <a id="map"><i class="fa-solid fa-location-dot"></i></a>
- <a id="share"><i class="fa-solid fa-share-nodes"></i></a>
- <a id="cart"><i class="fa-solid fa-cart-shopping"></i></a>
+<div class="top">
+ <div class="avatar" id="avatar"></div>
+ <div class="name" id="name"></div>
+ <div class="tag">Digital Business Card</div>
 </div>
 
-<div class="profile">
- <img id="photo" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png">
- <div class="info">
-  <div id="name"></div>
-  <div id="business"></div>
-  <div id="phone"><i class="fas fa-phone"></i><span></span></div>
-  <div id="email"><i class="fas fa-envelope"></i><span></span></div>
-  <div id="address"><i class="fas fa-map-marker-alt"></i><span></span></div>
-  <a id="websiteText" style="display:none"><i class="fas fa-globe"></i><span></span></a>
- </div>
+<div class="wrapper">
+
+<div class="card">
+ <div class="row"><i class="fas fa-phone"></i><span id="phone"></span></div>
+ <div class="row"><i class="fas fa-envelope"></i><span id="email"></span></div>
+ <div class="row"><i class="fas fa-location-dot"></i><span id="address"></span></div>
 </div>
 
-<div class="about" id="aboutBox">
- <div class="aboutText" id="aboutText"></div>
- <span class="aboutMore" id="aboutMore">See more</span>
+<div class="section" id="aboutBox" style="display:none">
+ <h3><i class="fas fa-circle-info"></i> About</h3>
+ <span id="aboutShort"></span>
+ <span id="aboutMore" style="display:none"></span>
+ <div class="more" id="toggleAbout"></div>
 </div>
 
-<div id="sectionsContainer"></div>
-<div class="offers" id="offersContainer"></div>
+<div class="section" id="webBox" style="display:none">
+ <h3><i class="fas fa-globe"></i> Website</h3>
+ <a id="website" target="_blank"></a>
+</div>
+
+</div>
 
 <div class="actions">
- <a id="call"><i class="fas fa-phone"></i></a>
- <a id="whatsapp"><i class="fab fa-whatsapp"></i></a>
- <a id="share2"><i class="fas fa-share"></i></a>
+ <a id="call"><i class="fas fa-phone"></i>Call</a>
+ <a id="wa"><i class="fab fa-whatsapp"></i>WhatsApp</a>
+ <a id="share"><i class="fas fa-share-nodes"></i>Share</a>
 </div>
 
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = 'https://dfvnefbxgayxqgjjgtrr.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE';
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const id=new URLSearchParams(location.search).get("id");
+const data=JSON.parse(localStorage.getItem("card_"+id));
 
-const id = new URLSearchParams(location.search).get("id");
-if(!id){ alert("Card not found"); }
+if(!data){alert("Card not found");location.href="index.html";}
 
-loadCard();
+avatar.innerText=data.name.charAt(0).toUpperCase();
+name.innerText=data.name;
+phone.innerText=data.phone;
+email.innerText=data.email || "—";
+address.innerText=data.address || "—";
 
-async function loadCard(){
- const {data,error} = await db.from("cards").select("*").eq("id",id).single();
- if(error){ alert("Error loading card"); return; }
- renderCard(data.data);
-}
+call.href="tel:"+data.phone;
+wa.href="https://wa.me/"+data.phone.replace(/\D/g,"");
 
-function renderCard(d){
- if(d.profileImage) photo.src = d.profileImage;
- name.innerText = d.name;
- business.innerText = d.businessName || "";
- phone.querySelector("span").innerText = d.phone;
- email.querySelector("span").innerText = d.email || "";
- address.querySelector("span").innerText = d.address || "";
-
- if(d.website){
-  websiteText.style.display="flex";
-  websiteText.href=d.website;
-  websiteText.querySelector("span").innerText=d.website;
+if(data.about){
+ aboutBox.style.display="block";
+ if(data.about.length>120){
+  aboutShort.innerText=data.about.slice(0,120)+"...";
+  aboutMore.innerText=data.about.slice(120);
+  toggleAbout.innerText="Read more";
+  toggleAbout.onclick=()=>{
+   const open=aboutMore.style.display==="inline";
+   aboutMore.style.display=open?"none":"inline";
+   toggleAbout.innerText=open?"Read more":"Show less";
+  };
+ }else{
+  aboutShort.innerText=data.about;
  }
+}
 
- if(d.businessAbout){
-  aboutText.innerText=d.businessAbout;
-  if(d.businessAbout.length>120) aboutMore.style.display="inline";
+if(data.website){
+ webBox.style.display="block";
+ website.href=data.website;
+ website.innerText=data.website;
+}
+
+share.onclick=()=>{
+ if(navigator.share){
+  navigator.share({
+   title:data.name,
+   text:data.about,
+   url:location.href
+  });
+ }else{
+  prompt("Copy link",location.href);
  }
-
- aboutMore.onclick=()=>aboutBox.classList.toggle("expanded");
-
- renderHours(d.businessHours);
- renderHolidays(d.holidays);
- renderOffers(d.offers);
-}
-
-function renderHours(hours){
- if(!hours?.length) return;
- const sec=document.createElement("div");
- sec.className="section";
- sec.innerHTML="<h3><i class='fas fa-clock'></i> Business Hours</h3>";
- const days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
- hours.forEach((h,i)=>{
-  sec.innerHTML+=`
-   <div class="dayRow">
-    <span>${days[i]}</span>
-    <span class="${!h.open?'closed':''}">
-     ${h.open?`${h.start} - ${h.end}`:"Closed"}
-    </span>
-   </div>`;
- });
- sectionsContainer.appendChild(sec);
-}
-
-function renderHolidays(list){
- if(!list?.length) return;
- const sec=document.createElement("div");
- sec.className="section";
- sec.innerHTML="<h3><i class='fas fa-calendar-times'></i> Holidays</h3>";
- list.forEach(h=>{
-  sec.innerHTML+=`
-   <div class="holidayItem">
-    <span>${h.name}</span>
-    <span class="closed">${h.date}</span>
-   </div>`;
- });
- sectionsContainer.appendChild(sec);
-}
-
-function renderOffers(offers){
- if(!offers?.length) return;
- offers.forEach(o=>{
-  const div=document.createElement("div");
-  div.className="offer";
-  div.innerHTML=`
-   <img src="${o.image||''}">
-   <div class="offerBadges">${o.badges.map(b=>`<span>${b}</span>`).join("")}</div>
-   <div class="offerOverlay">
-    <div class="offerTitle">${o.title}</div>
-    <div class="offerPrice">
-     <span class="current">${o.price}</span>
-     ${o.originalPrice?`<span class="original">${o.originalPrice}</span>`:""}
-    </div>
-   </div>`;
-  offersContainer.appendChild(div);
- });
-}
+};
 </script>
+
 </body>
 </html>
