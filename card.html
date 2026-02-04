@@ -389,33 +389,34 @@ body {
   gap: 6px;
 }
 
-/* Products - Grid layout like Facebook ads (5 cards per row) */
+/* Products - Facebook Ads Style with 1.75 cards visible */
+.products-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(10, 135px); /* Create many columns */
+  grid-auto-flow: column;
   gap: 12px;
-  margin-top: 10px;
   overflow-x: auto;
-  padding-bottom: 10px;
-  scrollbar-width: thin;
+  padding: 10px 15px;
+  padding-right: 30px; /* Extra space to show cards are peeking */
+  scrollbar-width: none; /* Hide scrollbar */
+  width: calc(100% + 40px); /* Extend beyond container */
+  margin-left: -15px; /* Pull left to show peeking */
 }
 
+/* Hide scrollbar completely */
 .products-grid::-webkit-scrollbar {
-  height: 6px;
-}
-
-.products-grid::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.products-grid::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 10px;
+  display: none;
 }
 
 .product-card {
-  min-width: 150px;
+  width: 135px; /* Fixed width for consistent size */
   background: white;
   border-radius: 16px;
   overflow: hidden;
@@ -423,6 +424,7 @@ body {
   transition: all 0.3s;
   cursor: pointer;
   position: relative;
+  flex-shrink: 0; /* Prevent cards from shrinking */
 }
 
 .product-card:hover {
@@ -517,6 +519,18 @@ body {
 .btn-buy:hover, .btn-cart:hover {
   opacity: 0.9;
   transform: translateY(-2px);
+}
+
+/* Right fade effect to indicate more cards */
+.products-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.9));
+  pointer-events: none;
 }
 
 /* Business Hours - Expandable */
@@ -746,11 +760,16 @@ body {
   }
   
   .products-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(10, 125px); /* Slightly smaller on mobile */
+    gap: 10px;
+    padding: 10px 12px;
+    padding-right: 25px;
+    width: calc(100% + 35px);
+    margin-left: -12px;
   }
   
   .product-card {
-    min-width: 110px;
+    width: 125px;
   }
   
   .live-chat-profile {
@@ -791,7 +810,11 @@ body {
 
 @media (max-width: 360px) {
   .products-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(10, 115px);
+  }
+  
+  .product-card {
+    width: 115px;
   }
   
   .live-chat-btn {
@@ -885,14 +908,16 @@ body {
       </div>
     </div>
 
-    <!-- Products Section - Grid layout like Facebook ads -->
+    <!-- Products Section - Facebook Ads Style with 1.75 cards visible -->
     <div class="section" id="productsSection">
       <div class="section-header">
         <i class="fas fa-gift"></i>
         <h3>Products & Offers</h3>
       </div>
-      <div class="products-grid" id="productsGrid">
-        <!-- Products will be inserted here -->
+      <div class="products-container">
+        <div class="products-grid" id="productsGrid">
+          <!-- Products will be inserted here -->
+        </div>
       </div>
     </div>
 
@@ -1223,7 +1248,7 @@ function renderCard() {
     document.getElementById('aboutSection').style.display = 'none';
   }
   
-  // Products - Grid layout (5 per row)
+  // Products - Facebook Ads Style with 1.75 cards visible
   const products = card.products || card.offers || [];
   const productsGrid = document.getElementById('productsGrid');
   
