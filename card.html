@@ -21,6 +21,7 @@ body {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
   color: #1e293b;
+  position: relative;
 }
 
 /* Floating Action Buttons */
@@ -322,15 +323,32 @@ body {
   gap: 6px;
 }
 
-/* Products Grid */
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+/* Products - Horizontal Scroll like Facebook Ads */
+.products-container {
+  display: flex;
   gap: 16px;
-  margin-top: 16px;
+  overflow-x: auto;
+  padding: 10px 0;
+  margin-top: 10px;
+  scrollbar-width: thin;
+}
+
+.products-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.products-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.products-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
 }
 
 .product-card {
+  min-width: 280px;
   background: white;
   border-radius: 16px;
   overflow: hidden;
@@ -347,7 +365,7 @@ body {
 
 .product-image {
   width: 100%;
-  height: 140px;
+  height: 160px;
   object-fit: cover;
 }
 
@@ -374,7 +392,7 @@ body {
 }
 
 .product-title {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: #1e293b;
   margin-bottom: 8px;
@@ -410,10 +428,10 @@ body {
 
 .btn-buy, .btn-cart {
   flex: 1;
-  padding: 8px;
+  padding: 10px;
   border: none;
   border-radius: 10px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
@@ -433,6 +451,57 @@ body {
   opacity: 0.9;
   transform: translateY(-2px);
 }
+
+/* Social Media Section */
+.social-media-section {
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 16px;
+  margin: 16px;
+}
+
+.social-media-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.social-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: white;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #1e293b;
+  transition: all 0.3s;
+}
+
+.social-link:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.social-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: white;
+}
+
+.facebook-icon { background: #1877F2; }
+.instagram-icon { background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D); }
+.twitter-icon { background: #1DA1F2; }
+.linkedin-icon { background: #0077B5; }
+.youtube-icon { background: #FF0000; }
+.tiktok-icon { background: #000000; }
 
 /* Business Hours */
 .hours-list {
@@ -541,7 +610,7 @@ body {
   transform: translateY(-2px);
 }
 
-/* Footer Actions */
+/* Footer Actions - FIXED WhatsApp Icon */
 .footer-actions {
   display: flex;
   justify-content: center;
@@ -582,10 +651,18 @@ body {
   color: white;
 }
 
-.call-btn .action-icon { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-.message-btn .action-icon { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
-.email-btn .action-icon { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
-.map-btn .action-icon { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+.call-btn .action-icon { 
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+}
+.message-btn .action-icon { 
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+}
+.email-btn .action-icon { 
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); 
+}
+.map-btn .action-icon { 
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
+}
 
 .action-label {
   font-size: 12px;
@@ -907,6 +984,7 @@ body {
   box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
   z-index: 999;
   animation: pulse 2s infinite;
+  cursor: pointer;
 }
 
 @keyframes pulse {
@@ -934,16 +1012,16 @@ body {
     padding: 15px;
   }
   
-  .products-grid {
-    grid-template-columns: 1fr;
-  }
-  
   .footer-actions {
     gap: 10px;
   }
   
   .action-btn {
     max-width: 70px;
+  }
+  
+  .social-media-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 </style>
@@ -953,17 +1031,13 @@ body {
 
 <!-- Floating Action Buttons -->
 <div class="fab-container">
-  <div class="fab fab-whatsapp" onclick="openWhatsAppChat()">
+  <div class="fab fab-whatsapp" onclick="openWhatsAppChat('greeting')">
     <i class="fab fa-whatsapp"></i>
     <span class="fab-label">Live Chat</span>
   </div>
-  <div class="fab fab-facebook" onclick="openMessenger()">
-    <i class="fab fa-facebook-messenger"></i>
-    <span class="fab-label">Messenger</span>
-  </div>
   <div class="fab fab-share" onclick="openShareModal()">
     <i class="fas fa-share-alt"></i>
-    <span class="fab-label">Share Card</span>
+    <span class="fab-label">Share</span>
   </div>
   <div class="fab fab-primary" onclick="scrollToTop()">
     <i class="fas fa-arrow-up"></i>
@@ -972,7 +1046,7 @@ body {
 </div>
 
 <!-- Live Chat Indicator -->
-<div class="live-chat-indicator" onclick="openWhatsAppChat()">
+<div class="live-chat-indicator" onclick="openWhatsAppChat('greeting')">
   <span class="live-dot"></span>
   Live Chat Available
 </div>
@@ -1036,13 +1110,22 @@ body {
       </div>
     </div>
 
-    <!-- Products Section -->
+    <!-- Social Media Section -->
+    <div class="social-media-section" id="socialMediaSection" style="display:none;">
+      <div class="section-header" style="margin-bottom:15px;">
+        <i class="fas fa-hashtag"></i>
+        <h3 style="margin:0;">Connect on Social Media</h3>
+      </div>
+      <div class="social-media-grid" id="socialMediaGrid"></div>
+    </div>
+
+    <!-- Products Section - Horizontal Scroll -->
     <div class="section" id="productsSection">
       <div class="section-header">
         <i class="fas fa-gift"></i>
         <h3>Products & Offers</h3>
       </div>
-      <div class="products-grid" id="productsGrid">
+      <div class="products-container" id="productsGrid">
         <!-- Products will be inserted here -->
       </div>
     </div>
@@ -1076,7 +1159,7 @@ body {
     </a>
   </div>
 
-  <!-- Footer Actions -->
+  <!-- Footer Actions - FIXED WhatsApp Icon -->
   <div class="footer-actions">
     <div class="action-btn call-btn" onclick="makeCall()">
       <div class="action-icon">
@@ -1085,7 +1168,7 @@ body {
       <div class="action-label">Call</div>
     </div>
     
-    <div class="action-btn message-btn" onclick="sendWhatsApp()">
+    <div class="action-btn message-btn" onclick="openWhatsAppChat('greeting')">
       <div class="action-icon">
         <i class="fab fa-whatsapp"></i>
       </div>
@@ -1212,12 +1295,6 @@ body {
         </div>
         <div class="share-label">Facebook</div>
       </div>
-      <div class="share-option" onclick="shareViaMessenger()">
-        <div class="share-icon messenger-share">
-          <i class="fab fa-facebook-messenger"></i>
-        </div>
-        <div class="share-label">Messenger</div>
-      </div>
       <div class="share-option" onclick="copyCardLink()">
         <div class="share-icon copy-share">
           <i class="fas fa-copy"></i>
@@ -1318,7 +1395,44 @@ function renderCard() {
     document.getElementById('aboutSection').style.display = 'none';
   }
   
-  // Products
+  // Social Media
+  const socialMedia = card.socialMedia || {};
+  const socialMediaGrid = document.getElementById('socialMediaGrid');
+  
+  const socialPlatforms = [
+    { key: 'facebook', icon: 'fab fa-facebook-f', label: 'Facebook', color: '#1877F2' },
+    { key: 'instagram', icon: 'fab fa-instagram', label: 'Instagram', color: '#E4405F' },
+    { key: 'twitter', icon: 'fab fa-twitter', label: 'Twitter', color: '#1DA1F2' },
+    { key: 'linkedin', icon: 'fab fa-linkedin-in', label: 'LinkedIn', color: '#0A66C2' },
+    { key: 'youtube', icon: 'fab fa-youtube', label: 'YouTube', color: '#FF0000' },
+    { key: 'tiktok', icon: 'fab fa-tiktok', label: 'TikTok', color: '#000000' }
+  ];
+  
+  let hasSocialMedia = false;
+  
+  socialPlatforms.forEach(platform => {
+    const url = socialMedia[platform.key];
+    if(url && url.trim()) {
+      hasSocialMedia = true;
+      const socialLink = document.createElement('a');
+      socialLink.className = 'social-link';
+      socialLink.href = url.includes('://') ? url : `https://${url}`;
+      socialLink.target = '_blank';
+      socialLink.innerHTML = `
+        <div class="social-icon" style="background:${platform.color}">
+          <i class="${platform.icon}"></i>
+        </div>
+        <span style="font-size:12px;font-weight:500;">${platform.label}</span>
+      `;
+      socialMediaGrid.appendChild(socialLink);
+    }
+  });
+  
+  if(hasSocialMedia) {
+    document.getElementById('socialMediaSection').style.display = 'block';
+  }
+  
+  // Products - Horizontal Scroll
   const products = card.products || card.offers || [];
   const productsGrid = document.getElementById('productsGrid');
   
@@ -1414,6 +1528,61 @@ function renderCard() {
   }
 }
 
+// WhatsApp Functions with Professional Messages
+function openWhatsAppChat(context) {
+  if(!card.phone) {
+    showNotification('WhatsApp number not available');
+    return;
+  }
+  
+  const phone = card.phone.replace(/\D/g, '');
+  let message = '';
+  
+  switch(context) {
+    case 'greeting':
+      // Professional greeting message
+      message = card.payments?.whatsapp?.greeting || 
+                `Hello! 👋 Welcome to ${card.businessName || card.name || 'our business'}. ` +
+                `How may I assist you today?`;
+      break;
+      
+    case 'order':
+      // Order inquiry message
+      const product = currentProduct;
+      if(product) {
+        const price = product.discountPrice || product.originalPrice;
+        message = `Hello! I'm interested in purchasing:\n\n` +
+                 `📦 *Product:* ${product.title || 'Product'}\n` +
+                 `💰 *Price:* PKR ${price || '0'}\n` +
+                 `📝 *Description:* ${product.desc || 'No description'}\n\n` +
+                 `Please let me know about availability and delivery options.`;
+      } else {
+        message = `Hello! I'm interested in your products. ` +
+                 `Could you please share the catalog and pricing?`;
+      }
+      break;
+      
+    case 'cod':
+      // COD confirmation message
+      const codProduct = currentProduct;
+      if(codProduct) {
+        const price = codProduct.discountPrice || codProduct.originalPrice;
+        message = `Hello! I would like to place a Cash on Delivery order:\n\n` +
+                 `📦 *Product:* ${codProduct.title || 'Product'}\n` +
+                 `💰 *Price:* PKR ${price || '0'}\n\n` +
+                 `Please confirm availability and share delivery details.`;
+      }
+      break;
+      
+    default:
+      // Generic professional message
+      message = `Hello! I found your digital business card and I'm interested in your services/products. ` +
+               `Could you please provide more information?`;
+  }
+  
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+}
+
 // Cart Functions
 function updateCartCount() {
   const count = cart.length;
@@ -1432,15 +1601,6 @@ function addToCart(productIndex) {
     });
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
-    
-    // Show success animation
-    const cartIcon = document.querySelector('.cart-icon');
-    cartIcon.style.transform = 'scale(1.2)';
-    setTimeout(() => {
-      cartIcon.style.transform = 'scale(1)';
-    }, 300);
-    
-    // Show notification
     showNotification('✅ Product added to cart!');
   }
 }
@@ -1505,30 +1665,32 @@ function checkoutCart() {
     return;
   }
   
-  let message = "🛒 *New Order Request*\n\n";
-  message += `Customer: ${card.name}\n`;
-  message += `Phone: ${card.phone || 'Not provided'}\n\n`;
-  message += "*Order Items:*\n";
+  let message = "🛒 *ORDER REQUEST*\n\n";
+  message += `👤 *Customer:* ${card.name || 'Customer'}\n`;
+  message += `📱 *Phone:* ${card.phone || 'Not provided'}\n\n`;
+  message += "*📦 ORDER DETAILS:*\n\n";
   
   let total = 0;
   cart.forEach((item, index) => {
     const price = item.discountPrice || item.originalPrice || 0;
     total += parseFloat(price);
-    message += `${index + 1}. ${item.title || 'Product'} - PKR ${price}\n`;
+    message += `${index + 1}. *${item.title || 'Product'}*\n`;
+    message += `   💰 Price: PKR ${price}\n`;
+    if(item.desc) message += `   📝 ${item.desc}\n`;
+    message += `\n`;
   });
   
-  message += `\n*Total: PKR ${total.toFixed(2)}*\n`;
-  message += `\nPlease confirm this order.`;
+  message += `💵 *TOTAL: PKR ${total.toFixed(2)}*\n\n`;
+  message += `Please confirm this order and share delivery details.`;
+  message += `\n\nThank you! 🙏`;
   
   if(card.phone) {
     const phone = card.phone.replace(/\D/g, '');
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
   } else {
-    // If no phone, show message
-    alert(message + '\n\nPlease save this order information.');
+    alert('Please contact via email: ' + (card.email || 'No email provided'));
   }
   
-  // Clear cart
   cart = [];
   localStorage.setItem('cart', JSON.stringify(cart));
   updateCartCount();
@@ -1553,12 +1715,10 @@ function showProductModal(productIndex) {
   const price = currentProduct.discountPrice || currentProduct.originalPrice;
   document.getElementById('modalPrice').textContent = price ? `PKR ${price}` : '';
   
-  // Reset payment section
   document.getElementById('paymentSection').style.display = 'none';
   document.getElementById('receiptUpload').style.display = 'none';
   document.getElementById('codConfirmation').style.display = 'none';
   
-  // Reset selected payment
   selectedPaymentMethod = null;
   document.querySelectorAll('.payment-option').forEach(opt => {
     opt.classList.remove('selected');
@@ -1574,7 +1734,6 @@ function buyNowProduct() {
 function selectPayment(method) {
   selectedPaymentMethod = method;
   
-  // Update UI
   document.querySelectorAll('.payment-option').forEach(opt => {
     opt.classList.remove('selected');
   });
@@ -1611,17 +1770,17 @@ function confirmPayment() {
   const product = currentProduct;
   const price = product.discountPrice || product.originalPrice || 0;
   
-  let message = "✅ *Payment Confirmed*\n\n";
-  message += `Product: ${product.title || 'Product'}\n`;
-  message += `Price: PKR ${price}\n`;
-  message += `Payment Method: ${selectedPaymentMethod === 'jazzcash' ? 'JazzCash/EasyPaisa' : 'Cash on Delivery'}\n\n`;
-  message += `Transaction ID: ${Date.now()}\n`;
-  message += `Thank you for your order!`;
+  let message = "✅ *PAYMENT CONFIRMATION*\n\n";
+  message += `📦 *Product:* ${product.title || 'Product'}\n`;
+  message += `💰 *Amount Paid:* PKR ${price}\n`;
+  message += `💳 *Payment Method:* ${selectedPaymentMethod === 'jazzcash' ? 'JazzCash/EasyPaisa' : 'Cash on Delivery'}\n`;
+  message += `🆔 *Transaction ID:* ${Date.now().toString().slice(-8)}\n\n`;
+  message += `Please confirm receipt and share delivery timeline.\n\n`;
+  message += `Thank you! 🙏`;
   
   if(card.phone) {
     const phone = card.phone.replace(/\D/g, '');
-    const whatsappMsg = `Hi! I've made a payment for:\n\nProduct: ${product.title}\nPrice: PKR ${price}\nPayment Method: ${selectedPaymentMethod}\n\nPlease confirm my order.`;
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(whatsappMsg)}`, '_blank');
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
   } else {
     alert(message);
   }
@@ -1634,14 +1793,7 @@ function confirmCOD() {
   const product = currentProduct;
   const price = product.discountPrice || product.originalPrice || 0;
   
-  if(card.phone) {
-    const phone = card.phone.replace(/\D/g, '');
-    const message = `Hi! I want to place a COD order:\n\nProduct: ${product.title || 'Product'}\nPrice: PKR ${price}\n\nPlease confirm availability and delivery details.`;
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
-  } else {
-    alert(`COD Order:\n\nProduct: ${product.title}\nPrice: PKR ${price}\n\nPlease contact the business to confirm.`);
-  }
-  
+  openWhatsAppChat('cod');
   closeModal('productModal');
 }
 
@@ -1655,7 +1807,10 @@ function closeShareModal() {
 }
 
 function shareViaWhatsApp() {
-  const message = `Check out ${card.name || 'this'}'s digital business card: ${window.location.href}`;
+  const message = `👋 Check out ${card.name || 'this'} digital business card!\n\n` +
+                 `${card.businessName ? `🏢 ${card.businessName}\n` : ''}` +
+                 `${card.business?.about ? `📝 ${card.business.about.substring(0, 100)}...\n\n` : '\n'}` +
+                 `View the complete digital card here:\n${window.location.href}`;
   window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
 }
 
@@ -1663,17 +1818,10 @@ function shareViaFacebook() {
   window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
 }
 
-function shareViaMessenger() {
-  // Simple Messenger share
-  const message = `Check out ${card.name || 'this'}'s digital business card: ${window.location.href}`;
-  window.open(`https://m.me/?text=${encodeURIComponent(message)}`, '_blank');
-}
-
 function copyCardLink() {
   navigator.clipboard.writeText(window.location.href).then(() => {
     showNotification('✅ Card link copied to clipboard!');
   }).catch(err => {
-    // Fallback for older browsers
     const textArea = document.createElement('textarea');
     textArea.value = window.location.href;
     document.body.appendChild(textArea);
@@ -1685,46 +1833,27 @@ function copyCardLink() {
 }
 
 function shareViaSMS() {
-  const message = `Check out ${card.name || 'this'}'s digital card: ${window.location.href}`;
+  const message = `Check out ${card.name || 'this'} digital business card: ${window.location.href}`;
   window.open(`sms:?body=${encodeURIComponent(message)}`, '_blank');
 }
 
 function shareViaEmail() {
   const subject = `${card.name || 'Digital'} Business Card`;
-  const body = `Hi,\n\nCheck out ${card.name || 'this'}'s digital business card:\n${window.location.href}\n\nBest regards,\n${card.name || 'Digital Card'}`;
+  const body = `Hi,\n\nI found ${card.name || 'this'} digital business card and thought you might be interested:\n\n` +
+              `${window.location.href}\n\n` +
+              `${card.businessName ? `Business: ${card.businessName}\n` : ''}` +
+              `${card.business?.about ? `About: ${card.business.about.substring(0, 150)}...\n` : ''}\n` +
+              `Best regards,\n${card.name || 'Digital Card'}`;
   window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
 }
 
-// Live Chat Functions
-function openWhatsAppChat() {
-  if(card.phone) {
-    const phone = card.phone.replace(/\D/g, '');
-    window.open(`https://wa.me/${phone}`, '_blank');
-  } else {
-    showNotification('Phone number not available for WhatsApp');
-  }
-}
-
-function openMessenger() {
-  // Simple implementation - opens WhatsApp if no Messenger
-  if(card.phone) {
-    openWhatsAppChat();
-  } else {
-    showNotification('Messenger integration not available');
-  }
-}
-
-// Footer Action Functions - ALL DEFINED NOW
+// Footer Action Functions
 function makeCall() {
   if(card.phone) {
     window.location.href = `tel:${card.phone}`;
   } else {
     showNotification('Phone number not available');
   }
-}
-
-function sendWhatsApp() {
-  openWhatsAppChat();
 }
 
 function sendEmail() {
@@ -1766,7 +1895,6 @@ function toggleAbout() {
   
   if(aboutSection && aboutMore) {
     aboutSection.classList.toggle('expanded');
-    
     const icon = aboutMore.nextElementSibling;
     if(aboutSection.classList.contains('expanded')) {
       aboutMore.textContent = 'See less';
@@ -1783,7 +1911,6 @@ function scrollToTop() {
 }
 
 function showNotification(message) {
-  // Create notification element
   const notification = document.createElement('div');
   notification.style.cssText = `
     position: fixed;
@@ -1804,7 +1931,6 @@ function showNotification(message) {
   notification.textContent = message;
   document.body.appendChild(notification);
   
-  // Remove after 3 seconds
   setTimeout(() => {
     notification.style.opacity = '0';
     notification.style.transform = 'translateY(-20px)';
