@@ -24,7 +24,7 @@ body {
   position: relative;
 }
 
-/* Fixed Floating Action Buttons - Updated with arrow-up only */
+/* Fixed Floating Action Buttons - Only Arrow Up */
 .fab-container {
   position: fixed;
   bottom: 100px;
@@ -57,11 +57,6 @@ body {
 
 .fab-primary {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-
-.fab-whatsapp {
-  background: #25D366;
   color: white;
 }
 
@@ -116,7 +111,7 @@ body {
   background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
 }
 
-/* Enhanced Header with SHARE BUTTON */
+/* Enhanced Header - Extended background for profile image */
 .header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -127,6 +122,7 @@ body {
   align-items: center;
   position: relative;
   overflow: hidden;
+  min-height: 120px; /* Increased height for profile image overlap */
 }
 
 .header::before {
@@ -188,13 +184,20 @@ body {
   justify-content: center;
 }
 
-/* Professional Profile Image - Fixed overlapping issue */
+/* Professional Profile Image - Centered text alignment */
 .profile-section {
   padding: 24px;
   display: flex;
-  align-items: flex-start;
-  gap: 20px;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   position: relative;
+  margin-top: -60px; /* Pull up to overlap with header */
+}
+
+.profile-avatar-container {
+  position: relative;
+  margin-bottom: 20px;
 }
 
 .profile-avatar {
@@ -206,30 +209,32 @@ body {
   box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
   position: relative;
   background: white;
-  flex-shrink: 0;
+  z-index: 2;
 }
 
-.profile-avatar::after {
-  content: '';
+.profile-avatar-background {
   position: absolute;
-  inset: -4px;
-  background: linear-gradient(45deg, #667eea, #764ba2);
+  top: -4px;
+  left: -4px;
+  width: 128px;
+  height: 128px;
   border-radius: 50%;
-  z-index: -1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  z-index: 1;
 }
 
 .profile-info {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
 }
 
 .profile-name {
   font-size: 22px;
   font-weight: 700;
   color: #1e293b;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 
@@ -242,26 +247,77 @@ body {
   font-size: 16px;
   color: #764ba2;
   font-weight: 600;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .profile-contact {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
 }
 
 .contact-item {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   font-size: 14px;
   color: #64748b;
+  width: 100%;
+  text-align: center;
 }
 
 .contact-item i {
   width: 20px;
   color: #667eea;
+  flex-shrink: 0;
+}
+
+/* Live Chat - Moved to LHS of profile image */
+.live-chat-profile {
+  position: absolute;
+  left: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.live-chat-btn {
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  outline: none;
+  white-space: nowrap;
+}
+
+.live-chat-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 }
 
 /* Sections */
@@ -303,6 +359,7 @@ body {
 .about-content {
   line-height: 1.6;
   color: #475569;
+  text-align: center;
 }
 
 .read-more {
@@ -315,98 +372,8 @@ body {
   gap: 6px;
 }
 
-/* Social Media Section - Expandable with arrow-up */
-.social-media-section {
-  padding: 20px;
-  background: #f8fafc;
-  border-radius: 16px;
-  margin: 16px;
-  position: relative;
-}
-
-.social-expandable {
-  max-height: 200px;
-  overflow: hidden;
-  transition: max-height 0.5s ease;
-}
-
-.social-expandable.expanded {
-  max-height: 1000px;
-}
-
-.social-media-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-top: 12px;
-}
-
-.social-link {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 15px;
-  background: white;
-  border-radius: 12px;
-  text-decoration: none;
-  color: #1e293b;
-  transition: all 0.3s;
-  border: 1px solid #e2e8f0;
-}
-
-.social-link:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  border-color: #667eea;
-}
-
-.social-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  color: white;
-}
-
-/* Brand colors for social icons */
-.facebook { background: #1877F2; }
-.instagram { background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D); }
-.twitter { background: #1DA1F2; }
-.linkedin { background: #0077B5; }
-.youtube { background: #FF0000; }
-.tiktok { background: #000000; }
-.website { background: #667eea; }
-
-.social-label {
-  font-size: 12px;
-  font-weight: 500;
-  color: #475569;
-  text-align: center;
-}
-
-.social-toggle {
-  color: #667eea;
-  font-weight: 600;
-  margin-top: 15px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 15px;
-  background: white;
-  border-radius: 25px;
-  border: 1px solid #e2e8f0;
-  transition: all 0.3s;
-}
-
-.social-toggle:hover {
-  background: #f8fafc;
-  border-color: #667eea;
-}
+/* Social Media Section - Removed (moved to RHS of arrow-up) */
+/* The entire social media section has been removed from the main content */
 
 /* Products - Grid layout like Facebook ads (5 cards per row) */
 .products-grid {
@@ -715,13 +682,35 @@ body {
   justify-content: center;
   font-size: 20px;
   color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-icon i {
+  position: relative;
+  z-index: 2;
+}
+
+/* WhatsApp icon with proper background */
+.message-btn .action-icon { 
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+}
+
+/* Fix for WhatsApp icon visibility */
+.message-btn .action-icon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="white" d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>') no-repeat center center;
+  background-size: 60%;
+  z-index: 1;
 }
 
 .call-btn .action-icon { 
   background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-}
-.message-btn .action-icon { 
-  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
 }
 .email-btn .action-icon { 
   background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); 
@@ -737,47 +726,50 @@ body {
   text-align: center;
 }
 
-/* Live Chat - Moved to top right as "About Business" */
-.live-chat-top {
-  position: absolute;
-  top: 20px;
-  right: 90px;
-  z-index: 100;
+/* Social Media moved to RHS of arrow-up button */
+.social-fab-container {
+  position: fixed;
+  bottom: 170px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
 }
 
-.live-chat-btn {
-  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 25px;
-  font-size: 14px;
-  font-weight: 600;
+.social-fab {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+  justify-content: center;
   cursor: pointer;
   transition: all 0.3s;
-  border: none;
-  outline: none;
+  color: white;
+  font-size: 18px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInUp 0.3s forwards;
 }
 
-.live-chat-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+.social-fab:nth-child(1) { animation-delay: 0.1s; }
+.social-fab:nth-child(2) { animation-delay: 0.2s; }
+.social-fab:nth-child(3) { animation-delay: 0.3s; }
+.social-fab:nth-child(4) { animation-delay: 0.4s; }
+
+.social-fab:hover {
+  transform: scale(1.1) translateY(0);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
 }
 
-.live-dot {
-  width: 8px;
-  height: 8px;
-  background: white;
-  border-radius: 50%;
-  animation: blink 1s infinite;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Responsive */
@@ -794,10 +786,6 @@ body {
     max-width: 70px;
   }
   
-  .social-media-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
   .profile-avatar {
     width: 100px;
     height: 100px;
@@ -811,13 +799,21 @@ body {
     min-width: 110px;
   }
   
-  .live-chat-top {
-    right: 80px;
+  .live-chat-profile {
+    left: 15px;
   }
   
   .live-chat-btn {
     padding: 6px 12px;
     font-size: 12px;
+  }
+  
+  .header {
+    min-height: 100px;
+  }
+  
+  .profile-section {
+    margin-top: -50px;
   }
 }
 
@@ -826,14 +822,20 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
   
-  .profile-section {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+  .live-chat-btn {
+    font-size: 11px;
+    padding: 5px 10px;
   }
   
-  .profile-info {
-    width: 100%;
+  .social-fab-container {
+    bottom: 160px;
+    right: 15px;
+  }
+  
+  .social-fab {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
   }
 }
 </style>
@@ -841,34 +843,25 @@ body {
 
 <body>
 
-<!-- Fixed Floating Action Buttons - Only WhatsApp & Arrow Up -->
+<!-- Fixed Floating Action Buttons - Only Arrow Up (WhatsApp removed from LHS) -->
 <div class="fab-container">
-  <div class="fab fab-whatsapp" onclick="openWhatsAppChat('greeting')">
-    <i class="fab fa-whatsapp"></i>
-    <span class="fab-label">Chat</span>
-  </div>
   <div class="fab fab-primary" onclick="scrollToTop()">
     <i class="fas fa-arrow-up"></i>
     <span class="fab-label">Top</span>
   </div>
 </div>
 
+<!-- Social Media Icons on RHS of arrow-up -->
+<div class="social-fab-container" id="socialFabContainer" style="display: none;"></div>
+
 <!-- Main Card Container -->
 <div class="card-container">
   
-  <!-- Header with Cart and Share Icons -->
+  <!-- Header with extended blue background -->
   <div class="glass-card">
     <div class="header">
       <h1 id="businessHeader">Digital Business Card</h1>
       <div class="header-actions">
-        <!-- Live Chat moved to top right -->
-        <div class="live-chat-top">
-          <button class="live-chat-btn" onclick="openWhatsAppChat('greeting')">
-            <span class="live-dot"></span>
-            Live Chat
-          </button>
-        </div>
-        
         <div class="share-header-icon" onclick="openShareModal()">
           <i class="fas fa-share-alt"></i>
         </div>
@@ -880,9 +873,21 @@ body {
       </div>
     </div>
 
-    <!-- Professional Profile Section -->
+    <!-- Professional Profile Section with centered text -->
     <div class="profile-section">
-      <img src="" id="photo" class="profile-avatar">
+      <!-- Live Chat moved to LHS of profile image -->
+      <div class="live-chat-profile">
+        <button class="live-chat-btn" onclick="openWhatsAppChat('greeting')">
+          <span class="live-dot"></span>
+          Live Chat
+        </button>
+      </div>
+      
+      <div class="profile-avatar-container">
+        <div class="profile-avatar-background"></div>
+        <img src="" id="photo" class="profile-avatar">
+      </div>
+      
       <div class="profile-info">
         <div class="profile-name">
           <span id="name">Loading...</span>
@@ -918,21 +923,6 @@ body {
           <span id="aboutMore">See more</span>
           <i class="fas fa-chevron-down"></i>
         </div>
-      </div>
-    </div>
-
-    <!-- Social Media Section - Expandable with arrow-up -->
-    <div class="social-media-section" id="socialMediaSection" style="display:none;">
-      <div class="section-header" style="margin-bottom:15px;">
-        <i class="fas fa-hashtag"></i>
-        <h3 style="margin:0;">Connect on Social Media</h3>
-      </div>
-      <div class="social-expandable" id="socialExpandable">
-        <div class="social-media-grid" id="socialMediaGrid"></div>
-      </div>
-      <div class="social-toggle" onclick="toggleSocialMedia()">
-        <span id="socialMore">Show more</span>
-        <i class="fas fa-arrow-up"></i>
       </div>
     </div>
 
@@ -982,7 +972,7 @@ body {
     </a>
   </div>
 
-  <!-- Footer Actions - Fixed WhatsApp Icon -->
+  <!-- Footer Actions - WhatsApp icon fixed -->
   <div class="footer-actions">
     <div class="action-btn call-btn" onclick="makeCall()">
       <div class="action-icon">
@@ -1099,6 +1089,7 @@ let card = {};
 let currentProduct = null;
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let selectedPaymentMethod = null;
+let showSocialIcons = false;
 
 // Initialize Supabase
 const supa = supabase.createClient(
@@ -1124,7 +1115,79 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderCard();
   updateCartCount();
   setupShareModal();
+  setupSocialFab();
 });
+
+// Setup Social Media FAB
+function setupSocialFab() {
+  const socialFabContainer = document.getElementById('socialFabContainer');
+  const socialMedia = card.socialMedia || {};
+  
+  const socialPlatforms = [
+    { key: 'facebook', icon: 'fab fa-facebook-f', label: 'Facebook', color: '#1877F2' },
+    { key: 'instagram', icon: 'fab fa-instagram', label: 'Instagram', color: '#E4405F' },
+    { key: 'twitter', icon: 'fab fa-twitter', label: 'Twitter', color: '#1DA1F2' },
+    { key: 'linkedin', icon: 'fab fa-linkedin-in', label: 'LinkedIn', color: '#0A66C2' },
+    { key: 'youtube', icon: 'fab fa-youtube', label: 'YouTube', color: '#FF0000' },
+    { key: 'tiktok', icon: 'fab fa-tiktok', label: 'TikTok', color: '#000000' }
+  ];
+  
+  let hasSocialMedia = false;
+  
+  socialPlatforms.forEach(platform => {
+    const url = socialMedia[platform.key];
+    if(url && url.trim()) {
+      hasSocialMedia = true;
+      const socialFab = document.createElement('div');
+      socialFab.className = 'social-fab';
+      socialFab.style.background = platform.color;
+      socialFab.innerHTML = `<i class="${platform.icon}"></i>`;
+      socialFab.title = platform.label;
+      socialFab.onclick = () => {
+        window.open(url.includes('://') ? url : `https://${url}`, '_blank');
+      };
+      socialFabContainer.appendChild(socialFab);
+    }
+  });
+  
+  // Add website if available
+  if(card.website && card.website.trim()) {
+    hasSocialMedia = true;
+    const websiteFab = document.createElement('div');
+    websiteFab.className = 'social-fab';
+    websiteFab.style.background = '#667eea';
+    websiteFab.innerHTML = `<i class="fas fa-globe"></i>`;
+    websiteFab.title = 'Website';
+    websiteFab.onclick = () => {
+      window.open(card.website, '_blank');
+    };
+    socialFabContainer.appendChild(websiteFab);
+  }
+  
+  if(hasSocialMedia) {
+    socialFabContainer.style.display = 'flex';
+    
+    // Toggle social icons on arrow-up click
+    const arrowUpBtn = document.querySelector('.fab-primary');
+    if(arrowUpBtn) {
+      arrowUpBtn.addEventListener('click', function(e) {
+        if(e.target.closest('.fab-primary')) {
+          showSocialIcons = !showSocialIcons;
+          const socialIcons = document.querySelectorAll('.social-fab');
+          socialIcons.forEach(icon => {
+            icon.style.display = showSocialIcons ? 'flex' : 'none';
+          });
+          
+          // Change label
+          const label = this.querySelector('.fab-label');
+          if(label) {
+            label.textContent = showSocialIcons ? 'Social' : 'Top';
+          }
+        }
+      });
+    }
+  }
+}
 
 // Setup Share Modal
 function setupShareModal() {
@@ -1146,29 +1209,6 @@ function setupShareModal() {
       <div class="share-label" style="font-size:14px;font-weight:600;color:#475569;">${method.label}</div>
     </div>
   `).join('');
-}
-
-// Toggle Social Media Expandable
-function toggleSocialMedia() {
-  const socialExpandable = document.getElementById('socialExpandable');
-  const socialMore = document.getElementById('socialMore');
-  const icon = socialMore.nextElementSibling;
-  
-  socialExpandable.classList.toggle('expanded');
-  
-  if(socialExpandable.classList.contains('expanded')) {
-    socialMore.textContent = 'Show less';
-    if(icon) {
-      icon.className = 'fas fa-arrow-down';
-      icon.style.transform = 'rotate(180deg)';
-    }
-  } else {
-    socialMore.textContent = 'Show more';
-    if(icon) {
-      icon.className = 'fas fa-arrow-up';
-      icon.style.transform = 'rotate(0deg)';
-    }
-  }
 }
 
 // Render card function
@@ -1217,77 +1257,9 @@ function renderCard() {
   const aboutText = card.business?.about || card.about || "";
   if(aboutText) {
     document.getElementById('aboutText').textContent = aboutText;
+    document.getElementById('aboutText').style.textAlign = 'center';
   } else {
     document.getElementById('aboutSection').style.display = 'none';
-  }
-  
-  // Social Media with Expandable feature
-  const socialMedia = card.socialMedia || {};
-  const socialMediaGrid = document.getElementById('socialMediaGrid');
-  
-  const socialPlatforms = [
-    { key: 'facebook', icon: 'fab fa-facebook-f', label: 'Facebook', color: '#1877F2' },
-    { key: 'instagram', icon: 'fab fa-instagram', label: 'Instagram', color: '#E4405F' },
-    { key: 'twitter', icon: 'fab fa-twitter', label: 'Twitter', color: '#1DA1F2' },
-    { key: 'linkedin', icon: 'fab fa-linkedin-in', label: 'LinkedIn', color: '#0A66C2' },
-    { key: 'youtube', icon: 'fab fa-youtube', label: 'YouTube', color: '#FF0000' },
-    { key: 'tiktok', icon: 'fab fa-tiktok', label: 'TikTok', color: '#000000' }
-  ];
-  
-  let hasSocialMedia = false;
-  let socialCount = 0;
-  
-  socialPlatforms.forEach(platform => {
-    const url = socialMedia[platform.key];
-    if(url && url.trim()) {
-      hasSocialMedia = true;
-      socialCount++;
-      const socialLink = document.createElement('a');
-      socialLink.className = 'social-link';
-      socialLink.href = url.includes('://') ? url : `https://${url}`;
-      socialLink.target = '_blank';
-      socialLink.innerHTML = `
-        <div class="social-icon ${platform.key}" style="background:${platform.color}">
-          <i class="${platform.icon}"></i>
-        </div>
-        <span class="social-label">${platform.label}</span>
-      `;
-      socialMediaGrid.appendChild(socialLink);
-    }
-  });
-  
-  // Add website if available
-  if(card.website && card.website.trim()) {
-    hasSocialMedia = true;
-    socialCount++;
-    const websiteLink = document.createElement('a');
-    websiteLink.className = 'social-link';
-    websiteLink.href = card.website;
-    websiteLink.target = '_blank';
-    websiteLink.innerHTML = `
-      <div class="social-icon website" style="background:#667eea">
-        <i class="fas fa-globe"></i>
-      </div>
-      <span class="social-label">Website</span>
-    `;
-    socialMediaGrid.appendChild(websiteLink);
-  }
-  
-  if(hasSocialMedia) {
-    document.getElementById('socialMediaSection').style.display = 'block';
-    
-    // Initially show only 6 items, hide others
-    const socialLinks = document.querySelectorAll('.social-link');
-    socialLinks.forEach((link, index) => {
-      if(index >= 6) {
-        link.style.display = 'none';
-      }
-    });
-    
-    // Show toggle only if more than 6 items
-    if(socialCount <= 6) {
-      document.querySelector('.social-toggle').style.display = 'none';
-    }
   }
   
   // Products - Grid layout (5 per row)
