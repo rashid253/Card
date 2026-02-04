@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
+/* All CSS remains the same as before */
 :root {
  --primary: #2563eb;
  --success: #10b981;
@@ -789,7 +790,7 @@ body{
 <script>
 // ============ SUPABASE CONFIGURATION ============
 const SUPABASE_URL = 'https://dfvnefbxgayxqgjjgtrr.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE';
+const SUPABASE_ANON_KEY = 'sb_publishable_WypeFELCIlVDlqGY4PdWwA_snqoPUSE';
 // =================================================
 
 // Global variables
@@ -802,7 +803,7 @@ document.addEventListener("DOMContentLoaded", async () => {
  console.log("DOM loaded, initializing...");
  
  try {
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   
   // Get card ID from URL
   const urlParams = new URLSearchParams(window.location.search);
@@ -886,6 +887,8 @@ function showError(title, message) {
 }
 
 function populateCardData(card) {
+ console.log("Populating card data:", card);
+ 
  // Set profile image
  const photoEl = document.getElementById('photo');
  if (card.profileImage && card.profileImage.startsWith('data:image')) {
@@ -922,7 +925,7 @@ function populateCardData(card) {
   aboutText.textContent = 'No description available';
  }
 
- // Business Hours
+ // Business Hours - FIXED DISPLAY
  if (card.businessHours && card.businessHours.length > 0) {
   const hoursHTML = card.businessHours.map((day, index) => {
    const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -974,9 +977,11 @@ function populateCardData(card) {
   document.getElementById('sectionsContainer').appendChild(holidaysSection);
  }
 
- // Offers
+ // Offers - FIXED DISPLAY
  const offersContainer = document.getElementById('offersContainer');
  if (card.offers && card.offers.length > 0) {
+  console.log("Displaying offers:", card.offers);
+  
   card.offers.forEach((offer, index) => {
    const offerEl = document.createElement('div');
    offerEl.className = 'offer';
@@ -1161,26 +1166,6 @@ END:VCARD`;
  // Checkout button
  document.getElementById('checkoutBtn').addEventListener('click', showCheckout);
 
- // Panel WhatsApp button
- document.getElementById('panelWhatsApp').addEventListener('click', function() {
-  if (currentCard && currentCard.phone) {
-   const phoneNumber = currentCard.phone.replace(/\D/g, '');
-   const panelTitle = document.getElementById('panelTitle').textContent;
-   const panelPrice = document.getElementById('panelPrice').textContent;
-   const message = encodeURIComponent(`I'm interested in: ${panelTitle}\nPrice: ${panelPrice}`);
-   window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
-  }
- });
-
- // Panel Cart button
- document.getElementById('panelCart').addEventListener('click', function() {
-  const offerIndex = parseInt(document.getElementById('offerPanel').dataset.offerIndex);
-  if (!isNaN(offerIndex)) {
-   addToCart(offerIndex);
-   document.getElementById('offerPanel').style.display = 'none';
-  }
- });
-
  console.log("Event listeners initialized");
 }
 
@@ -1359,14 +1344,14 @@ function showCheckout() {
    <div style="text-align:center;">
     <p>Please pay using JazzCash and send screenshot to confirm your order.</p>`;
    
-  if (currentCard.jazzcash.qr) {
+  if (currentCard.jazzcash && currentCard.jazzcash.qr) {
    content += `
     <div class="jazzcashQr">
      <img src="${currentCard.jazzcash.qr}" alt="JazzCash QR Code">
     </div>`;
   }
    
-  if (currentCard.jazzcash.number) {
+  if (currentCard.jazzcash && currentCard.jazzcash.number) {
    content += `
     <div class="jazzcashNumber">
      <strong>Send payment to:</strong>
