@@ -414,7 +414,7 @@ body {
   user-select: none;
 }
 
-/* Products - Facebook Ads Style with 1.75 cards visible */
+/* Products - Facebook Ads Style with standardized scrolling */
 .products-container {
   position: relative;
   width: 100%;
@@ -423,26 +423,32 @@ body {
 }
 
 .products-grid {
-  display: grid;
-  grid-template-columns: repeat(10, 135px);
-  grid-auto-flow: column;
+  display: flex;
   gap: 12px;
   overflow-x: auto;
-  padding: 10px 15px;
-  padding-right: 30px;
-  scrollbar-width: none;
-  width: calc(100% + 40px);
-  margin-left: -15px;
+  padding: 10px 5px;
+  scrollbar-width: thin;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
 }
 
 .products-grid::-webkit-scrollbar {
-  display: none;
+  height: 6px;
+}
+
+.products-grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.products-grid::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
 }
 
 .product-card {
   width: 135px;
+  flex-shrink: 0;
   background: white;
   border-radius: 16px;
   overflow: hidden;
@@ -450,7 +456,6 @@ body {
   transition: all 0.3s;
   cursor: pointer;
   position: relative;
-  flex-shrink: 0;
   user-select: none;
 }
 
@@ -550,139 +555,7 @@ body {
   transform: translateY(-2px);
 }
 
-.products-container::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 40px;
-  height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.9));
-  pointer-events: none;
-}
-
-/* Offers Cards - Fixed RHS movement with VISIBLE END */
-.offers-container {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  padding: 10px 0;
-  margin-top: 10px;
-  scrollbar-width: thin;
-  position: relative;
-  -webkit-overflow-scrolling: touch;
-}
-
-.offers-container::-webkit-scrollbar {
-  height: 6px;
-}
-
-.offers-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.offers-container::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 10px;
-}
-
-.offers-container::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 20px;
-  height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.95));
-  pointer-events: none;
-}
-
-.offer-card {
-  min-width: 280px;
-  background: white;
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  border: 1px solid #e2e8f0;
-  flex-shrink: 0;
-  position: relative;
-  user-select: none;
-}
-
-.offer-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-}
-
-.offer-card h3 {
-  margin-top: 0;
-  color: #1e293b;
-  font-size: 16px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.offer-image {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  background: #f8fafc;
-}
-
-.offer-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 10px 0;
-}
-
-.offer-badge {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 20px;
-}
-
-.offer-desc {
-  color: #475569;
-  font-size: 14px;
-  line-height: 1.5;
-  margin: 10px 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.offer-price {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 12px 0;
-}
-
-.offer-original-price {
-  text-decoration: line-through;
-  color: #94a3b8;
-  font-size: 14px;
-}
-
-.offer-discount-price {
-  color: #ef4444;
-  font-weight: 700;
-  font-size: 18px;
-}
-
-/* Business Hours - Expandable */
+/* Expandable Business Hours */
 .hours-list {
   display: flex;
   flex-direction: column;
@@ -925,15 +798,6 @@ body {
     height: 100px;
   }
   
-  .products-grid {
-    grid-template-columns: repeat(10, 125px);
-    gap: 10px;
-    padding: 10px 12px;
-    padding-right: 25px;
-    width: calc(100% + 35px);
-    margin-left: -12px;
-  }
-  
   .product-card {
     width: 125px;
   }
@@ -972,17 +836,9 @@ body {
     height: 40px;
     font-size: 16px;
   }
-  
-  .offer-card {
-    min-width: 250px;
-  }
 }
 
 @media (max-width: 360px) {
-  .products-grid {
-    grid-template-columns: repeat(10, 115px);
-  }
-  
   .product-card {
     width: 115px;
   }
@@ -994,10 +850,6 @@ body {
   
   .live-chat-profile {
     top: 83px;
-  }
-  
-  .offer-card {
-    min-width: 220px;
   }
 }
 
@@ -1046,12 +898,11 @@ body {
     <div class="header">
       <h1 id="businessHeader">Digital Business Card</h1>
       <div class="header-actions">
-        <!-- FIXED: Added pointer-events auto for better touch -->
-        <div class="share-header-icon" onclick="openShareModal()" style="pointer-events: auto;">
+        <div class="share-header-icon" onclick="openShareModal()">
           <i class="fas fa-share-alt"></i>
         </div>
         
-        <div class="cart-icon" onclick="openCartModal()" style="pointer-events: auto;">
+        <div class="cart-icon" onclick="openCartModal()">
           <i class="fas fa-shopping-cart"></i>
           <span class="cart-count" id="cartCount">0</span>
         </div>
@@ -1108,7 +959,7 @@ body {
       </div>
     </div>
 
-    <!-- Products Section - Facebook Ads Style with 1.75 cards visible -->
+    <!-- Products Section - Facebook Ads Style with standardized scrolling -->
     <div class="section" id="productsSection">
       <div class="section-header">
         <i class="fas fa-gift"></i>
@@ -1118,17 +969,6 @@ body {
         <div class="products-grid" id="productsGrid">
           <!-- Products will be inserted here -->
         </div>
-      </div>
-    </div>
-
-    <!-- Special Offers Section - Shows offer cards WITH PRODUCT DETAILS -->
-    <div class="section" id="specialOffersSection" style="display: none;">
-      <div class="section-header">
-        <i class="fas fa-bolt"></i>
-        <h3>Special Offers</h3>
-      </div>
-      <div class="offers-container" id="specialOffersContainer">
-        <!-- Special offers will be inserted here with product details -->
       </div>
     </div>
 
@@ -1199,10 +1039,9 @@ body {
   </div>
 </div>
 
-<!-- Product Detail Modal - FIXED: Proper close functionality -->
+<!-- Product Detail Modal -->
 <div class="modal" id="productModal">
   <div class="modal-content" style="background:white;border-radius:24px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp 0.3s ease;">
-    <!-- FIXED: Added close button -->
     <button class="close-btn" onclick="closeModal('productModal')" style="top:10px;right:10px;background:rgba(0,0,0,0.5);color:white;">×</button>
     
     <img src="" id="modalImage" class="modal-image" style="width:100%;height:250px;object-fit:cover;border-radius:24px 24px 0 0;background:#f8fafc;">
@@ -1210,8 +1049,6 @@ body {
       <h2 class="modal-title" id="modalTitle" style="font-size:22px;font-weight:700;color:#1e293b;margin-bottom:12px;"></h2>
       <p class="modal-description" id="modalDescription" style="color:#64748b;line-height:1.6;margin-bottom:20px;"></p>
       <div class="modal-price" id="modalPrice" style="font-size:28px;font-weight:700;color:#10b981;margin-bottom:24px;"></div>
-      
-      <!-- FIXED: Payment Methods removed from here - it's in cart modal -->
       
       <div style="display:flex;gap:12px;margin-top:24px;">
         <button class="modal-btn" onclick="buyNowProduct()" style="flex:1;padding:16px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;">
@@ -1225,10 +1062,9 @@ body {
   </div>
 </div>
 
-<!-- Cart Modal - FIXED: Added payment options and better checkout -->
+<!-- Cart Modal -->
 <div class="modal" id="cartModal">
   <div class="modal-content" style="background:white;border-radius:24px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp 0.3s ease;">
-    <!-- FIXED: Added close button -->
     <button class="close-btn" onclick="closeModal('cartModal')" style="top:10px;right:10px;background:rgba(0,0,0,0.5);color:white;">×</button>
     
     <div class="cart-header" style="padding:24px;border-bottom:1px solid #e2e8f0;">
@@ -1242,7 +1078,7 @@ body {
       <span>PKR <span id="cartTotal">0</span></span>
     </div>
     
-    <!-- FIXED: Added Payment Options -->
+    <!-- Payment Options -->
     <div class="payment-section" style="padding:0 24px 24px 24px;">
       <h3 style="margin-bottom:15px;color:#1e293b;">Select Payment Method</h3>
       <div class="payment-options" style="display:flex;flex-direction:column;gap:12px;">
@@ -1286,10 +1122,9 @@ body {
   </div>
 </div>
 
-<!-- Share Modal - FIXED FUNCTIONAL SHARE BUTTON -->
+<!-- Share Modal -->
 <div class="modal" id="shareModal">
   <div class="modal-content" style="background:white;border-radius:24px;width:100%;max-width:350px;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp 0.3s ease;">
-    <!-- FIXED: Added close button -->
     <button class="close-btn" onclick="closeModal('shareModal')" style="top:10px;right:10px;background:rgba(0,0,0,0.5);color:white;">×</button>
     
     <div class="cart-header" style="padding:24px;border-bottom:1px solid #e2e8f0;">
@@ -1305,7 +1140,6 @@ body {
 <!-- JazzCash Payment Modal -->
 <div class="modal" id="jazzcashModal">
   <div class="modal-content" style="background:white;border-radius:24px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp 0.3s ease;">
-    <!-- FIXED: Added close button -->
     <button class="close-btn" onclick="closeModal('jazzcashModal')" style="top:10px;right:10px;background:rgba(0,0,0,0.5);color:white;">×</button>
     
     <div class="cart-header" style="padding:24px;border-bottom:1px solid #e2e8f0;">
@@ -1358,7 +1192,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateCartCount();
   setupShareModal();
   setupSocialIcons();
-  setupModalCloseListeners(); // FIXED: Setup modal close listeners
+  setupModalCloseListeners();
 });
 
 // Setup modal close listeners
@@ -1463,7 +1297,7 @@ function toggleSocialIcons() {
   }
 }
 
-// Setup Share Modal - FIXED FUNCTIONALITY
+// Setup Share Modal
 function setupShareModal() {
   const shareOptions = document.getElementById('shareOptions');
   const shareMethods = [
@@ -1540,7 +1374,7 @@ function renderCard() {
     document.getElementById('aboutSection').style.display = 'none';
   }
   
-  // Products - Facebook Ads Style with 1.75 cards visible
+  // Products - Standardized scrolling
   const products = card.products || card.offers || [];
   const productsGrid = document.getElementById('productsGrid');
   
@@ -1572,57 +1406,6 @@ function renderCard() {
     });
   } else {
     document.getElementById('productsSection').style.display = 'none';
-  }
-  
-  // Special Offers Section - Shows offer cards WITH PRODUCT DETAILS
-  const specialOffersContainer = document.getElementById('specialOffersContainer');
-  let hasSpecialOffers = false;
-  
-  if(products.length > 0) {
-    // Filter products that have badges (special offers)
-    const specialOffers = products.filter(product => 
-      product.badges && product.badges.length > 0
-    );
-    
-    if(specialOffers.length > 0) {
-      hasSpecialOffers = true;
-      document.getElementById('specialOffersSection').style.display = 'block';
-      
-      specialOffers.forEach((product, index) => {
-        const originalIndex = products.findIndex(p => p.title === product.title);
-        const price = product.discountPrice || product.originalPrice;
-        const originalPrice = product.originalPrice && product.discountPrice ? product.originalPrice : null;
-        
-        const offerCard = document.createElement('div');
-        offerCard.className = 'offer-card';
-        
-        offerCard.innerHTML = `
-          <h3><i class="fas fa-bolt"></i> ${product.title || 'Special Offer'}</h3>
-          ${product.image ? `<img src="${product.image}" class="offer-image" onerror="this.style.display='none'">` : ''}
-          <div class="offer-badges">
-            ${(product.badges || []).map(badge => `<span class="offer-badge">${badge}</span>`).join('')}
-          </div>
-          <div class="offer-desc">${product.desc || 'Special limited time offer!'}</div>
-          <div class="offer-price">
-            ${originalPrice ? `<span class="offer-original-price">PKR ${originalPrice}</span>` : ''}
-            ${price ? `<span class="offer-discount-price">PKR ${price}</span>` : ''}
-          </div>
-          <div style="display:flex;gap:10px;margin-top:15px;">
-            <button onclick="showProductModal(${originalIndex})" style="flex:1;padding:10px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;">
-              View Details
-            </button>
-            <button onclick="addToCart(${originalIndex})" style="flex:1;padding:10px;background:linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;">
-              Add to Cart
-            </button>
-          </div>
-        `;
-        specialOffersContainer.appendChild(offerCard);
-      });
-    }
-  }
-  
-  if(!hasSpecialOffers) {
-    document.getElementById('specialOffersSection').style.display = 'none';
   }
   
   // Business Hours - Expandable
@@ -1786,7 +1569,7 @@ function openWhatsAppChat(context) {
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
 }
 
-// Share Functions - ALL FIXED AND FUNCTIONAL
+// Share Functions
 function openShareModal() {
   document.getElementById('shareModal').style.display = 'flex';
   document.body.style.overflow = 'hidden';
@@ -1990,7 +1773,7 @@ function resetCartPaymentSelection() {
   });
 }
 
-// FIXED: Enhanced Checkout Function with Payment Methods
+// Enhanced Checkout Function with Payment Methods
 function checkoutCart() {
   if(cart.length === 0) {
     showNotification('Your cart is empty');
@@ -2047,7 +1830,7 @@ function getPaymentMethodName(method) {
   }
 }
 
-// Product Modal Functions - FIXED: Proper close functionality
+// Product Modal Functions
 function showProductModal(productIndex) {
   const products = card.products || card.offers || [];
   currentProduct = products[productIndex];
