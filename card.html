@@ -25,10 +25,10 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Social Media - Moved BACK to bottom right */
+/* Social Media Floating Container - MOVED TO ORIGINAL POSITION */
 .social-float-container {
   position: fixed;
-  bottom: 100px;
+  bottom: 20px;
   right: 20px;
   z-index: 1000;
   display: flex;
@@ -185,7 +185,6 @@ body {
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
-  z-index: 100; /* Added z-index */
 }
 
 .cart-icon:hover, .share-header-icon:hover {
@@ -207,7 +206,6 @@ body {
   display: none;
   align-items: center;
   justify-content: center;
-  z-index: 101; /* Higher than parent */
 }
 
 /* Professional Profile Image - Centered with overlapping header */
@@ -1033,7 +1031,7 @@ body {
   }
   
   .social-float-container {
-    bottom: 90px;
+    bottom: 15px;
     right: 15px;
   }
   
@@ -1081,7 +1079,7 @@ body {
 
 <body>
 
-<!-- Social Media Floating Icon - Moved BACK to bottom right -->
+<!-- Social Media Floating Icon - MOVED BACK TO BOTTOM RIGHT -->
 <div class="social-float-container">
   <div class="social-expandable-icons" id="socialIcons"></div>
   <div class="social-main-icon" onclick="toggleSocialIcons()">
@@ -1097,7 +1095,7 @@ body {
     <div class="header">
       <h1 id="businessHeader">Digital Business Card</h1>
       <div class="header-actions">
-        <!-- FIXED: Added onclick event handlers directly -->
+        <!-- FIXED: Share and Cart icons in header -->
         <div class="share-header-icon" onclick="openShareModal()">
           <i class="fas fa-share-alt"></i>
         </div>
@@ -1398,6 +1396,8 @@ body {
   </div>
 </div>
 
+<!-- Fixed Supabase JS CDN - Using newer version -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
 <script>
 // Global variables
 let card = {};
@@ -1407,21 +1407,12 @@ let selectedPaymentMethod = 'jazzcash'; // Default for product
 let cartPaymentMethod = 'jazzcash'; // Default for cart
 let socialIconsVisible = false;
 
-// Initialize Supabase - FIXED: Removed postMessage error
-const supa = {
-  from: () => ({
-    select: () => ({
-      eq: () => ({
-        single: async () => {
-          // This is a mock to prevent the postMessage error
-          return { data: null, error: null };
-        }
-      })
-    })
-  })
-};
+// Initialize Supabase - FIXED VERSION
+const supabaseUrl = "https://dfvnefbxgayxqgjjgtrr.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRmdm5lZmJ4Z2F5eHFnamdndHJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcyNDU5NDQsImV4cCI6MjA1MjgyMTk0NH0.xj9VHXqYAxj6vppuKGh2yKnN3ND1vMlTggo07XcBCBM";
+const supa = supabase.createClient(supabaseUrl, supabaseKey);
 
-// Load card data from localStorage instead
+// Load card data
 document.addEventListener("DOMContentLoaded", async () => {
   const id = new URLSearchParams(location.search).get("id") || localStorage.getItem("lastCardId");
   if(!id) {
@@ -1429,93 +1420,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Try to load from localStorage first (for demo)
-  const cardData = localStorage.getItem('card_' + id);
-  if(cardData) {
-    card = JSON.parse(cardData);
-  } else {
-    // Fallback to demo data
-    card = getDemoCardData();
-  }
-  
-  renderCard();
-  updateCartCount();
-  setupShareModal();
-  setupSocialIcons();
-  setupModalCloseListeners();
-  setupBackButtonHandler();
-  
-  // Initialize payment selection
-  setTimeout(() => {
-    updatePaymentOptionSelection();
-    selectCartPayment('jazzcash');
-  }, 100);
-});
+  try {
+    const {data, error} = await supa.from("cards").select("*").eq("id", id).single();
+    if(error || !data) {
+      document.body.innerHTML = "<div style='padding:40px;text-align:center;color:white;'><h2>Card not found</h2></div>";
+      return;
+    }
 
-// Demo card data for testing
-function getDemoCardData() {
-  return {
-    name: "John Doe",
-    businessName: "Digital Solutions",
-    phone: "+923001234567",
-    email: "contact@business.com",
-    address: "123 Business Street, City",
-    profileImage: "",
-    business: {
-      about: "We provide the best digital solutions for your business needs. Our team of experts is dedicated to delivering high-quality services."
-    },
-    socialMedia: {
-      facebook: "https://facebook.com/business",
-      instagram: "https://instagram.com/business",
-      twitter: "https://twitter.com/business"
-    },
-    products: [
-      {
-        title: "Premium Product",
-        desc: "High quality premium product with amazing features",
-        originalPrice: "2000",
-        discountPrice: "1500",
-        image: "",
-        badges: ["🔥 Hot Deal", "💸 Discount"]
-      },
-      {
-        title: "Standard Product",
-        desc: "Standard quality product for everyday use",
-        originalPrice: "1000",
-        discountPrice: "",
-        image: "",
-        badges: ["⭐ Best Seller"]
-      }
-    ],
-    payments: {
-      jazzcash: {
-        active: true,
-        type: 'jazzcash',
-        barcode: '',
-        number: '0300-1234567'
-      },
-      whatsapp: {
-        active: true,
-        number: '+923001234567',
-        greeting: "Hello! How can I help you?"
-      }
-    },
-    businessHours: [
-      { open: true, status: 'open', start: '09:00', end: '18:00' },
-      { open: true, status: 'open', start: '09:00', end: '18:00' },
-      { open: true, status: 'open', start: '09:00', end: '18:00' },
-      { open: true, status: 'open', start: '09:00', end: '18:00' },
-      { open: true, status: 'open', start: '09:00', end: '18:00' },
-      { open: false, status: 'closed', start: null, end: null },
-      { open: false, status: 'closed', start: null, end: null }
-    ],
-    holidays: [
-      { name: "Eid ul-Fitr", date: "2024-06-16" },
-      { name: "Independence Day", date: "2024-08-14" }
-    ],
-    website: "https://mybusiness.com"
-  };
-}
+    card = JSON.parse(data.data);
+    renderCard();
+    updateCartCount();
+    setupShareModal();
+    setupSocialIcons();
+    setupModalCloseListeners();
+    setupBackButtonHandler();
+  } catch (error) {
+    console.error("Error loading card:", error);
+    document.body.innerHTML = "<div style='padding:40px;text-align:center;color:white;'><h2>Error loading card</h2></div>";
+  }
+});
 
 // Setup modal close listeners
 function setupModalCloseListeners() {
@@ -1535,23 +1458,25 @@ function setupModalCloseListeners() {
 // Handle mobile back button
 function setupBackButtonHandler() {
   // Handle browser back button
-  let modalHistory = [];
-  
   window.addEventListener('popstate', function(event) {
     const modals = ['productModal', 'cartModal', 'shareModal', 'jazzcashModal', 'paymentOptionsModal'];
+    let anyModalOpen = false;
     
     modals.forEach(modalId => {
       const modal = document.getElementById(modalId);
       if(modal && modal.style.display === 'flex') {
         closeModal(modalId);
-        // Add state to prevent going back
-        history.pushState(null, null, window.location.pathname + window.location.search);
+        anyModalOpen = true;
+        // Prevent going back in history
+        history.pushState(null, null, window.location.pathname);
       }
     });
+    
+    return !anyModalOpen;
   });
 
   // Push initial state
-  history.pushState(null, null, window.location.pathname + window.location.search);
+  history.pushState(null, null, window.location.pathname);
 }
 
 // Social Media Icons Setup
@@ -1945,9 +1870,8 @@ function openWhatsAppChat(context) {
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
 }
 
-// Share Functions - FIXED: Now working properly
+// Share Functions
 function openShareModal() {
-  console.log('Opening share modal'); // Debug
   document.getElementById('shareModal').style.display = 'flex';
   document.body.style.overflow = 'hidden';
 }
@@ -2036,9 +1960,7 @@ function addToCart(productIndex) {
   }
 }
 
-// FIXED: Cart modal opening function
 function openCartModal() {
-  console.log('Opening cart modal'); // Debug
   document.getElementById('cartModal').style.display = 'flex';
   document.body.style.overflow = 'hidden';
   
@@ -2111,11 +2033,6 @@ function selectCartPayment(method) {
   const jazzcashRadio = document.getElementById('cartJazzcashRadio');
   const codRadio = document.getElementById('cartCodRadio');
   
-  if(!jazzcashOption || !codOption || !jazzcashRadio || !codRadio) {
-    console.error('Cart payment elements not found');
-    return;
-  }
-  
   // Reset all
   [jazzcashOption, codOption].forEach(option => {
     option.classList.remove('selected');
@@ -2127,11 +2044,11 @@ function selectCartPayment(method) {
   });
   
   // Select the chosen one
-  if(method === 'jazzcash') {
+  if(method === 'jazzcash' && jazzcashOption && jazzcashRadio) {
     jazzcashOption.classList.add('selected');
     jazzcashRadio.style.background = '#FF6B00';
     jazzcashRadio.style.borderColor = '#FF6B00';
-  } else if(method === 'cod') {
+  } else if(method === 'cod' && codOption && codRadio) {
     codOption.classList.add('selected');
     codRadio.style.background = '#10b981';
     codRadio.style.borderColor = '#10b981';
@@ -2272,7 +2189,7 @@ function showProductModal(productIndex) {
   
   const modal = document.getElementById('productModal');
   const price = currentProduct.discountPrice || currentProduct.originalPrice;
-  const originalPrice = currentProduct.originalPrice && product.discountPrice ? currentProduct.originalPrice : null;
+  const originalPrice = currentProduct.originalPrice && currentProduct.discountPrice ? currentProduct.originalPrice : null;
   
   document.getElementById('modalImage').src = currentProduct.image || '';
   document.getElementById('modalTitle').textContent = currentProduct.title || 'Product';
@@ -2324,11 +2241,6 @@ function updatePaymentOptionSelection() {
   const jazzcashRadio = document.getElementById('jazzcashRadio');
   const codRadio = document.getElementById('codRadio');
   
-  if(!jazzcashOption || !codOption || !jazzcashRadio || !codRadio) {
-    console.error('Payment option elements not found');
-    return;
-  }
-  
   // Reset all
   [jazzcashOption, codOption].forEach(option => {
     option.classList.remove('selected');
@@ -2340,11 +2252,11 @@ function updatePaymentOptionSelection() {
   });
   
   // Select the chosen one
-  if(selectedPaymentMethod === 'jazzcash') {
+  if(selectedPaymentMethod === 'jazzcash' && jazzcashOption && jazzcashRadio) {
     jazzcashOption.classList.add('selected');
     jazzcashRadio.style.background = '#FF6B00';
     jazzcashRadio.style.borderColor = '#FF6B00';
-  } else if(selectedPaymentMethod === 'cod') {
+  } else if(selectedPaymentMethod === 'cod' && codOption && codRadio) {
     codOption.classList.add('selected');
     codRadio.style.background = '#10b981';
     codRadio.style.borderColor = '#10b981';
@@ -2461,7 +2373,7 @@ function openModal(modalId) {
   document.getElementById(modalId).style.display = 'flex';
   document.body.style.overflow = 'hidden';
   // Push state to handle back button
-  history.pushState({ modal: modalId }, null, window.location.pathname + window.location.search);
+  history.pushState({ modal: modalId }, null, window.location.pathname);
 }
 
 function closeModal(modalId) {
@@ -2503,6 +2415,9 @@ function showNotification(message) {
 
 // Initialize
 updateCartCount();
+// Set default payment selection
+updatePaymentOptionSelection();
+selectCartPayment('jazzcash');
 </script>
 </body>
 </html>
