@@ -779,6 +779,102 @@ body {
   to { transform: translateY(0); opacity: 1; }
 }
 
+/* Simplified Share Button Styles */
+.share-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px 15px;
+  border-radius: 18px;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 1px solid transparent;
+  min-height: 110px;
+}
+
+.share-option:hover {
+  background: white;
+  border-color: #e2e8f0;
+  transform: translateY(-3px);
+}
+
+.share-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+}
+
+.share-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* JazzCash Barcode/QR Code Styling */
+.barcode-container {
+  text-align: center;
+  margin: 20px 0;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 16px;
+  border: 2px dashed #e2e8f0;
+}
+
+.barcode-image {
+  max-width: 250px;
+  max-height: 250px;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  margin: 0 auto 15px;
+  display: block;
+  background: white;
+  padding: 10px;
+}
+
+.payment-number {
+  font-size: 24px;
+  font-weight: 700;
+  color: #FF6B00;
+  margin: 15px 0;
+  letter-spacing: 1px;
+  background: rgba(255, 107, 0, 0.1);
+  padding: 10px 15px;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+.payment-instructions {
+  background: #f0f9ff;
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 20px;
+  border-left: 4px solid #3b82f6;
+}
+
+.payment-instructions ol {
+  text-align: left;
+  padding-left: 20px;
+  margin: 10px 0;
+}
+
+.payment-instructions li {
+  margin-bottom: 8px;
+  color: #475569;
+  font-size: 14px;
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   .card-container {
@@ -1039,7 +1135,7 @@ body {
   </div>
 </div>
 
-<!-- Product Detail Modal -->
+<!-- Product Detail Modal - ENHANCED WITH BUY NOW CHECKOUT -->
 <div class="modal" id="productModal">
   <div class="modal-content" style="background:white;border-radius:24px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp 0.3s ease;">
     <button class="close-btn" onclick="closeModal('productModal')" style="top:10px;right:10px;background:rgba(0,0,0,0.5);color:white;">×</button>
@@ -1050,8 +1146,49 @@ body {
       <p class="modal-description" id="modalDescription" style="color:#64748b;line-height:1.6;margin-bottom:20px;"></p>
       <div class="modal-price" id="modalPrice" style="font-size:28px;font-weight:700;color:#10b981;margin-bottom:24px;"></div>
       
+      <!-- NEW: Direct Checkout Section for Single Product -->
+      <div id="directCheckoutSection" style="display:none; margin-top: 24px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
+        <h3 style="font-size:18px;font-weight:600;color:#1e293b;margin-bottom:15px;">Checkout Now</h3>
+        
+        <div class="payment-options" style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
+          <div class="payment-option" onclick="selectBuyNowPayment('whatsapp')" id="whatsappBuyNowOption" style="padding:16px;border:2px solid #e2e8f0;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.3s;">
+            <div class="payment-icon" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;background:#25D366;">
+              <i class="fab fa-whatsapp"></i>
+            </div>
+            <div style="flex:1;">
+              <div style="font-weight:600;color:#1e293b;">WhatsApp Order</div>
+              <div style="font-size:12px;color:#64748b;">Confirm order via WhatsApp chat</div>
+            </div>
+          </div>
+          
+          <div class="payment-option" onclick="selectBuyNowPayment('cod')" id="codBuyNowOption" style="padding:16px;border:2px solid #e2e8f0;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.3s;">
+            <div class="payment-icon" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;background:#10b981;">
+              <i class="fas fa-truck"></i>
+            </div>
+            <div style="flex:1;">
+              <div style="font-weight:600;color:#1e293b;">Cash on Delivery</div>
+              <div style="font-size:12px;color:#64748b;">Pay when product arrives</div>
+            </div>
+          </div>
+          
+          <div class="payment-option" onclick="selectBuyNowPayment('jazzcash')" id="jazzcashBuyNowOption" style="padding:16px;border:2px solid #e2e8f0;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.3s;">
+            <div class="payment-icon" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;background:#FF6B00;">
+              <i class="fas fa-qrcode"></i>
+            </div>
+            <div style="flex:1;">
+              <div style="font-weight:600;color:#1e293b;">JazzCash / EasyPaisa</div>
+              <div style="font-size:12px;color:#64748b;">Pay via QR Code or Number</div>
+            </div>
+          </div>
+        </div>
+        
+        <button class="buynow-checkout-btn" onclick="checkoutBuyNow()" style="width:100%;padding:16px;background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:white;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;">
+          <i class="fas fa-bolt"></i> Complete Purchase
+        </button>
+      </div>
+      
       <div style="display:flex;gap:12px;margin-top:24px;">
-        <button class="modal-btn" onclick="buyNowProduct()" style="flex:1;padding:16px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;">
+        <button class="modal-btn" onclick="showDirectCheckout()" style="flex:1;padding:16px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;">
           🛒 Buy Now
         </button>
         <button class="modal-btn" onclick="addToCartFromModal()" style="flex:1;padding:16px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;background:linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);color:white;">
@@ -1122,7 +1259,7 @@ body {
   </div>
 </div>
 
-<!-- Share Modal -->
+<!-- Share Modal - SIMPLIFIED FOR MOBILE -->
 <div class="modal" id="shareModal">
   <div class="modal-content" style="background:white;border-radius:24px;width:100%;max-width:350px;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp 0.3s ease;">
     <button class="close-btn" onclick="closeModal('shareModal')" style="top:10px;right:10px;background:rgba(0,0,0,0.5);color:white;">×</button>
@@ -1157,6 +1294,41 @@ body {
   </div>
 </div>
 
+<!-- NEW: Buy Now Payment Modal (Similar to JazzCash Modal but for single product) -->
+<div class="modal" id="buyNowPaymentModal">
+  <div class="modal-content" style="background:white;border-radius:24px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp 0.3s ease;">
+    <button class="close-btn" onclick="closeModal('buyNowPaymentModal')" style="top:10px;right:10px;background:rgba(0,0,0,0.5);color:white;">×</button>
+    
+    <div class="cart-header" style="padding:24px;border-bottom:1px solid #e2e8f0;">
+      <div class="cart-title" style="font-size:20px;font-weight:700;color:#1e293b;">Complete Your Purchase</div>
+      <div style="font-size:14px;color:#64748b;margin-top:5px;" id="buyNowProductTitle"></div>
+    </div>
+    
+    <div style="padding:24px;">
+      <div id="buyNowPaymentDetails">
+        <!-- Payment details will be inserted here based on selected method -->
+      </div>
+      
+      <div class="payment-instructions" id="buyNowInstructions">
+        <div style="font-size:14px;color:#64748b;margin-bottom:8px;"><strong>Instructions:</strong></div>
+        <ol id="buyNowStepsList">
+          <li>Complete the payment using the method above</li>
+          <li>Take a screenshot of the payment confirmation</li>
+          <li>Share the screenshot via WhatsApp for order confirmation</li>
+        </ol>
+      </div>
+      
+      <button onclick="confirmBuyNowPayment()" style="width:100%;padding:16px;background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:white;border:none;border-radius:12px;font-size:16px;font-weight:600;margin-top:20px;cursor:pointer;">
+        <i class="fas fa-check-circle"></i> I Have Made the Payment
+      </button>
+      
+      <button onclick="closeModal('buyNowPaymentModal')" style="width:100%;padding:12px;background:#f1f5f9;color:#64748b;border:none;border-radius:12px;font-size:14px;font-weight:600;margin-top:10px;cursor:pointer;">
+        Cancel Order
+      </button>
+    </div>
+  </div>
+</div>
+
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
 // Global variables
@@ -1165,7 +1337,8 @@ let currentProduct = null;
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let selectedPaymentMethod = null;
 let socialIconsVisible = false;
-let cartPaymentMethod = 'whatsapp'; // Default payment method for cart
+let cartPaymentMethod = 'whatsapp';
+let buyNowPaymentMethod = 'whatsapp'; // NEW: Payment method for Buy Now flow
 
 // Initialize Supabase
 const supa = supabase.createClient(
@@ -1199,7 +1372,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 function setupModalCloseListeners() {
   // Close modals when clicking outside
   document.addEventListener('click', (e) => {
-    const modals = ['productModal', 'cartModal', 'shareModal', 'jazzcashModal'];
+    const modals = ['productModal', 'cartModal', 'shareModal', 'jazzcashModal', 'buyNowPaymentModal'];
     
     modals.forEach(modalId => {
       const modal = document.getElementById(modalId);
@@ -1212,7 +1385,7 @@ function setupModalCloseListeners() {
   // Close modals with Escape key
   document.addEventListener('keydown', (e) => {
     if(e.key === 'Escape') {
-      const modals = ['productModal', 'cartModal', 'shareModal', 'jazzcashModal'];
+      const modals = ['productModal', 'cartModal', 'shareModal', 'jazzcashModal', 'buyNowPaymentModal'];
       modals.forEach(modalId => {
         const modal = document.getElementById(modalId);
         if(modal && modal.style.display === 'flex') {
@@ -1297,7 +1470,7 @@ function toggleSocialIcons() {
   }
 }
 
-// Setup Share Modal
+// Setup Share Modal - SIMPLIFIED FOR MOBILE
 function setupShareModal() {
   const shareOptions = document.getElementById('shareOptions');
   const shareMethods = [
@@ -1309,12 +1482,13 @@ function setupShareModal() {
     { icon: 'fas fa-envelope', label: 'Email', color: '#ef4444', action: 'shareViaEmail' }
   ];
 
+  // Simple grid layout with larger touch targets
   shareOptions.innerHTML = shareMethods.map(method => `
-    <div class="share-option" onclick="${method.action}()" style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px;border-radius:16px;background:#f8fafc;cursor:pointer;transition:all 0.3s;">
-      <div class="share-icon" style="width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;color:white;background:${method.color};">
+    <div class="share-option" onclick="${method.action}()">
+      <div class="share-icon" style="background:${method.color};">
         <i class="${method.icon}"></i>
       </div>
-      <div class="share-label" style="font-size:14px;font-weight:600;color:#475569;">${method.label}</div>
+      <div class="share-label">${method.label}</div>
     </div>
   `).join('');
 }
@@ -1534,7 +1708,7 @@ function openWhatsAppChat(context) {
   
   switch(context) {
     case 'greeting':
-      message = `Hello! I found your digital business card and I'm interested in your products/services. Could you please provide more information?`;
+      message = card.payments?.whatsapp?.greeting || `Hello! I found your digital business card and I'm interested in your products/services. Could you please provide more information?`;
       break;
       
     case 'order':
@@ -1563,7 +1737,7 @@ function openWhatsAppChat(context) {
       break;
       
     default:
-      message = `Hello! I found your digital business card and I'm interested in your services/products. Could you please provide more information?`;
+      message = card.payments?.whatsapp?.greeting || `Hello! I found your digital business card and I'm interested in your services/products. Could you please provide more information?`;
   }
   
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
@@ -1742,8 +1916,10 @@ function selectCartPayment(method) {
   
   // Reset all
   [whatsappOption, codOption, jazzcashOption].forEach(option => {
-    option.style.borderColor = '#e2e8f0';
-    option.style.backgroundColor = 'white';
+    if(option) {
+      option.style.borderColor = '#e2e8f0';
+      option.style.backgroundColor = 'white';
+    }
   });
   
   // Select the chosen one
@@ -1830,7 +2006,7 @@ function getPaymentMethodName(method) {
   }
 }
 
-// Product Modal Functions
+// Product Modal Functions - ENHANCED WITH BUY NOW FLOW
 function showProductModal(productIndex) {
   const products = card.products || card.offers || [];
   currentProduct = products[productIndex];
@@ -1854,8 +2030,20 @@ function showProductModal(productIndex) {
     document.getElementById('modalPrice').textContent = price ? `PKR ${price}` : 'Price not available';
   }
   
+  // Hide direct checkout section initially
+  document.getElementById('directCheckoutSection').style.display = 'none';
+  // Reset Buy Now payment selection
+  selectBuyNowPayment('whatsapp');
+  
   modal.style.display = 'flex';
   document.body.style.overflow = 'hidden';
+}
+
+function showDirectCheckout() {
+  // Show the checkout section in the product modal
+  document.getElementById('directCheckoutSection').style.display = 'block';
+  // Scroll to the checkout section
+  document.getElementById('directCheckoutSection').scrollIntoView({ behavior: 'smooth' });
 }
 
 function addToCartFromModal() {
@@ -1870,11 +2058,139 @@ function addToCartFromModal() {
   }
 }
 
-function buyNowProduct() {
-  if(currentProduct) {
-    // Direct WhatsApp order for single product
-    openWhatsAppChat('order');
-    closeModal('productModal');
+// NEW: Buy Now Payment Selection
+function selectBuyNowPayment(method) {
+  buyNowPaymentMethod = method;
+  
+  const whatsappOption = document.getElementById('whatsappBuyNowOption');
+  const codOption = document.getElementById('codBuyNowOption');
+  const jazzcashOption = document.getElementById('jazzcashBuyNowOption');
+  
+  // Reset all
+  [whatsappOption, codOption, jazzcashOption].forEach(option => {
+    if(option) {
+      option.style.borderColor = '#e2e8f0';
+      option.style.backgroundColor = 'white';
+    }
+  });
+  
+  // Select the chosen one
+  if(method === 'whatsapp' && whatsappOption) {
+    whatsappOption.style.borderColor = '#25D366';
+    whatsappOption.style.backgroundColor = '#f0fdf4';
+  } else if(method === 'cod' && codOption) {
+    codOption.style.borderColor = '#10b981';
+    codOption.style.backgroundColor = '#f0fdf4';
+  } else if(method === 'jazzcash' && jazzcashOption) {
+    jazzcashOption.style.borderColor = '#FF6B00';
+    jazzcashOption.style.backgroundColor = '#fff7ed';
+  }
+}
+
+// NEW: Checkout for Buy Now (Single Product)
+function checkoutBuyNow() {
+  if(!currentProduct) {
+    showNotification('No product selected');
+    return;
+  }
+  
+  const price = currentProduct.discountPrice || currentProduct.originalPrice || 0;
+  
+  // If JazzCash/EasyPaisa is selected, show payment details modal
+  if(buyNowPaymentMethod === 'jazzcash' && card.payments?.jazzcash?.active) {
+    showBuyNowPaymentModal();
+  } else {
+    // For WhatsApp and COD, directly send message
+    sendBuyNowOrder();
+  }
+}
+
+// NEW: Show Buy Now Payment Modal
+function showBuyNowPaymentModal() {
+  if(!currentProduct) return;
+  
+  document.getElementById('buyNowProductTitle').textContent = currentProduct.title || 'Product';
+  
+  const paymentDetails = document.getElementById('buyNowPaymentDetails');
+  const price = currentProduct.discountPrice || currentProduct.originalPrice || 0;
+  
+  let html = '';
+  
+  if(buyNowPaymentMethod === 'jazzcash' && card.payments?.jazzcash?.active) {
+    html = `
+      <div style="text-align:center;">
+        <div style="margin-bottom:20px;">
+          <div style="font-size:16px;font-weight:600;color:#1e293b;margin-bottom:8px;">${card.payments.jazzcash.type === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'} Payment</div>
+          <div style="font-size:18px;color:#475569;margin-bottom:10px;">Send <strong>PKR ${price}</strong> to:</div>
+          <div class="payment-number">${card.payments.jazzcash.number || ''}</div>
+        </div>
+        
+        ${card.payments.jazzcash.barcode ? `
+          <div class="barcode-container">
+            <div style="font-size:14px;color:#64748b;margin-bottom:10px;">Scan QR Code to Pay</div>
+            <img src="${card.payments.jazzcash.barcode}" class="barcode-image" alt="Payment QR Code">
+          </div>
+        ` : ''}
+        
+        <div style="font-size:13px;color:#475569;margin-top:15px;">
+          ${card.payments.jazzcash.instructions || 'Please share payment screenshot via WhatsApp for order confirmation.'}
+        </div>
+      </div>
+    `;
+  }
+  
+  paymentDetails.innerHTML = html;
+  document.getElementById('buyNowPaymentModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  closeModal('productModal');
+}
+
+// NEW: Confirm Buy Now Payment
+function confirmBuyNowPayment() {
+  sendBuyNowOrder();
+  closeModal('buyNowPaymentModal');
+}
+
+// NEW: Send Buy Now Order via WhatsApp
+function sendBuyNowOrder() {
+  if(!currentProduct) return;
+  
+  const price = currentProduct.discountPrice || currentProduct.originalPrice || 0;
+  
+  let message = `Hello! I would like to purchase:\n\n` +
+               `Product: ${currentProduct.title || 'Product'}\n` +
+               `Price: PKR ${price}\n` +
+               `${currentProduct.desc ? `Description: ${currentProduct.desc}\n\n` : '\n'}` +
+               `Payment Method: ${getBuyNowPaymentMethodName(buyNowPaymentMethod)}\n`;
+  
+  // Add payment method specific instructions
+  if(buyNowPaymentMethod === 'jazzcash' && card.payments?.jazzcash?.active) {
+    message += `Payment sent to: ${card.payments.jazzcash.number || ''}\n`;
+    message += `Via: ${card.payments.jazzcash.type === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'}\n`;
+  } else if(buyNowPaymentMethod === 'cod') {
+    message += `I prefer Cash on Delivery.\n`;
+  }
+  
+  message += `\nPlease confirm availability and share delivery details.`;
+  
+  if(card.phone) {
+    const phone = card.phone.replace(/\D/g, '');
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+  } else {
+    showNotification('Please contact business directly for order');
+  }
+  
+  // Close product modal
+  closeModal('productModal');
+}
+
+// NEW: Get payment method name for Buy Now
+function getBuyNowPaymentMethodName(method) {
+  switch(method) {
+    case 'whatsapp': return 'WhatsApp Order';
+    case 'cod': return 'Cash on Delivery';
+    case 'jazzcash': return card.payments?.jazzcash?.type === 'easypaisa' ? 'EasyPaisa' : 'JazzCash';
+    default: return 'WhatsApp Order';
   }
 }
 
