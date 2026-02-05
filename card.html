@@ -560,7 +560,7 @@ body {
   pointer-events: none;
 }
 
-/* Offers Cards - Fixed: Only show offers without product details */
+/* Offers Cards - Standardized without auto movement */
 .offers-container {
   display: flex;
   gap: 16px;
@@ -569,7 +569,6 @@ body {
   margin-top: 10px;
   scrollbar-width: thin;
   position: relative;
-  scroll-behavior: smooth;
 }
 
 .offers-container::-webkit-scrollbar {
@@ -616,6 +615,11 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.offer-card:hover .offer-image {
+  transform: scale(1.05);
 }
 
 .offer-badge {
@@ -628,6 +632,7 @@ body {
   font-weight: 600;
   padding: 4px 12px;
   border-radius: 20px;
+  z-index: 2;
 }
 
 .offer-title {
@@ -651,6 +656,7 @@ body {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  min-height: 42px;
 }
 
 .offer-price {
@@ -1171,7 +1177,7 @@ body {
         </button>
       </div>
       
-      <img src="" id="photo" class="profile-avatar">
+      <img src="" id="photo" class="profile-avatar" onerror="this.style.display='none'">
       
       <div class="profile-info">
         <div class="profile-name">
@@ -1224,7 +1230,7 @@ body {
       </div>
     </div>
 
-    <!-- Offers Section - Fixed: Only show offers without product details -->
+    <!-- Offers Section - Standardized without auto movement -->
     <div class="section" id="offersSection" style="display: none;">
       <div class="section-header">
         <i class="fas fa-tags"></i>
@@ -1480,32 +1486,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateCartCount();
   setupShareModal();
   setupSocialIcons();
-  
-  // Initialize scroll functionality for offers
-  initializeOffersScroll();
 });
-
-// Initialize offers scroll with loop effect
-function initializeOffersScroll() {
-  const offersContainer = document.getElementById('offersContainer');
-  if(!offersContainer) return;
-  
-  offersContainer.addEventListener('scroll', () => {
-    const scrollLeft = offersContainer.scrollLeft;
-    const scrollWidth = offersContainer.scrollWidth;
-    const clientWidth = offersContainer.clientWidth;
-    
-    // Reset to beginning when scrolled to end
-    if (scrollLeft + clientWidth >= scrollWidth - 10) {
-      offersContainer.scrollLeft = 0;
-    }
-    
-    // Reset to end when scrolled to beginning (for left scroll)
-    if (scrollLeft <= 10) {
-      offersContainer.scrollLeft = scrollWidth - clientWidth;
-    }
-  });
-}
 
 // Social Media Icons Setup - Follow/Subscribe style icons
 function setupSocialIcons() {
@@ -1671,7 +1652,7 @@ function renderCard() {
       productCard.className = 'product-card';
       productCard.onclick = () => showProductModal(index);
       productCard.innerHTML = `
-        <img src="${product.image || ''}" class="product-image" onerror="this.style.display='none'">
+        <img src="${product.image || ''}" class="product-image" onerror="this.onerror=null; this.src='https://via.placeholder.com/135x120/667eea/ffffff?text=Product';">
         <div class="product-badges">
           ${(product.badges || []).map(badge => `<span class="badge">${badge}</span>`).join('')}
         </div>
@@ -1693,7 +1674,7 @@ function renderCard() {
     document.getElementById('productsSection').style.display = 'none';
   }
   
-  // Offers Section - Fixed: Only show offers without product details
+  // Offers Section - Standardized without auto movement
   const offersContainer = document.getElementById('offersContainer');
   const productsWithBadges = products.filter(product => product.badges && product.badges.length > 0);
   
@@ -1710,7 +1691,7 @@ function renderCard() {
       offerCard.onclick = () => showProductModal(productIndex);
       offerCard.innerHTML = `
         <div class="offer-image-container">
-          <img src="${product.image || ''}" class="offer-image" onerror="this.src='https://via.placeholder.com/280x160/667eea/ffffff?text=Offer'">
+          <img src="${product.image || ''}" class="offer-image" onerror="this.onerror=null; this.src='https://via.placeholder.com/280x160/764ba2/ffffff?text=Special+Offer';">
           <div class="offer-badge">${product.badges[0] || 'Offer'}</div>
         </div>
         <div class="offer-title">
@@ -2029,6 +2010,8 @@ function shareViaEmail() {
 
 // Cart Functions
 function updateCartCount() {
+  // FIXED: Load cart from localStorage every time
+  cart = JSON.parse(localStorage.getItem('cart')) || [];
   const count = cart.length;
   document.getElementById('cartCount').textContent = count;
   document.getElementById('cartCount').style.display = count > 0 ? 'flex' : 'none';
@@ -2039,9 +2022,12 @@ function addToCart(productIndex) {
   const product = products[productIndex];
   
   if(product) {
+    // FIXED: Load cart first, then add item
+    cart = JSON.parse(localStorage.getItem('cart')) || [];
     cart.push({
       ...product,
-      index: productIndex
+      index: productIndex,
+      addedAt: new Date().toISOString() // Add timestamp to avoid duplicates
     });
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
@@ -2053,11 +2039,15 @@ function openCartModal() {
   document.getElementById('cartModal').style.display = 'flex';
   document.body.style.overflow = 'hidden';
   
+  // FIXED: Load fresh cart data
+  cart = JSON.parse(localStorage.getItem('cart')) || [];
+  
   const cartItems = document.getElementById('cartItems');
   cartItems.innerHTML = '';
   
   if(cart.length === 0) {
     cartItems.innerHTML = '<div style="text-align:center;color:#64748b;padding:40px 0;">Your cart is empty</div>';
+    document.getElementById('cartTotal').textContent = '0.00';
     return;
   }
   
@@ -2133,6 +2123,9 @@ function closeCartModal() {
 }
 
 function checkoutCart() {
+  // FIXED: Load fresh cart data
+  cart = JSON.parse(localStorage.getItem('cart')) || [];
+  
   if(cart.length === 0) {
     showNotification('Your cart is empty');
     return;
@@ -2271,6 +2264,10 @@ function showProductModal(productIndex) {
   const originalPrice = currentProduct.originalPrice && currentProduct.discountPrice ? currentProduct.originalPrice : null;
   
   document.getElementById('modalImage').src = currentProduct.image || 'https://via.placeholder.com/420x250/667eea/ffffff?text=Product+Image';
+  document.getElementById('modalImage').onerror = function() {
+    this.src = 'https://via.placeholder.com/420x250/667eea/ffffff?text=Product+Image';
+  };
+  
   document.getElementById('modalTitle').textContent = currentProduct.title || 'Product';
   document.getElementById('modalDescription').textContent = currentProduct.desc || 'No description available';
   
@@ -2482,56 +2479,8 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Initialize
+// Initialize cart count on page load
 updateCartCount();
-
-// Add smooth scrolling for products and offers
-setTimeout(() => {
-  const productsGrid = document.getElementById('productsGrid');
-  const offersContainer = document.getElementById('offersContainer');
-  
-  if(productsGrid) {
-    let autoScroll = setInterval(() => {
-      if(productsGrid.scrollLeft + productsGrid.clientWidth >= productsGrid.scrollWidth - 10) {
-        productsGrid.scrollLeft = 0;
-      } else {
-        productsGrid.scrollLeft += 1;
-      }
-    }, 30);
-    
-    productsGrid.addEventListener('mouseenter', () => clearInterval(autoScroll));
-    productsGrid.addEventListener('mouseleave', () => {
-      autoScroll = setInterval(() => {
-        if(productsGrid.scrollLeft + productsGrid.clientWidth >= productsGrid.scrollWidth - 10) {
-          productsGrid.scrollLeft = 0;
-        } else {
-          productsGrid.scrollLeft += 1;
-        }
-      }, 30);
-    });
-  }
-  
-  if(offersContainer) {
-    let offersAutoScroll = setInterval(() => {
-      if(offersContainer.scrollLeft + offersContainer.clientWidth >= offersContainer.scrollWidth - 10) {
-        offersContainer.scrollLeft = 0;
-      } else {
-        offersContainer.scrollLeft += 1;
-      }
-    }, 40);
-    
-    offersContainer.addEventListener('mouseenter', () => clearInterval(offersAutoScroll));
-    offersContainer.addEventListener('mouseleave', () => {
-      offersAutoScroll = setInterval(() => {
-        if(offersContainer.scrollLeft + offersContainer.clientWidth >= offersContainer.scrollWidth - 10) {
-          offersContainer.scrollLeft = 0;
-        } else {
-          offersContainer.scrollLeft += 1;
-        }
-      }, 40);
-    });
-  }
-}, 1000);
 </script>
 </body>
 </html>
