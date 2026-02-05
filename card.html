@@ -28,7 +28,7 @@ body {
 /* Social Media - Follow/Subscribe icons */
 .social-float-container {
   position: fixed;
-  bottom: 100px;
+  top: 20px;
   right: 20px;
   z-index: 1000;
   display: flex;
@@ -523,7 +523,7 @@ body {
   gap: 6px;
 }
 
-.btn-buy, .btn-cart {
+.btn-view, .grab-offer-btn {
   flex: 1;
   padding: 8px;
   border: none;
@@ -535,17 +535,18 @@ body {
   user-select: none;
 }
 
-.btn-buy {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+.btn-view {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
 }
 
-.btn-cart {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+.grab-offer-btn {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   color: white;
+  width: 100%;
 }
 
-.btn-buy:hover, .btn-cart:hover {
+.btn-view:hover, .grab-offer-btn:hover {
   opacity: 0.9;
   transform: translateY(-2px);
 }
@@ -658,7 +659,7 @@ body {
   line-height: 1.5;
   margin: 10px 0;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -906,6 +907,79 @@ body {
   to { transform: translateY(0); opacity: 1; }
 }
 
+/* Payment Options Modal */
+.payment-option-item {
+  padding: 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s;
+  margin-bottom: 12px;
+}
+
+.payment-option-item.selected {
+  border-color: #667eea;
+  background: #f8fafc;
+}
+
+.payment-option-item:hover {
+  border-color: #667eea;
+}
+
+.payment-option-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: white;
+}
+
+/* JazzCash Modal */
+.qr-code-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.qr-code {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  padding: 10px;
+  background: white;
+}
+
+/* Close button for all modals */
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.3);
+  color: white;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  z-index: 2001;
+}
+
+.close-btn:hover {
+  background: rgba(255,255,255,0.2);
+  transform: rotate(90deg);
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   .card-container {
@@ -957,7 +1031,7 @@ body {
   }
   
   .social-float-container {
-    bottom: 90px;
+    top: 15px;
     right: 15px;
   }
   
@@ -1000,37 +1074,12 @@ body {
     min-width: 220px;
   }
 }
-
-/* Close button for all modals */
-.close-btn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.1);
-  border: 2px solid rgba(255,255,255,0.3);
-  color: white;
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s;
-  z-index: 2001;
-}
-
-.close-btn:hover {
-  background: rgba(255,255,255,0.2);
-  transform: rotate(90deg);
-}
 </style>
 </head>
 
 <body>
 
-<!-- Social Media Floating Icon - Follow/Subscribe style -->
+<!-- Social Media Floating Icon - Moved to top right -->
 <div class="social-float-container">
   <div class="social-expandable-icons" id="socialIcons"></div>
   <div class="social-main-icon" onclick="toggleSocialIcons()">
@@ -1046,12 +1095,12 @@ body {
     <div class="header">
       <h1 id="businessHeader">Digital Business Card</h1>
       <div class="header-actions">
-        <!-- FIXED: Added pointer-events auto for better touch -->
-        <div class="share-header-icon" onclick="openShareModal()" style="pointer-events: auto;">
+        <!-- FIXED: Moved to right side for better touch -->
+        <div class="share-header-icon" onclick="openShareModal()">
           <i class="fas fa-share-alt"></i>
         </div>
         
-        <div class="cart-icon" onclick="openCartModal()" style="pointer-events: auto;">
+        <div class="cart-icon" onclick="openCartModal()">
           <i class="fas fa-shopping-cart"></i>
           <span class="cart-count" id="cartCount">0</span>
         </div>
@@ -1121,14 +1170,14 @@ body {
       </div>
     </div>
 
-    <!-- Special Offers Section - Shows offer cards WITH PRODUCT DETAILS -->
+    <!-- Special Offers Section - Shows offer cards with GRAB OFFER button -->
     <div class="section" id="specialOffersSection" style="display: none;">
       <div class="section-header">
         <i class="fas fa-bolt"></i>
         <h3>Special Offers</h3>
       </div>
       <div class="offers-container" id="specialOffersContainer">
-        <!-- Special offers will be inserted here with product details -->
+        <!-- Special offers will be inserted here -->
       </div>
     </div>
 
@@ -1199,11 +1248,10 @@ body {
   </div>
 </div>
 
-<!-- Product Detail Modal - FIXED: Proper close functionality -->
+<!-- Product Detail Modal -->
 <div class="modal" id="productModal">
   <div class="modal-content" style="background:white;border-radius:24px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp 0.3s ease;">
-    <!-- FIXED: Added close button -->
-    <button class="close-btn" onclick="closeModal('productModal')" style="top:10px;right:10px;background:rgba(0,0,0,0.5);color:white;">×</button>
+    <button class="close-btn" onclick="closeModal('productModal')">×</button>
     
     <img src="" id="modalImage" class="modal-image" style="width:100%;height:250px;object-fit:cover;border-radius:24px 24px 0 0;background:#f8fafc;">
     <div class="modal-body" style="padding:24px;">
@@ -1211,10 +1259,8 @@ body {
       <p class="modal-description" id="modalDescription" style="color:#64748b;line-height:1.6;margin-bottom:20px;"></p>
       <div class="modal-price" id="modalPrice" style="font-size:28px;font-weight:700;color:#10b981;margin-bottom:24px;"></div>
       
-      <!-- FIXED: Payment Methods removed from here - it's in cart modal -->
-      
       <div style="display:flex;gap:12px;margin-top:24px;">
-        <button class="modal-btn" onclick="buyNowProduct()" style="flex:1;padding:16px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;">
+        <button class="modal-btn" onclick="openPaymentOptionsForProduct()" style="flex:1;padding:16px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;">
           🛒 Buy Now
         </button>
         <button class="modal-btn" onclick="addToCartFromModal()" style="flex:1;padding:16px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;background:linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);color:white;">
@@ -1225,11 +1271,69 @@ body {
   </div>
 </div>
 
-<!-- Cart Modal - FIXED: Added payment options and better checkout -->
+<!-- Payment Options Modal -->
+<div class="modal" id="paymentOptionsModal">
+  <div class="modal-content" style="background:white;border-radius:24px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp 0.3s ease;">
+    <button class="close-btn" onclick="closeModal('paymentOptionsModal')">×</button>
+    
+    <div class="cart-header" style="padding:24px;border-bottom:1px solid #e2e8f0;">
+      <div class="cart-title" style="font-size:20px;font-weight:700;color:#1e293b;">Select Payment Method</div>
+    </div>
+    
+    <div style="padding:24px;">
+      <div class="payment-option-item" onclick="selectPaymentOption('jazzcash')" id="jazzcashOption">
+        <div class="payment-option-icon" style="background:#FF6B00;">
+          <i class="fas fa-qrcode"></i>
+        </div>
+        <div style="flex:1;">
+          <div style="font-weight:600;color:#1e293b;">JazzCash / EasyPaisa</div>
+          <div style="font-size:12px;color:#64748b;">Pay via QR Code or Account Number</div>
+        </div>
+        <div id="jazzcashRadio" style="width:20px;height:20px;border-radius:50%;border:2px solid #e2e8f0;"></div>
+      </div>
+      
+      <div class="payment-option-item" onclick="selectPaymentOption('cod')" id="codOption">
+        <div class="payment-option-icon" style="background:#10b981;">
+          <i class="fas fa-truck"></i>
+        </div>
+        <div style="flex:1;">
+          <div style="font-weight:600;color:#1e293b;">Cash on Delivery</div>
+          <div style="font-size:12px;color:#64748b;">Pay when product arrives</div>
+        </div>
+        <div id="codRadio" style="width:20px;height:20px;border-radius:50%;border:2px solid #e2e8f0;"></div>
+      </div>
+      
+      <button onclick="proceedWithSelectedPayment()" style="width:100%;padding:16px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;border:none;border-radius:12px;font-size:16px;font-weight:600;margin-top:20px;cursor:pointer;">
+        Continue
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- JazzCash Payment Modal -->
+<div class="modal" id="jazzcashModal">
+  <div class="modal-content" style="background:white;border-radius:24px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp 0.3s ease;">
+    <button class="close-btn" onclick="closeModal('jazzcashModal')">×</button>
+    
+    <div class="cart-header" style="padding:24px;border-bottom:1px solid #e2e8f0;">
+      <div class="cart-title" style="font-size:20px;font-weight:700;color:#1e293b;">JazzCash Payment</div>
+    </div>
+    
+    <div style="padding:24px;">
+      <div id="jazzcashDetails">
+        <!-- JazzCash details will be inserted here -->
+      </div>
+      <button onclick="confirmJazzcashPayment()" style="width:100%;padding:16px;background:linear-gradient(135deg, #FF6B00 0%, #FF8E53 100%);color:white;border:none;border-radius:12px;font-size:16px;font-weight:600;margin-top:20px;cursor:pointer;">
+        <i class="fas fa-check-circle"></i> Confirm Payment
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Cart Modal -->
 <div class="modal" id="cartModal">
   <div class="modal-content" style="background:white;border-radius:24px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp 0.3s ease;">
-    <!-- FIXED: Added close button -->
-    <button class="close-btn" onclick="closeModal('cartModal')" style="top:10px;right:10px;background:rgba(0,0,0,0.5);color:white;">×</button>
+    <button class="close-btn" onclick="closeModal('cartModal')">×</button>
     
     <div class="cart-header" style="padding:24px;border-bottom:1px solid #e2e8f0;">
       <div class="cart-title" style="font-size:20px;font-weight:700;color:#1e293b;">Your Shopping Cart</div>
@@ -1242,39 +1346,30 @@ body {
       <span>PKR <span id="cartTotal">0</span></span>
     </div>
     
-    <!-- FIXED: Added Payment Options -->
-    <div class="payment-section" style="padding:0 24px 24px 24px;">
+    <!-- Cart Payment Options -->
+    <div style="padding:0 24px 24px 24px;">
       <h3 style="margin-bottom:15px;color:#1e293b;">Select Payment Method</h3>
-      <div class="payment-options" style="display:flex;flex-direction:column;gap:12px;">
-        <div class="payment-option" onclick="selectCartPayment('whatsapp')" id="whatsappCartOption" style="padding:16px;border:2px solid #e2e8f0;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.3s;">
-          <div class="payment-icon" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;background:#25D366;">
-            <i class="fab fa-whatsapp"></i>
-          </div>
-          <div style="flex:1;">
-            <div style="font-weight:600;color:#1e293b;">WhatsApp Order</div>
-            <div style="font-size:12px;color:#64748b;">Confirm order via WhatsApp chat</div>
-          </div>
+      
+      <div class="payment-option-item" onclick="selectCartPayment('jazzcash')" id="cartJazzcashOption">
+        <div class="payment-option-icon" style="background:#FF6B00;">
+          <i class="fas fa-qrcode"></i>
         </div>
-        
-        <div class="payment-option" onclick="selectCartPayment('cod')" id="codCartOption" style="padding:16px;border:2px solid #e2e8f0;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.3s;">
-          <div class="payment-icon" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;background:#10b981;">
-            <i class="fas fa-truck"></i>
-          </div>
-          <div style="flex:1;">
-            <div style="font-weight:600;color:#1e293b;">Cash on Delivery</div>
-            <div style="font-size:12px;color:#64748b;">Pay when product arrives</div>
-          </div>
+        <div style="flex:1;">
+          <div style="font-weight:600;color:#1e293b;">JazzCash / EasyPaisa</div>
+          <div style="font-size:12px;color:#64748b;">Pay via QR Code or Account Number</div>
         </div>
-        
-        <div class="payment-option" onclick="selectCartPayment('jazzcash')" id="jazzcashCartOption" style="padding:16px;border:2px solid #e2e8f0;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.3s;">
-          <div class="payment-icon" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;background:#FF6B00;">
-            <i class="fas fa-qrcode"></i>
-          </div>
-          <div style="flex:1;">
-            <div style="font-weight:600;color:#1e293b;">JazzCash / EasyPaisa</div>
-            <div style="font-size:12px;color:#64748b;">Pay via QR Code or Number</div>
-          </div>
+        <div id="cartJazzcashRadio" style="width:20px;height:20px;border-radius:50%;border:2px solid #e2e8f0;"></div>
+      </div>
+      
+      <div class="payment-option-item" onclick="selectCartPayment('cod')" id="cartCodOption">
+        <div class="payment-option-icon" style="background:#10b981;">
+          <i class="fas fa-truck"></i>
         </div>
+        <div style="flex:1;">
+          <div style="font-weight:600;color:#1e293b;">Cash on Delivery</div>
+          <div style="font-size:12px;color:#64748b;">Pay when product arrives</div>
+        </div>
+        <div id="cartCodRadio" style="width:20px;height:20px;border-radius:50%;border:2px solid #e2e8f0;"></div>
       </div>
     </div>
     
@@ -1286,11 +1381,10 @@ body {
   </div>
 </div>
 
-<!-- Share Modal - FIXED FUNCTIONAL SHARE BUTTON -->
+<!-- Share Modal -->
 <div class="modal" id="shareModal">
   <div class="modal-content" style="background:white;border-radius:24px;width:100%;max-width:350px;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp 0.3s ease;">
-    <!-- FIXED: Added close button -->
-    <button class="close-btn" onclick="closeModal('shareModal')" style="top:10px;right:10px;background:rgba(0,0,0,0.5);color:white;">×</button>
+    <button class="close-btn" onclick="closeModal('shareModal')">×</button>
     
     <div class="cart-header" style="padding:24px;border-bottom:1px solid #e2e8f0;">
       <div class="cart-title" style="font-size:20px;font-weight:700;color:#1e293b;">Share Digital Card</div>
@@ -1302,36 +1396,15 @@ body {
   </div>
 </div>
 
-<!-- JazzCash Payment Modal -->
-<div class="modal" id="jazzcashModal">
-  <div class="modal-content" style="background:white;border-radius:24px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp 0.3s ease;">
-    <!-- FIXED: Added close button -->
-    <button class="close-btn" onclick="closeModal('jazzcashModal')" style="top:10px;right:10px;background:rgba(0,0,0,0.5);color:white;">×</button>
-    
-    <div class="cart-header" style="padding:24px;border-bottom:1px solid #e2e8f0;">
-      <div class="cart-title" style="font-size:20px;font-weight:700;color:#1e293b;">JazzCash Payment</div>
-    </div>
-    
-    <div style="padding:24px;">
-      <div id="jazzcashDetails">
-        <!-- JazzCash details will be inserted here -->
-      </div>
-      <button onclick="proceedWithJazzcash()" style="width:100%;padding:16px;background:linear-gradient(135deg, #FF6B00 0%, #FF8E53 100%);color:white;border:none;border-radius:12px;font-size:16px;font-weight:600;margin-top:20px;cursor:pointer;">
-        <i class="fas fa-check-circle"></i> Confirm Payment
-      </button>
-    </div>
-  </div>
-</div>
-
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
 // Global variables
 let card = {};
 let currentProduct = null;
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
-let selectedPaymentMethod = null;
+let selectedPaymentMethod = 'jazzcash'; // Default for product
+let cartPaymentMethod = 'jazzcash'; // Default for cart
 let socialIconsVisible = false;
-let cartPaymentMethod = 'whatsapp'; // Default payment method for cart
 
 // Initialize Supabase
 const supa = supabase.createClient(
@@ -1358,14 +1431,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateCartCount();
   setupShareModal();
   setupSocialIcons();
-  setupModalCloseListeners(); // FIXED: Setup modal close listeners
+  setupModalCloseListeners();
+  setupBackButtonHandler();
 });
 
 // Setup modal close listeners
 function setupModalCloseListeners() {
   // Close modals when clicking outside
   document.addEventListener('click', (e) => {
-    const modals = ['productModal', 'cartModal', 'shareModal', 'jazzcashModal'];
+    const modals = ['productModal', 'cartModal', 'shareModal', 'jazzcashModal', 'paymentOptionsModal'];
     
     modals.forEach(modalId => {
       const modal = document.getElementById(modalId);
@@ -1374,22 +1448,33 @@ function setupModalCloseListeners() {
       }
     });
   });
-
-  // Close modals with Escape key
-  document.addEventListener('keydown', (e) => {
-    if(e.key === 'Escape') {
-      const modals = ['productModal', 'cartModal', 'shareModal', 'jazzcashModal'];
-      modals.forEach(modalId => {
-        const modal = document.getElementById(modalId);
-        if(modal && modal.style.display === 'flex') {
-          closeModal(modalId);
-        }
-      });
-    }
-  });
 }
 
-// Social Media Icons Setup - Follow/Subscribe style icons
+// Handle mobile back button
+function setupBackButtonHandler() {
+  // Handle browser back button
+  window.addEventListener('popstate', function(event) {
+    const modals = ['productModal', 'cartModal', 'shareModal', 'jazzcashModal', 'paymentOptionsModal'];
+    let anyModalOpen = false;
+    
+    modals.forEach(modalId => {
+      const modal = document.getElementById(modalId);
+      if(modal && modal.style.display === 'flex') {
+        closeModal(modalId);
+        anyModalOpen = true;
+        // Prevent going back in history
+        history.pushState(null, null, window.location.pathname);
+      }
+    });
+    
+    return !anyModalOpen;
+  });
+
+  // Push initial state
+  history.pushState(null, null, window.location.pathname);
+}
+
+// Social Media Icons Setup
 function setupSocialIcons() {
   const socialIcons = document.getElementById('socialIcons');
   const socialMedia = card.socialMedia || {};
@@ -1463,7 +1548,7 @@ function toggleSocialIcons() {
   }
 }
 
-// Setup Share Modal - FIXED FUNCTIONALITY
+// Setup Share Modal
 function setupShareModal() {
   const shareOptions = document.getElementById('shareOptions');
   const shareMethods = [
@@ -1485,12 +1570,12 @@ function setupShareModal() {
   `).join('');
 }
 
-// Render card function with all fixes
+// Render card function
 function renderCard() {
   // Header
   document.getElementById('businessHeader').textContent = card.businessName || card.name || "Digital Card";
   
-  // Profile - Professional circular image
+  // Profile
   const photo = document.getElementById('photo');
   if(card.profileImage) {
     photo.src = card.profileImage;
@@ -1527,7 +1612,7 @@ function renderCard() {
     document.getElementById('addressItem').style.display = 'none';
   }
   
-  // About - Text aligned both sides with collapse
+  // About
   const aboutText = card.business?.about || card.about || "";
   if(aboutText) {
     document.getElementById('aboutText').textContent = aboutText;
@@ -1540,7 +1625,7 @@ function renderCard() {
     document.getElementById('aboutSection').style.display = 'none';
   }
   
-  // Products - Facebook Ads Style with 1.75 cards visible
+  // Products - Regular products with VIEW button
   const products = card.products || card.offers || [];
   const productsGrid = document.getElementById('productsGrid');
   
@@ -1554,7 +1639,7 @@ function renderCard() {
       productCard.innerHTML = `
         <img src="${product.image || ''}" class="product-image" onerror="this.style.display='none'; this.parentElement.style.background='#f8fafc';">
         <div class="product-badges">
-          ${(product.badges || []).map(badge => `<span class="badge">${badge}</span>`).join('')}
+          ${(product.badges || []).slice(0, 2).map(badge => `<span class="badge">${badge}</span>`).join('')}
         </div>
         <div class="product-details">
           <div class="product-title">${product.title || 'Product'}</div>
@@ -1563,8 +1648,7 @@ function renderCard() {
             ${price ? `<span class="discount-price">PKR ${price}</span>` : ''}
           </div>
           <div class="product-actions">
-            <button class="btn-buy" onclick="showProductModal(${index})">Buy Now</button>
-            <button class="btn-cart" onclick="addToCart(${index})">Add to Cart</button>
+            <button class="btn-view" onclick="showProductModal(${index})">View</button>
           </div>
         </div>
       `;
@@ -1574,7 +1658,7 @@ function renderCard() {
     document.getElementById('productsSection').style.display = 'none';
   }
   
-  // Special Offers Section - Shows offer cards WITH PRODUCT DETAILS
+  // Special Offers Section - With GRAB OFFER button
   const specialOffersContainer = document.getElementById('specialOffersContainer');
   let hasSpecialOffers = false;
   
@@ -1607,14 +1691,9 @@ function renderCard() {
             ${originalPrice ? `<span class="offer-original-price">PKR ${originalPrice}</span>` : ''}
             ${price ? `<span class="offer-discount-price">PKR ${price}</span>` : ''}
           </div>
-          <div style="display:flex;gap:10px;margin-top:15px;">
-            <button onclick="showProductModal(${originalIndex})" style="flex:1;padding:10px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;">
-              View Details
-            </button>
-            <button onclick="addToCart(${originalIndex})" style="flex:1;padding:10px;background:linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;">
-              Add to Cart
-            </button>
-          </div>
+          <button class="grab-offer-btn" onclick="showProductModal(${originalIndex})">
+            🎯 Grab Offer
+          </button>
         `;
         specialOffersContainer.appendChild(offerCard);
       });
@@ -1625,7 +1704,7 @@ function renderCard() {
     document.getElementById('specialOffersSection').style.display = 'none';
   }
   
-  // Business Hours - Expandable
+  // Business Hours
   if(card.businessHours && card.businessHours.length > 0) {
     const hoursList = document.getElementById('businessHours');
     const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -1686,7 +1765,7 @@ function renderCard() {
     document.getElementById('holidaysSection').style.display = 'block';
   }
   
-  // Website Banner - Only show if website link exists and is functional
+  // Website Banner
   if(card.website && card.website.trim() && card.website.includes('://')) {
     document.getElementById('websiteBanner').style.display = 'block';
     document.getElementById('websiteBannerLink').href = card.website;
@@ -1786,14 +1865,10 @@ function openWhatsAppChat(context) {
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
 }
 
-// Share Functions - ALL FIXED AND FUNCTIONAL
+// Share Functions
 function openShareModal() {
   document.getElementById('shareModal').style.display = 'flex';
   document.body.style.overflow = 'hidden';
-}
-
-function closeShareModal() {
-  closeModal('shareModal');
 }
 
 function shareViaWhatsApp() {
@@ -1802,24 +1877,24 @@ function shareViaWhatsApp() {
                  `${card.business?.about ? `${card.business.about.substring(0, 100)}...\n\n` : '\n'}` +
                  `View the complete digital card here:\n${window.location.href}`;
   window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
-  closeShareModal();
+  closeModal('shareModal');
 }
 
 function shareViaFacebook() {
   window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
-  closeShareModal();
+  closeModal('shareModal');
 }
 
 function shareViaTwitter() {
   const message = `Check out ${card.name || 'this'} digital business card! ${window.location.href}`;
   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`, '_blank');
-  closeShareModal();
+  closeModal('shareModal');
 }
 
 function copyCardLink() {
   navigator.clipboard.writeText(window.location.href).then(() => {
     showNotification('✅ Card link copied to clipboard!');
-    closeShareModal();
+    closeModal('shareModal');
   }).catch(err => {
     const textArea = document.createElement('textarea');
     textArea.value = window.location.href;
@@ -1828,14 +1903,14 @@ function copyCardLink() {
     document.execCommand('copy');
     document.body.removeChild(textArea);
     showNotification('✅ Card link copied to clipboard!');
-    closeShareModal();
+    closeModal('shareModal');
   });
 }
 
 function shareViaSMS() {
   const message = `Check out ${card.name || 'this'} digital business card: ${window.location.href}`;
   window.open(`sms:?body=${encodeURIComponent(message)}`, '_blank');
-  closeShareModal();
+  closeModal('shareModal');
 }
 
 function shareViaEmail() {
@@ -1846,7 +1921,7 @@ function shareViaEmail() {
               `${card.business?.about ? `About: ${card.business.about.substring(0, 150)}...\n` : ''}\n` +
               `Best regards,\n${card.name || 'Digital Card'}`;
   window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
-  closeShareModal();
+  closeModal('shareModal');
 }
 
 // Cart Functions
@@ -1861,7 +1936,6 @@ function addToCart(productIndex) {
   const product = products[productIndex];
   
   if(product) {
-    // Check if product already in cart
     const existingIndex = cart.findIndex(item => 
       item.title === product.title && 
       item.discountPrice === product.discountPrice
@@ -1945,59 +2019,134 @@ function removeFromCart(index) {
   openCartModal();
 }
 
-function closeCartModal() {
-  closeModal('cartModal');
-}
-
 // Cart Payment Selection
 function selectCartPayment(method) {
   cartPaymentMethod = method;
   
-  const whatsappOption = document.getElementById('whatsappCartOption');
-  const codOption = document.getElementById('codCartOption');
-  const jazzcashOption = document.getElementById('jazzcashCartOption');
+  const jazzcashOption = document.getElementById('cartJazzcashOption');
+  const codOption = document.getElementById('cartCodOption');
+  const jazzcashRadio = document.getElementById('cartJazzcashRadio');
+  const codRadio = document.getElementById('cartCodRadio');
   
   // Reset all
-  [whatsappOption, codOption, jazzcashOption].forEach(option => {
-    option.style.borderColor = '#e2e8f0';
-    option.style.backgroundColor = 'white';
+  [jazzcashOption, codOption].forEach(option => {
+    option.classList.remove('selected');
+  });
+  
+  [jazzcashRadio, codRadio].forEach(radio => {
+    radio.style.background = 'white';
+    radio.style.borderColor = '#e2e8f0';
   });
   
   // Select the chosen one
-  if(method === 'whatsapp' && whatsappOption) {
-    whatsappOption.style.borderColor = '#25D366';
-    whatsappOption.style.backgroundColor = '#f0fdf4';
-  } else if(method === 'cod' && codOption) {
-    codOption.style.borderColor = '#10b981';
-    codOption.style.backgroundColor = '#f0fdf4';
-  } else if(method === 'jazzcash' && jazzcashOption) {
-    jazzcashOption.style.borderColor = '#FF6B00';
-    jazzcashOption.style.backgroundColor = '#fff7ed';
+  if(method === 'jazzcash' && jazzcashOption && jazzcashRadio) {
+    jazzcashOption.classList.add('selected');
+    jazzcashRadio.style.background = '#FF6B00';
+    jazzcashRadio.style.borderColor = '#FF6B00';
+  } else if(method === 'cod' && codOption && codRadio) {
+    codOption.classList.add('selected');
+    codRadio.style.background = '#10b981';
+    codRadio.style.borderColor = '#10b981';
   }
 }
 
 function resetCartPaymentSelection() {
-  cartPaymentMethod = 'whatsapp';
-  const whatsappOption = document.getElementById('whatsappCartOption');
-  const codOption = document.getElementById('codCartOption');
-  const jazzcashOption = document.getElementById('jazzcashCartOption');
-  
-  [whatsappOption, codOption, jazzcashOption].forEach(option => {
-    if(option) {
-      option.style.borderColor = '#e2e8f0';
-      option.style.backgroundColor = 'white';
-    }
-  });
+  cartPaymentMethod = 'jazzcash';
+  selectCartPayment('jazzcash');
 }
 
-// FIXED: Enhanced Checkout Function with Payment Methods
+// Checkout Cart with selected payment method
 function checkoutCart() {
   if(cart.length === 0) {
     showNotification('Your cart is empty');
     return;
   }
   
-  let message = `Hello! I would like to place an order:\n\n`;
+  if(cartPaymentMethod === 'jazzcash') {
+    openCartJazzcashModal();
+  } else if(cartPaymentMethod === 'cod') {
+    checkoutWithCOD();
+  }
+}
+
+function checkoutWithCOD() {
+  let message = `Hello! I would like to place a Cash on Delivery order:\n\n`;
+  
+  cart.forEach((item, index) => {
+    const price = item.discountPrice || item.originalPrice || 0;
+    message += `${index + 1}. ${item.title || 'Product'} - PKR ${price}\n`;
+  });
+  
+  const total = cart.reduce((sum, item) => {
+    const price = parseFloat(item.discountPrice || item.originalPrice || 0);
+    return sum + price;
+  }, 0);
+  
+  message += `\nTotal: PKR ${total.toFixed(2)}\n\nPlease confirm availability and share delivery details.`;
+  
+  if(card.phone) {
+    const phone = card.phone.replace(/\D/g, '');
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+  }
+  
+  // Clear cart after checkout
+  cart = [];
+  localStorage.setItem('cart', JSON.stringify(cart));
+  updateCartCount();
+  closeModal('cartModal');
+}
+
+function openCartJazzcashModal() {
+  const jazzcashDetails = document.getElementById('jazzcashDetails');
+  let html = '';
+  
+  if(card.payments?.jazzcash?.active) {
+    // Calculate cart total
+    const total = cart.reduce((sum, item) => {
+      const price = parseFloat(item.discountPrice || item.originalPrice || 0);
+      return sum + price;
+    }, 0);
+    
+    html = `
+      <div style="text-align:center;">
+        <div style="margin-bottom:20px;">
+          <div style="font-size:16px;font-weight:600;color:#1e293b;margin-bottom:8px;">Total Amount</div>
+          <div style="font-size:32px;font-weight:700;color:#FF6B00;margin:15px 0;">PKR ${total.toFixed(2)}</div>
+        </div>
+        
+        <div style="margin-bottom:20px;">
+          <div style="font-size:16px;font-weight:600;color:#1e293b;margin-bottom:8px;">${card.payments.jazzcash.type === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'} Account</div>
+          <div style="font-size:24px;font-weight:700;color:#1e293b;margin:10px 0;">${card.payments.jazzcash.number || ''}</div>
+        </div>
+        
+        ${card.payments.jazzcash.barcode ? `
+          <div class="qr-code-container">
+            <div style="font-size:14px;color:#64748b;margin-bottom:10px;">Scan QR Code to Pay</div>
+            <img src="${card.payments.jazzcash.barcode}" class="qr-code">
+          </div>
+        ` : ''}
+        
+        <div style="background:#f8fafc;padding:15px;border-radius:12px;margin-top:20px;">
+          <div style="font-size:14px;color:#64748b;margin-bottom:8px;">Instructions:</div>
+          <div style="font-size:13px;color:#475569;text-align:left;">
+            1. Send payment to the above ${card.payments.jazzcash.type === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'} number<br>
+            2. Take screenshot of payment confirmation<br>
+            3. Share screenshot via WhatsApp for order confirmation
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    html = '<div style="text-align:center;color:#ef4444;padding:20px;">JazzCash payment not configured</div>';
+  }
+  
+  jazzcashDetails.innerHTML = html;
+  document.getElementById('jazzcashModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function confirmJazzcashPayment() {
+  let message = `Hello! I have made a ${card.payments.jazzcash.type === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'} payment for the following items:\n\n`;
   
   cart.forEach((item, index) => {
     const price = item.discountPrice || item.originalPrice || 0;
@@ -2010,44 +2159,23 @@ function checkoutCart() {
   }, 0);
   
   message += `\nTotal: PKR ${total.toFixed(2)}\n`;
-  message += `Payment Method: ${getPaymentMethodName(cartPaymentMethod)}\n\n`;
-  
-  // Add payment method specific instructions
-  if(cartPaymentMethod === 'jazzcash' && card.payments?.jazzcash?.active) {
-    message += `I will pay via ${card.payments.jazzcash.type === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'}.\n`;
-    if(card.payments.jazzcash.number) {
-      message += `Account: ${card.payments.jazzcash.number}\n`;
-    }
-  } else if(cartPaymentMethod === 'cod') {
-    message += `I prefer Cash on Delivery.\n`;
-  }
-  
-  message += `Please confirm availability and share delivery details.`;
+  message += `Payment sent to: ${card.payments.jazzcash.number || ''}\n\n`;
+  message += `Please confirm my order.`;
   
   if(card.phone) {
     const phone = card.phone.replace(/\D/g, '');
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
-  } else {
-    showNotification('Please contact business directly for order');
   }
   
-  // Clear cart after checkout
+  // Clear cart after payment confirmation
   cart = [];
   localStorage.setItem('cart', JSON.stringify(cart));
   updateCartCount();
-  closeCartModal();
+  closeModal('jazzcashModal');
+  closeModal('cartModal');
 }
 
-function getPaymentMethodName(method) {
-  switch(method) {
-    case 'whatsapp': return 'WhatsApp Order';
-    case 'cod': return 'Cash on Delivery';
-    case 'jazzcash': return card.payments?.jazzcash?.type === 'easypaisa' ? 'EasyPaisa' : 'JazzCash';
-    default: return 'WhatsApp Order';
-  }
-}
-
-// Product Modal Functions - FIXED: Proper close functionality
+// Product Modal Functions
 function showProductModal(productIndex) {
   const products = card.products || card.offers || [];
   currentProduct = products[productIndex];
@@ -2065,7 +2193,7 @@ function showProductModal(productIndex) {
   if(originalPrice) {
     document.getElementById('modalPrice').innerHTML = `
       <span style="text-decoration:line-through;color:#94a3b8;font-size:18px;margin-right:10px;">PKR ${originalPrice}</span>
-      <span>PKR ${price}</span>
+      <span style="color:#ef4444;">PKR ${price}</span>
     `;
   } else {
     document.getElementById('modalPrice').textContent = price ? `PKR ${price}` : 'Price not available';
@@ -2087,37 +2215,94 @@ function addToCartFromModal() {
   }
 }
 
-function buyNowProduct() {
-  if(currentProduct) {
-    // Direct WhatsApp order for single product
-    openWhatsAppChat('order');
+// Payment Options for Product
+function openPaymentOptionsForProduct() {
+  // Reset selection
+  selectedPaymentMethod = 'jazzcash';
+  updatePaymentOptionSelection();
+  
+  document.getElementById('paymentOptionsModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function selectPaymentOption(method) {
+  selectedPaymentMethod = method;
+  updatePaymentOptionSelection();
+}
+
+function updatePaymentOptionSelection() {
+  const jazzcashOption = document.getElementById('jazzcashOption');
+  const codOption = document.getElementById('codOption');
+  const jazzcashRadio = document.getElementById('jazzcashRadio');
+  const codRadio = document.getElementById('codRadio');
+  
+  // Reset all
+  [jazzcashOption, codOption].forEach(option => {
+    option.classList.remove('selected');
+  });
+  
+  [jazzcashRadio, codRadio].forEach(radio => {
+    radio.style.background = 'white';
+    radio.style.borderColor = '#e2e8f0';
+  });
+  
+  // Select the chosen one
+  if(selectedPaymentMethod === 'jazzcash' && jazzcashOption && jazzcashRadio) {
+    jazzcashOption.classList.add('selected');
+    jazzcashRadio.style.background = '#FF6B00';
+    jazzcashRadio.style.borderColor = '#FF6B00';
+  } else if(selectedPaymentMethod === 'cod' && codOption && codRadio) {
+    codOption.classList.add('selected');
+    codRadio.style.background = '#10b981';
+    codRadio.style.borderColor = '#10b981';
+  }
+}
+
+function proceedWithSelectedPayment() {
+  closeModal('paymentOptionsModal');
+  
+  if(selectedPaymentMethod === 'jazzcash') {
+    openProductJazzcashModal();
+  } else if(selectedPaymentMethod === 'cod') {
+    openWhatsAppChat('cod');
     closeModal('productModal');
   }
 }
 
-// JazzCash Modal Functions
-function openJazzcashModal() {
+function openProductJazzcashModal() {
   const jazzcashDetails = document.getElementById('jazzcashDetails');
   let html = '';
   
-  if(card.payments?.jazzcash?.active) {
+  if(card.payments?.jazzcash?.active && currentProduct) {
+    const price = currentProduct.discountPrice || currentProduct.originalPrice || 0;
+    
     html = `
       <div style="text-align:center;">
         <div style="margin-bottom:20px;">
-          <div style="font-size:16px;font-weight:600;color:#1e293b;margin-bottom:8px;">${card.payments.jazzcash.type === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'} Details</div>
-          <div style="font-size:24px;font-weight:700;color:#FF6B00;margin:15px 0;">${card.payments.jazzcash.number || ''}</div>
+          <div style="font-size:16px;font-weight:600;color:#1e293b;margin-bottom:8px;">Product</div>
+          <div style="font-size:18px;color:#475569;margin:10px 0;">${currentProduct.title || 'Product'}</div>
+        </div>
+        
+        <div style="margin-bottom:20px;">
+          <div style="font-size:16px;font-weight:600;color:#1e293b;margin-bottom:8px;">Amount to Pay</div>
+          <div style="font-size:32px;font-weight:700;color:#FF6B00;margin:15px 0;">PKR ${price}</div>
+        </div>
+        
+        <div style="margin-bottom:20px;">
+          <div style="font-size:16px;font-weight:600;color:#1e293b;margin-bottom:8px;">${card.payments.jazzcash.type === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'} Account</div>
+          <div style="font-size:24px;font-weight:700;color:#1e293b;margin:10px 0;">${card.payments.jazzcash.number || ''}</div>
         </div>
         
         ${card.payments.jazzcash.barcode ? `
-          <div style="margin:20px 0;">
+          <div class="qr-code-container">
             <div style="font-size:14px;color:#64748b;margin-bottom:10px;">Scan QR Code to Pay</div>
-            <img src="${card.payments.jazzcash.barcode}" style="max-width:250px;max-height:250px;border-radius:12px;border:2px solid #e2e8f0;">
+            <img src="${card.payments.jazzcash.barcode}" class="qr-code">
           </div>
         ` : ''}
         
         <div style="background:#f8fafc;padding:15px;border-radius:12px;margin-top:20px;">
           <div style="font-size:14px;color:#64748b;margin-bottom:8px;">Instructions:</div>
-          <div style="font-size:13px;color:#475569;">
+          <div style="font-size:13px;color:#475569;text-align:left;">
             1. Send payment to the above ${card.payments.jazzcash.type === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'} number<br>
             2. Take screenshot of payment confirmation<br>
             3. Share screenshot via WhatsApp for order confirmation
@@ -2125,6 +2310,8 @@ function openJazzcashModal() {
         </div>
       </div>
     `;
+  } else {
+    html = '<div style="text-align:center;color:#ef4444;padding:20px;">Payment not configured</div>';
   }
   
   jazzcashDetails.innerHTML = html;
@@ -2132,11 +2319,7 @@ function openJazzcashModal() {
   document.body.style.overflow = 'hidden';
 }
 
-function closeJazzcashModal() {
-  closeModal('jazzcashModal');
-}
-
-function proceedWithJazzcash() {
+function confirmJazzcashPayment() {
   if(currentProduct) {
     const price = currentProduct.discountPrice || currentProduct.originalPrice;
     let message = `Hello! I have made a ${card.payments.jazzcash.type === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'} payment for:\n\n` +
@@ -2150,7 +2333,7 @@ function proceedWithJazzcash() {
       window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
     }
     
-    closeJazzcashModal();
+    closeModal('jazzcashModal');
     closeModal('productModal');
   }
 }
@@ -2184,6 +2367,8 @@ function openMap() {
 function openModal(modalId) {
   document.getElementById(modalId).style.display = 'flex';
   document.body.style.overflow = 'hidden';
+  // Push state to handle back button
+  history.pushState({ modal: modalId }, null, window.location.pathname);
 }
 
 function closeModal(modalId) {
@@ -2225,6 +2410,9 @@ function showNotification(message) {
 
 // Initialize
 updateCartCount();
+// Set default payment selection
+updatePaymentOptionSelection();
+selectCartPayment('jazzcash');
 </script>
 </body>
 </html>
